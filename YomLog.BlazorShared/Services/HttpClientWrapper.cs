@@ -13,21 +13,20 @@ public class HttpClientWrapper : BindBase
 {
     private readonly HttpClient _httpClient;
     private readonly IPopupService _popupService;
-    private readonly OidcAuthService _authService;
+    private readonly IAuthService _authService;
 
     private int _retryCount;
     private readonly int RetryLimit = 3;
 
     public ReactivePropertySlim<bool> IsOffline { get; }
 
-    public HttpClientWrapper(HttpClient httpClient, IPopupService popupService, OidcAuthService authService)
+    public HttpClientWrapper(HttpClient httpClient, IPopupService popupService, IAuthService authService)
     {
         _httpClient = httpClient;
         _popupService = popupService;
         _authService = authService;
 
-        IsOffline = new ReactivePropertySlim<bool>(false, mode: ReactivePropertyMode.DistinctUntilChanged)
-            .AddTo(Disposable);
+        IsOffline = new ReactivePropertySlim<bool>().AddTo(Disposable);
     }
 
     public async Task<T> Get<T>(string uri)
@@ -86,7 +85,7 @@ public class HttpClientWrapper : BindBase
                             exception = await UnauthorizedException.CreateFromHttpResponse(httpException, response);
                             break;
                         }
-                        var result = await _authService.RefreshTokenAsync();
+                        await _authService.RefreshTokenAsync();
                         return await GetHttpResponseAsync(callback);
                     case null:
                         IsOffline.Value = true;

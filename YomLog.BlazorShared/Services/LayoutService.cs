@@ -22,6 +22,7 @@ public class LayoutService : BindBase
     public ReactivePropertySlim<bool> DrawerOpen { get; }
     public ReactivePropertySlim<PageContainer?> Page { get; }
     public ReactivePropertySlim<Exception?> Exception = new();
+    public ReactivePropertySlim<bool> IsInitializing { get; }
 
     public event Action? AppBarRerenderRequested;
     public void RequestAppBarRerender() => AppBarRerenderRequested?.Invoke();
@@ -39,6 +40,7 @@ public class LayoutService : BindBase
             .Subscribe(async v => await _preference.SaveAsync(Key, v));
 
         Exception = Exception.AddTo(Disposable);
+        IsInitializing = new ReactivePropertySlim<bool>(true).AddTo(Disposable);
     }
 
     public bool IsDarkMode { get; private set; }

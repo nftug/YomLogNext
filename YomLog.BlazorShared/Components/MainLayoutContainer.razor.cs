@@ -14,7 +14,7 @@ public partial class MainLayoutContainer : BindComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private ScrollInfoService ScrollInfoService { get; set; } = null!;
-    [Inject] private OidcAuthService AuthService { get; set; } = null!;
+    [Inject] private IAuthService AuthService { get; set; } = null!;
 
     [Parameter] public bool? IsDarkModeDefault { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
@@ -22,10 +22,8 @@ public partial class MainLayoutContainer : BindComponentBase
     [Parameter] public RenderFragment AppBarSection { get; set; } = null!;
     [Parameter] public RenderFragment? NotFoundSection { get; set; }
 
-    private ErrorBoundary? _errorBoundary;
-    private MudThemeProvider? _mudThemeProvider;
-
-    private ReactivePropertySlim<bool> IsInitializing { get; set; } = null!;
+    private readonly ErrorBoundary? _errorBoundary;
+    private readonly MudThemeProvider? _mudThemeProvider;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,8 +36,7 @@ public partial class MainLayoutContainer : BindComponentBase
             .Subscribe(_ => StateHasChanged())
             .AddTo(Disposable);
 
-        IsInitializing = new ReactivePropertySlim<bool>().AddTo(Disposable);
-        IsInitializing.Skip(1).Subscribe(_ => StateHasChanged());
+        LayoutService.IsInitializing.Skip(1).Subscribe(_ => StateHasChanged());
 
         await ScrollInfoService.RegisterService();
         await ApplyUserPreferences();
@@ -50,7 +47,7 @@ public partial class MainLayoutContainer : BindComponentBase
         if (!firstRender) return;
 
         // Initializing application
-        IsInitializing.Value = true;
+        LayoutService.IsInitializing.Value = true;
 
         try
         {
@@ -58,13 +55,18 @@ public partial class MainLayoutContainer : BindComponentBase
             if (AuthService.IsAuthenticated.Value)
             {
                 await AuthService.RefreshTokenAsync();
-                AuthService.StartRefreshTimer();
+                AuthService.RefreshTimer.Start();
             }
+        }
+        catch (Exception e)
+        {
+            // Notify exception to ExceptionReceiver
+            LayoutService.Exception.Value = e;
         }
         finally
         {
             // Initialization finished
-            IsInitializing.Value = false;
+            LayoutService.IsInitializing.Value = false;
         }
     }
 
@@ -78,11 +80,4 @@ public partial class MainLayoutContainer : BindComponentBase
         var defaultDarkMode = IsDarkModeDefault ?? await _mudThemeProvider!.GetSystemPreference();
         await LayoutService.ApplyUserPreferences(defaultDarkMode);
     }
-
-    private void LayoutServiceOnMajorUpdateOccurred(object? sender, EventArgs e) => StateHasChanged();
-}
-
-public class InitializeLayoutEventArgs : EventArgs
-{
-    public bool IsAuthenticated { get; init; }
 }

@@ -24,12 +24,7 @@ public static class MauiProgram
 
         string uri = "https://localhost:5011/api/";
 
-        builder.Services.AddAppServices<
-            EnvironmentHelper,
-            MauiPreferenceRepository,
-            MauiCacheRepository,
-            MauiPopupService
-        >(new()
+        builder.Services.AddAppServices(new()
         {
             MudServicesConfiguration = config =>
             {

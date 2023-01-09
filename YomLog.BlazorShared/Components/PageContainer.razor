@@ -2,20 +2,22 @@
 
 <PageTitle>@Title - @AppSettings.AppName</PageTitle>
 
-<MudContainer Class="@(CenteredContainer ? "inner-centered-container" : null)" MaxWidth="@ContainerMaxWidth">
-    @if (SetHeader)
-    {
-        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-            <MudText Typo="Typo.h4" GutterBottom>@Title</MudText>
-        </MudHidden>
-    }
+<div class="@OuterContainerClass">
+    <MudContainer Class="@(CenteredContainer ? "inner-centered-container" : null)" MaxWidth="@ContainerMaxWidth">
+        @if (SetHeader)
+        {
+            <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                <MudText Typo="Typo.h4" GutterBottom>@Title</MudText>
+            </MudHidden>
+        }
 
-    @if (MainContent != null)
-    {
-        @MainContent
-    }
-    else
-    {
-        @ChildContent
-    }
-</MudContainer>
+        @if (MainContent != null)
+        {
+            @MainContent
+        }
+        else
+        {
+            @ChildContent
+        }
+    </MudContainer>
+</div>

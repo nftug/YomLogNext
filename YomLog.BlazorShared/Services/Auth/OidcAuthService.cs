@@ -1,7 +1,6 @@
 using System.Reactive.Linq;
 using Blazored.SessionStorage;
 using IdentityModel.OidcClient;
-using IdentityModel.OidcClient.Results;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
@@ -12,7 +11,7 @@ using YomLog.BlazorShared.Services.Popup;
 
 namespace YomLog.BlazorShared.Services.Auth;
 
-public class OidcAuthService : BindBase
+public class OidcAuthService : BindBase, IAuthService
 {
     private readonly MyAuthenticationStateProvider _authStateProvider;
     private readonly OidcClient _oidcClient;
@@ -21,8 +20,8 @@ public class OidcAuthService : BindBase
     private readonly ISessionStorageService _sessionStorage;
     private readonly ISnackbar _snackBar;
 
-    private Timer? _timer;
-    private readonly TimeSpan RefreshTimeSpan = TimeSpan.FromSeconds(30);
+    public ReactiveTimer RefreshTimer { get; }
+    public static readonly TimeSpan RefreshTimeSpan = TimeSpan.FromSeconds(30);
 
     public ReadOnlyReactivePropertySlim<bool> IsAuthenticated { get; }
 
@@ -44,31 +43,28 @@ public class OidcAuthService : BindBase
 
         IsAuthenticated = _authStateProvider.Identity
             .ObserveProperty(x => x.Value.IsAuthenticated)
-            .ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.DistinctUntilChanged)
+            .ToReadOnlyReactivePropertySlim()
             .AddTo(Disposable);
+
+        RefreshTimer = new ReactiveTimer(RefreshTimeSpan).AddTo(Disposable);
+        RefreshTimer.Subscribe(async _ => await RefreshTokenAsync());
     }
 
-    public void StartRefreshTimer()
-    {
-        _timer = new(async (_) => await RefreshTokenAsync(), null, TimeSpan.FromSeconds(0), RefreshTimeSpan);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        _timer?.Dispose();
-    }
-
-    public async Task LoginAsync()
+    public async Task LoginAsync(string? redirectTo = null)
     {
         if (_oidcClient.Options.Browser != null)
         {
             var loginResult = await _oidcClient.LoginAsync(new LoginRequest());
-            await ProcessLoginResult(loginResult);
+            await ProcessLoginResult(loginResult, redirectTo);
         }
         else
         {
             var state = await _oidcClient.PrepareLoginAsync();
             await _sessionStorage.SetItemAsync("State", state);
+
+            if (redirectTo != null)
+                await _sessionStorage.SetItemAsync("RedirectTo", redirectTo);
+
             _navigationManager.NavigateTo(state.StartUrl, forceLoad: true);
         }
     }
@@ -76,11 +72,13 @@ public class OidcAuthService : BindBase
     public async Task ProcessLoginCallbackAsync(string data)
     {
         var state = await _sessionStorage.GetItemAsync<AuthorizeState>("State");
+        var redirectTo = await _sessionStorage.GetItemAsStringAsync("RedirectTo");
+
         var loginResult = await _oidcClient.ProcessResponseAsync(data, state);
-        await ProcessLoginResult(loginResult);
+        await ProcessLoginResult(loginResult, redirectTo);
     }
 
-    private async Task ProcessLoginResult(LoginResult loginResult)
+    private async Task ProcessLoginResult(LoginResult loginResult, string? redirectTo)
     {
         if (loginResult.IsError)
         {
@@ -101,6 +99,9 @@ public class OidcAuthService : BindBase
 
         await _authStateProvider.MarkUserAsAuthenticated(tokenModel);
 
+        if (redirectTo != null)
+            _navigationManager.NavigateTo(redirectTo, replace: true);
+
         _snackBar.Add("Login succeed.", Severity.Info);
     }
 
@@ -119,6 +120,7 @@ public class OidcAuthService : BindBase
         if (_oidcClient.Options.Browser != null)
         {
             await _oidcClient.LogoutAsync(new LogoutRequest());
+            _snackBar.Add("Logged out.", Severity.Info);
         }
         else
         {
@@ -127,19 +129,19 @@ public class OidcAuthService : BindBase
         }
     }
 
-    public async Task<RefreshTokenResult?> RefreshTokenAsync()
+    public async Task RefreshTokenAsync()
     {
         var tokenModel = await _authStateProvider.GetTokenModelAsync();
-        if (tokenModel == null) return null;
+        if (tokenModel == null) return;
 
         var timeSpan = tokenModel.AccessTokenExpiration - DateTimeOffset.Now;
-        if (timeSpan > RefreshTimeSpan * 2) return null;
+        if (timeSpan > RefreshTimeSpan * 2) return;
 
         var result = await _oidcClient.RefreshTokenAsync(tokenModel.RefreshToken);
         if (result.IsError)
         {
-            await LoginAsync();
-            return await RefreshTokenAsync();
+            await LoginAsync(_navigationManager.ToBaseRelativePath(_navigationManager.Uri));
+            await RefreshTokenAsync();
         }
 
         tokenModel.AccessToken = result.AccessToken;
@@ -147,7 +149,5 @@ public class OidcAuthService : BindBase
         tokenModel.AccessTokenExpiration = result.AccessTokenExpiration;
 
         await _authStateProvider.SaveTokenModelAsync(tokenModel);
-
-        return result;
     }
 }

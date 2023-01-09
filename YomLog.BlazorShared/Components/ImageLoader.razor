@@ -1,9 +1,10 @@
-﻿@inject IDialogService DialogService
+﻿@inherits BindComponentBase
+@inject IDialogService DialogService
 
 <div class="d-flex justify-center mt-5">
     <InputFile id="fileInput" OnChange="OnSelectImage" hidden accept="image/*" />
 
-    @if (IsLoading)
+    @if (_isLoading.Value)
     {
         <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
     }

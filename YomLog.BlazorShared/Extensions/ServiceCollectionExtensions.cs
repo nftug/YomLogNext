@@ -4,22 +4,20 @@ using IdentityModel.OidcClient;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services;
 using YomLog.BlazorShared.Services.Auth;
+using YomLog.BlazorShared.Services.EventsHub;
 using YomLog.BlazorShared.Services.Popup;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using YomLog.BlazorShared.Services.Repository;
+using System.Reflection;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddAppServices<TEnvironment, TPreference, TCache, TPopup>
-        (this IServiceCollection services, AppConfiguration config)
-        where TEnvironment : class, IEnvironmentHelper
-        where TPreference : class, IPreferenceRepositoryService
-        where TCache : class, ICacheRepositoryService
-        where TPopup : class, IPopupService
+    public static IServiceCollection AddAppServices(this IServiceCollection services, AppConfiguration config)
     {
         services.AddSingleton(sp =>
             new HttpClient { BaseAddress = config.AppSettings.ApiBaseAddress, Timeout = TimeSpan.FromSeconds(30) }
@@ -33,24 +31,29 @@ public static class ServiceCollectionExtensions
         // Blazor特有の機能 (JSRuntime, NavigationManagerなど) を含むサービスは、Scoped or TransientでDIすること
         // (Singletonだと起動不可)
         services.AddTransient(sp => config.AppSettings);
-        services.AddTransient<IPreferenceRepositoryService, TPreference>();
-        services.AddTransient<ICacheRepositoryService, TCache>();
-        services.AddTransient<IPopupService, TPopup>();
         services.AddScoped<LayoutService>();
         services.AddScoped<PageInfoService>();
         services.AddScoped<HttpClientWrapper>();
-        services.AddScoped<IEnvironmentHelper, TEnvironment>();
         services.AddScoped<ScrollInfoService>();
 
         services.AddBlazoredLocalStorage();
         services.AddBlazoredSessionStorage();
 
+        // Add services automatically
+        var assemblyNames =
+            new List<Assembly> { Assembly.GetCallingAssembly(), Assembly.GetExecutingAssembly() }
+                .Select(x => x.GetName().Name!);
+        var assemblies = Assembly.GetCallingAssembly().CollectReferencedAssemblies(assemblyNames);
+
+        services.AddAssemblyTypes<IPreferenceRepositoryService>(assemblies, ServiceLifetime.Transient);
+        services.AddAssemblyTypes<ICacheRepositoryService>(assemblies, ServiceLifetime.Transient);
+        services.AddAssemblyTypes<IPopupService>(assemblies, ServiceLifetime.Transient);
+        services.AddAssemblyTypes<IEnvironmentHelper>(assemblies, ServiceLifetime.Transient);
+        services.AddAssemblyTypes<IEventsHubService>(assemblies, ServiceLifetime.Scoped);
+        services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "ApiService");
+
         return services;
     }
-
-    public static IServiceCollection AddAppServices(this IServiceCollection services, AppConfiguration config)
-        => AddAppServices<EnvironmentHelper, BlazorPreferenceRepository, BlazorCacheRepository, BlazorPopupService>
-            (services, config);
 
     private static void AddAuthServices(this IServiceCollection services, OidcClientOptions options)
     {
@@ -58,7 +61,7 @@ public static class ServiceCollectionExtensions
         services.AddAuthorizationCore();
         services.AddTransient(sp => new OidcClient(options));
         services.AddScoped<AuthenticationStateProvider, MyAuthenticationStateProvider>();
-        services.AddScoped<OidcAuthService>();
+        services.AddScoped<IAuthService, OidcAuthService>();
     }
 }
 

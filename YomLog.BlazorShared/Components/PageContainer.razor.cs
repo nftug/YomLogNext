@@ -34,7 +34,7 @@ public partial class PageContainer : BindComponentBase
     public string MainContentClass
         => FooterContent != null ? "mud-main-content-with-footer" : string.Empty;
 
-    public string OuterContainerClass
+    private string OuterContainerClass
         => CenteredContainer
             ? $"outer-centered-container {Class}"
             : $"{(HttpClientWrapper.IsOffline.Value ? "mt-10 " : null)}{Class}";

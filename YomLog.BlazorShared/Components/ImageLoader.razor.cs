@@ -3,10 +3,13 @@ using YomLog.Shared.ValueObjects;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
+using Reactive.Bindings;
+using YomLog.BlazorShared.Models;
+using Reactive.Bindings.Extensions;
 
 namespace YomLog.BlazorShared.Components;
 
-public partial class ImageLoader : ComponentBase
+public partial class ImageLoader : BindComponentBase
 {
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
@@ -26,21 +29,12 @@ public partial class ImageLoader : ComponentBase
             : null;
     private PhotoDTO _photoOrigin = null!;
 
-    private bool _isLoading;
-    private bool IsLoading
-    {
-        get => _isLoading;
-        set
-        {
-            if (value == _isLoading) return;
-            _isLoading = value;
-            StateHasChanged();
-        }
-    }
+    private ReactivePropertySlim<bool> _isLoading = new();
 
     protected override void OnInitialized()
     {
         _photoOrigin = Photo;
+        _isLoading.AddTo(Disposable);
     }
 
     private async Task OnSelectImage(InputFileChangeEventArgs e)
@@ -51,7 +45,7 @@ public partial class ImageLoader : ComponentBase
         Photo = new();
         await PhotoChanged.InvokeAsync(Photo);
 
-        IsLoading = true;
+        _isLoading.Value = true;
         try
         {
             using var stream = e.File.OpenReadStream(MaxFileSize);
@@ -66,7 +60,7 @@ public partial class ImageLoader : ComponentBase
         }
         finally
         {
-            IsLoading = false;
+            _isLoading.Value = false;
         }
     }
 
