@@ -22,8 +22,8 @@ public partial class MainLayoutContainer : BindComponentBase
     [Parameter] public RenderFragment AppBarSection { get; set; } = null!;
     [Parameter] public RenderFragment? NotFoundSection { get; set; }
 
-    private readonly ErrorBoundary? _errorBoundary;
-    private readonly MudThemeProvider? _mudThemeProvider;
+    private ErrorBoundary? _errorBoundary;
+    private MudThemeProvider? _mudThemeProvider;
 
     protected override async Task OnInitializedAsync()
     {

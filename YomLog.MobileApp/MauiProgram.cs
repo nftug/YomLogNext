@@ -19,8 +19,10 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
 
+#if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
+#endif
 
         string uri = "https://localhost:5011/api/";
 

@@ -1,17 +1,30 @@
+@using YomLog.Shared.Exceptions
+
 <MudContainer Class="mt-8 mb-8">
     <MudAlert Class="mb-5" Severity="Severity" ShowCloseIcon="true"
-            CloseIconClicked="(() => ErrorBoundary?.Recover())">
-        @if (ChildContent != null)
-        {
-            @ChildContent(Exception)
-        }
-        else
-        {
-            <p>
-                An unhandled error has occured. <br />
-                Click close button to recover. <br />
-            </p>
-        }
+              CloseIconClicked="(() => ErrorBoundary?.Recover())"
+              Variant="Variant.Filled">
+        <MudText Typo="Typo.body2">
+            @if (Exception is IApiException e)
+            {
+                var errorTitle = e switch
+                {
+                    ModelErrorException err => "Invalid values",
+                    ForbiddenException err => "Access forbidden",
+                    UnauthorizedException err => "Unauthorized",
+                    NotFoundException err => "Not found",
+                    _ => "Something is wrong"
+                };
+
+                <b>API Error: @errorTitle</b>
+            }
+            else
+            {
+                <b>An unhandled error has occured.</b>
+            }
+        </MudText>
+
+        <MudText Typo="Typo.body2">Click close button to recover.</MudText>
     </MudAlert>
 
     @if (ShowDetails)
@@ -22,7 +35,7 @@
             </MudExpansionPanel>
             <MudExpansionPanel Text="Details">
                 <MudTextField T="string" Variant="Variant.Outlined" Text="@ErrorDetails"
-                        Lines="10" ReadOnly="true" Style="font-size: var(--mud-typography-body2-size);" />
+                              Lines="10" ReadOnly="true" Style="font-size: var(--mud-typography-body2-size);" />
             </MudExpansionPanel>
         </MudExpansionPanels>
     }
@@ -31,11 +44,14 @@
 @code {
     [Parameter] public ErrorBoundary? ErrorBoundary { get; set; }
     [Parameter] public Exception Exception { get; set; } = null!;
-    [Parameter] public RenderFragment<Exception>? ChildContent { get; set; }
     [Parameter] public bool ShowDetails { get; set; } = false;
     [Parameter] public Severity Severity { get; set; } = Severity.Error;
 
-    private string ErrorSummary => $"{Exception.GetType().Name}: {Exception.Message}";
+    private string ErrorSummary
+        => Exception is IApiException e
+            ? e.Message ?? e.Response ?? Exception.GetType().Name
+            : $"{Exception.GetType().Name}: {Exception.Message}";
+
     private string ErrorDetails
         => "Summary:\n"
             + $"{ErrorSummary}\n\n"
