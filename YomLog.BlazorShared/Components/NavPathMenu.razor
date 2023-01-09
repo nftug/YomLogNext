@@ -1,0 +1,32 @@
+﻿@inject NavigationManager NavigationManager
+
+@implements IDisposable
+
+@if (UseMudNavMenu)
+{
+    <MudNavMenu>
+        @ChildContent
+    </MudNavMenu>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public bool UseMudNavMenu { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+        GC.SuppressFinalize(this);
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs args) => StateHasChanged();
+}

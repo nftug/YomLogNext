@@ -1,0 +1,37 @@
+﻿@inject IJSRuntime JSRuntime
+
+<DialogBase Style="width: calc(100% - 24px);">
+    <TitleContent>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="OnClickCloseButton" />
+    </TitleContent>
+
+    <DialogContent>
+        <div class="d-flex justify-center mx-n4">
+            <MudImage Src="@Image" Class="my-4" Fluid="true" />
+        </div>
+    </DialogContent>
+</DialogBase>
+
+@code {
+    [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public string Image { get; set; } = string.Empty;
+
+    private async void OnClickCloseButton()
+    {
+        MudDialog?.Close();
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
+    public static async Task<DialogResult> ShowDialog(IDialogService dialogService, string? image)
+    {
+        var parameters = new DialogParameters { ["Image"] = image };
+        var options = new DialogOptions
+            {
+                MaxWidth = MaxWidth.Small,
+                DisableBackdropClick = false
+            };
+        var dialog = dialogService.Show<ImageDialog>("Image", parameters, options);
+        return await dialog.Result;
+    }
+}

@@ -1,0 +1,26 @@
+@page "/settings"
+@attribute [AllowAnonymous]
+
+@inject LayoutService LayoutService
+
+<PageContainer Title="Settings" MaxWidth="MaxWidth.Small">
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="Appearance" IsExpanded="true">
+            <MudList>
+                <MudListItem>
+                    <MudSwitch @bind-Checked="@_isDarkMode" @onclick="LayoutService.ToggleDarkMode"
+                               Color="Color.Primary" Label="Dark mode" />
+                </MudListItem>
+            </MudList>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</PageContainer>
+
+@code {
+    private bool _isDarkMode;
+
+    protected override void OnInitialized()
+    {
+        _isDarkMode = LayoutService.IsDarkMode;
+    }
+}

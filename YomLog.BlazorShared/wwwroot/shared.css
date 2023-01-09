@@ -1,0 +1,92 @@
+﻿.fab {
+    bottom: 24px;
+    right: 24px;
+    flex: 1;
+    z-index: 1000;
+    position: fixed
+}
+
+.nowrap-with-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mud-appbar.mud-appbar-fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 5);
+    z-index: calc(var(--mud-zindex-popover) - 1);
+}
+
+.mud-main-content-with-footer {
+    padding-bottom: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 5);
+}
+
+.fab-with-footer {
+    bottom: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 5 + 24px);
+}
+
+.mud-tab {
+    min-width: 130px;
+    min-height: 42px;
+}
+
+.mud-tabs-scroll-button>button.mud-button-root {
+    height: 42px;
+    width: 42px;
+}
+
+@media screen and (min-width: 600px) {
+    .header-message {
+        position: absolute;
+        top: var(--mud-appbar-height);
+        right: 0;
+        left: 0;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        text-align: center;
+    }
+
+    .outer-centered-container {
+        height: calc(100vh - var(--mud-appbar-height));
+        width: 100%;
+        position: relative;
+    }
+
+    .inner-centered-container {
+        position: absolute;
+        top: calc(55vh - var(--mud-appbar-height));
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .header-message {
+        position: absolute;
+        top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
+        right: 0;
+        left: 0;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        text-align: center;
+    }
+
+    .outer-centered-container {
+        height: calc(100vh - (var(--mud-appbar-height) - var(--mud-appbar-height) / 8));
+        width: 100%;
+        position: relative;
+    }
+
+    .inner-centered-container {
+        position: absolute;
+        top: calc(50vh - (var(--mud-appbar-height) - var(--mud-appbar-height) / 8));
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+        text-align: center;
+    }
+}

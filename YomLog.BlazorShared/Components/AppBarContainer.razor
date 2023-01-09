@@ -1,0 +1,43 @@
+﻿<MudAppBar Elevation="0" Fixed>
+    @if (LayoutService.Page.Value?.LeftButton == AppBarLeftButton.Drawer)
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                Color="Color.Inherit"
+                Edge="Edge.Start"
+                OnClick="DrawerToggle" />
+    }
+    else
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowBack"
+                Color="Color.Inherit"
+                Edge="Edge.Start"
+                OnClick="BackButtonClicked" />
+    }
+
+    @if (LayoutService.Page.Value?.TitleContent != null)
+    {
+        @LayoutService.Page.Value?.TitleContent(this)
+    }
+    else
+    {
+        @ChildContent(this)
+    }
+
+    @if (LayoutService.Page.Value?.AppBarActions != null)
+    {
+        @LayoutService.Page.Value?.AppBarActions(this)
+    }
+    @if (RightSection != null)
+    {
+        @RightSection(this)
+    }
+
+    @if (HttpClientWrapper.IsOffline.Value)
+    {
+        <MudPaper Class="header-message mud-secondary" Square="true" Elevation="0">
+            <MudText Typo="Typo.caption">
+                Offline mode
+            </MudText>
+        </MudPaper>
+    }
+</MudAppBar>

@@ -1,0 +1,36 @@
+﻿@using YomLog.BlazorShared.Extensions
+
+@inject NavigationManager NavigationManager
+
+@if (UseMudNavLink || Icon != null)
+{
+    <MudNavLink Href="@HrefForRendering" Match="MatchForRendering" Icon="@Icon" @attributes="Attributes">
+        <div class="d-flex justify-space-between align-center">
+            @ChildContent(this)
+        </div>
+    </MudNavLink>
+}
+else
+{
+    @ChildContent(this)
+}
+
+@code {
+    [Parameter] public string Href { get; set; } = null!;
+    [Parameter] public NavPathLinkMatch Match { get; set; } = NavPathLinkMatch.WithoutQuery;
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public RenderFragment<NavPathLink> ChildContent { get; set; } = null!;
+    [Parameter] public bool UseMudNavLink { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? Attributes { get; set; }
+
+    public string? HrefForRendering => NavigationManager.CheckMatchRelativePath(Href, Match) ? null : Href;
+
+    public bool IsPathMatch => HrefForRendering == null;
+
+    // ページ一致で完全マッチの場合、HrefForRendering == nullだとNavLinkによるマッチ判定が正しく行われない
+    // ⇒マッチ条件をNavLinkMatch.Prefixに変更
+    public NavLinkMatch MatchForRendering
+        => Match == NavPathLinkMatch.All && HrefForRendering != null
+           ? NavLinkMatch.All
+           : NavLinkMatch.Prefix;
+}

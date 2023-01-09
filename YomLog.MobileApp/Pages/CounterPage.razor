@@ -1,0 +1,22 @@
+﻿@page "/counter"
+@inject LayoutService LayoutService
+
+<PageContainer Title="Counter">
+    <MudText Class="mb-4">Current count: @currentCount</MudText>
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="IncrementCount">Click me</MudButton>
+</PageContainer>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(3000);
+        LayoutService.Exception.Value = new Exception("Test Exception");
+    }
+
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

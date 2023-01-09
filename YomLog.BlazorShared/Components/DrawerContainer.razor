@@ -1,0 +1,15 @@
+@using YomLog.BlazorShared.Services
+@inject LayoutService LayoutService
+
+<MudDrawer @bind-Open="LayoutService.DrawerOpen.Value" Elevation="1">
+    @ChildContent
+</MudDrawer>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        LayoutService.DrawerOpen.Skip(1).Subscribe(_ => StateHasChanged());
+    }
+}

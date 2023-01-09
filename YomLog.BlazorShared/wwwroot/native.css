@@ -1,0 +1,17 @@
+body {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+::-webkit-scrollbar {
+  width: 3px !important;
+  height: 3px !important;
+}
+
+.tap-highlight {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.5);
+}

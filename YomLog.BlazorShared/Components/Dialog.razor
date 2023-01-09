@@ -1,0 +1,21 @@
+﻿<DialogBase>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@MudDialog?.Title</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudText Typo="Typo.body1" Style="white-space: pre-wrap;">
+            @((MarkupString)ContentText)
+        </MudText>
+    </DialogContent>
+
+    <DialogActions>
+        @if (CancelText != null)
+        {
+            <MudButton OnClick="context.Cancel">@CancelText</MudButton>
+        }
+        <MudButton Variant="@OkVariant" Color="@OkColor" OnClick="@(() => context.Ok(true))">
+            @OkText
+        </MudButton>
+    </DialogActions>
+</DialogBase>

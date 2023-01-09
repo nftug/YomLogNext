@@ -1,0 +1,34 @@
+﻿@inherits AuthorizeComponentBase
+
+<DrawerContainer>
+    <MudDrawerHeader Class="d-flex align-center">
+        <MudAvatar Color="Color.Default" Size="Size.Medium" Class="my-3 mr-3">
+            @CurrentUser?.Name?.FirstOrDefault().ToString().ToUpper()
+        </MudAvatar>
+        <div class="d-flex flex-column">
+            <MudText Typo="Typo.body2">
+                @(CurrentUser?.Name ?? "Annonymous User")
+            </MudText>
+        </div>
+    </MudDrawerHeader>
+
+    <MudDivider Class="mb-2" />
+
+    <NavPathMenu UseMudNavMenu="true">
+        <NavPathLink Href="/" Match="NavPathLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+            Home
+        </NavPathLink>
+        <NavPathLink Href="/counter" Match="NavPathLinkMatch.All" Icon="@Icons.Material.Filled.Add">
+            Counter
+        </NavPathLink>
+
+        <MudDivider />
+
+        <NavPathLink Href="/settings" Match="NavPathLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">
+            Settings
+        </NavPathLink>
+        <NavPathLink Href="/about" Match="NavPathLinkMatch.All" Icon="@Icons.Material.Filled.Help">
+            About
+        </NavPathLink>
+    </NavPathMenu>
+</DrawerContainer>

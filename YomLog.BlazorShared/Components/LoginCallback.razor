@@ -1,0 +1,10 @@
+@using YomLog.BlazorShared.Services.Auth
+@inject PageInfoService PageInfoService
+@inject OidcAuthService AuthService
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.ProcessLoginCallbackAsync(PageInfoService.CurrentQuery!);
+    }
+}

@@ -1,0 +1,32 @@
+﻿<MudButton Color="Color" Variant="Variant.Outlined"
+           Class="@ClassForRendering" Style="@StyleForRendering"
+           OnClick="OnClick" Href="@Href" Disabled="Disabled">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        <MudIcon Icon="@Icon" Title="@Title" />
+    }
+</MudButton>
+
+@code {
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public string Icon { get; set; } = string.Empty;
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+    [Parameter] public string? Href { get; set; }
+    [Parameter] public bool Active { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string StyleForRendering
+        => "border-color: transparent;"
+               + (Active ? " background-color: var(--mud-palette-action-default-hover);" : null)
+               + $" {Style}";
+
+    private string ClassForRendering => $"mud-width-full {Class}";
+}

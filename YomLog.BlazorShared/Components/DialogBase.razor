@@ -1,0 +1,53 @@
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<MudDialog OnBackdropClick="Cancel" Class="@Class" Style="@Style">
+    <TitleContent>
+        @TitleContent
+    </TitleContent>
+
+    <DialogContent>
+        @DialogContent
+    </DialogContent>
+
+    <DialogActions>
+        @if (DialogActions != null)
+        {
+            @DialogActions(this)
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public RenderFragment? TitleContent { get; set; } = null!;
+    [Parameter] public RenderFragment DialogContent { get; set; } = null!;
+    [Parameter] public RenderFragment<DialogBase>? DialogActions { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Style { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("onOpenDialog");
+    }
+
+    public async Task Ok<T>(T result)
+    {
+        MudDialog?.Close(DialogResult.Ok(result));
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
+    public async void Cancel()
+    {
+        MudDialog?.Cancel();
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+
+    public async void Dispose()
+    {
+        await Task.Delay(100);
+        await JSRuntime.InvokeVoidAsync("onRemoveDialog");
+        GC.SuppressFinalize(this);
+    }
+}

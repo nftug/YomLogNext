@@ -1,0 +1,48 @@
+<MudContainer Class="mt-8 mb-8">
+    <MudAlert Class="mb-5" Severity="Severity" ShowCloseIcon="true"
+            CloseIconClicked="(() => ErrorBoundary?.Recover())">
+        @if (ChildContent != null)
+        {
+            @ChildContent(Exception)
+        }
+        else
+        {
+            <p>
+                An unhandled error has occured. <br />
+                Click close button to recover. <br />
+            </p>
+        }
+    </MudAlert>
+
+    @if (ShowDetails)
+    {
+        <MudExpansionPanels Class="mb-5" MultiExpansion="true">
+            <MudExpansionPanel Text="Summary">
+                @ErrorSummary
+            </MudExpansionPanel>
+            <MudExpansionPanel Text="Details">
+                <MudTextField T="string" Variant="Variant.Outlined" Text="@ErrorDetails"
+                        Lines="10" ReadOnly="true" Style="font-size: var(--mud-typography-body2-size);" />
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    }
+</MudContainer>
+
+@code {
+    [Parameter] public ErrorBoundary? ErrorBoundary { get; set; }
+    [Parameter] public Exception Exception { get; set; } = null!;
+    [Parameter] public RenderFragment<Exception>? ChildContent { get; set; }
+    [Parameter] public bool ShowDetails { get; set; } = false;
+    [Parameter] public Severity Severity { get; set; } = Severity.Error;
+
+    private string ErrorSummary => $"{Exception.GetType().Name}: {Exception.Message}";
+    private string ErrorDetails
+        => "Summary:\n"
+            + $"{ErrorSummary}\n\n"
+            + "Stack trace:\n"
+            + $"{Exception.StackTrace}\n\n"
+            + "Source:\n"
+            + $"{Exception.Source}\n\n"
+            + "Target site\n"
+            + Exception.TargetSite;
+}

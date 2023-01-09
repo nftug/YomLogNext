@@ -1,0 +1,15 @@
+@inherits BindComponentBase
+@inject LayoutService LayoutService
+
+@code {
+    protected override void OnInitialized()
+    {
+        LayoutService.Exception
+            .Where(v => v != null)
+            .Subscribe(v => {
+                LayoutService.Exception.Value = null;
+                throw v!;
+            })
+            .AddTo(Disposable);
+    }
+}

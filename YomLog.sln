@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YomLog", "YomLog\YomLog.csproj", "{66C58741-11D3-4500-B4CD-C0D6DDA0C8E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YomLog.MobileApp", "YomLog.MobileApp\YomLog.MobileApp.csproj", "{66C58741-11D3-4500-B4CD-C0D6DDA0C8E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YomLog.BlazorShared", "YomLog.BlazorShared\YomLog.BlazorShared.csproj", "{B54F3B84-6842-499D-AAB5-5594A01E70DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YomLog.Shared", "YomLog.Shared\YomLog.Shared.csproj", "{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YomLog.Identity", "YomLog.Identity\YomLog.Identity.csproj", "{E6376F1F-5056-405C-BC22-CF382AC05A68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +23,18 @@ Global
 		{66C58741-11D3-4500-B4CD-C0D6DDA0C8E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66C58741-11D3-4500-B4CD-C0D6DDA0C8E0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{66C58741-11D3-4500-B4CD-C0D6DDA0C8E0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B54F3B84-6842-499D-AAB5-5594A01E70DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B54F3B84-6842-499D-AAB5-5594A01E70DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B54F3B84-6842-499D-AAB5-5594A01E70DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B54F3B84-6842-499D-AAB5-5594A01E70DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6376F1F-5056-405C-BC22-CF382AC05A68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6376F1F-5056-405C-BC22-CF382AC05A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6376F1F-5056-405C-BC22-CF382AC05A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6376F1F-5056-405C-BC22-CF382AC05A68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

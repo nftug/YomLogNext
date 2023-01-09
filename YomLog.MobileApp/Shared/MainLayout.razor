@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+
+<MainLayoutContainer IsDarkModeDefault="@IsDarkModeDefault">
+    <ChildContent>
+        @Body
+    </ChildContent>
+    <AppBarSection>
+        <AppBar />
+    </AppBarSection>
+    <DrawerSection>
+        <Drawer />
+    </DrawerSection>
+</MainLayoutContainer>
+
+@code {
+    static bool IsDarkModeDefault => Application.Current?.RequestedTheme == AppTheme.Dark;
+}

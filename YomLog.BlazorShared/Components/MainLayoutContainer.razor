@@ -1,0 +1,71 @@
+﻿@using System.Net
+@using YomLog.Shared.Exceptions
+
+@inherits BindComponentBase
+
+<MudThemeProvider @ref="@_mudThemeProvider"
+                  Theme="new MudTheme()"
+                  IsDarkMode="@LayoutService.IsDarkMode"
+                  IsDarkModeChanged="LayoutService.SetDarkMode" />
+<MudDialogProvider FullWidth="true"
+                   MaxWidth="MaxWidth.ExtraSmall"
+                   CloseButton="false"
+                   DisableBackdropClick="true"
+                   NoHeader="false"
+                   Position="DialogPosition.Center"
+                   CloseOnEscapeKey="false" />
+<MudSnackbarProvider />
+
+<CascadingValue Value="this">
+    <MudLayout>
+        @AppBarSection
+
+        @if (DrawerSection != null)
+        {
+            @DrawerSection
+        }
+
+        <MudMainContent Class="@LayoutService.Page.Value?.MainContentClass">
+            <div class="@LayoutService.Page.Value?.OuterContainerClass">
+                <ErrorBoundary @ref="_errorBoundary">
+                    <ChildContent>
+                        <ExceptionReceiver />
+
+                        @if (IsInitializing.Value)
+                        {
+                            <div class="d-flex justify-center">
+                                <MudProgressCircular Class="mt-2" Size="Size.Medium" Indeterminate="true" />
+                            </div>
+                        }
+                        else
+                        {
+                            @ChildContent
+                        }
+                    </ChildContent>
+                    <ErrorContent>
+                        @if (context is IApiException e && e.StatusCode == HttpStatusCode.NotFound)
+                        {
+                            @if (NotFoundSection != null)
+                            {
+                                @NotFoundSection
+                            }
+                            else
+                            {
+                                <NotFoundPage />
+                            }
+                        }
+                        else
+                        {
+                            <ExceptionAlert ErrorBoundary="_errorBoundary" Exception="context" ShowDetails="true" />
+                        }
+                    </ErrorContent>
+                </ErrorBoundary>
+            </div>
+        </MudMainContent>
+
+        @if (LayoutService.Page.Value?.FooterContent != null)
+        {
+            @LayoutService.Page.Value.FooterContent
+        }
+    </MudLayout>
+</CascadingValue>
