@@ -28,35 +28,35 @@ public class EventsHubService : BindBase, IEventsHubService
         // Due to some bugs in Blazor MAUI client, skipping once prevents from first-time firing of events.
         _authService.IsAuthenticated
             .Where(v => v)
-            .Subscribe(_ => Handle(OnAuthenticated))
+            .Subscribe(async _ => await Handle(OnAuthenticated))
             .AddTo(Disposable);
 
         _authService.IsAuthenticated
             .Skip(1)
             .Where(v => !v)
-            .Subscribe(_ => Handle(OnLogout))
+            .Subscribe(async _ => await Handle(OnLogout))
             .AddTo(Disposable);
 
         _httpClientWrapper.IsOffline
             .Skip(1)
-            .Subscribe(v => Handle(() => OnChangeIsOffline(v)))
+            .Subscribe(async v => await Handle(() => OnChangeIsOffline(v)))
             .AddTo(Disposable);
     }
 
     // NOTE:
     // The following virtual methods are implemented only for a delivered class.
     // Do not edit them directly!
-    protected virtual void OnAuthenticated() { }
+    protected virtual Task OnAuthenticated() => Task.FromResult(0);
 
-    protected virtual void OnLogout() { }
+    protected virtual Task OnLogout() => Task.FromResult(0);
 
-    protected virtual void OnChangeIsOffline(bool isOffline) { }
+    protected virtual Task OnChangeIsOffline(bool isOffline) => Task.FromResult(0);
 
-    protected void Handle(Action action)
+    protected async Task Handle(Func<Task> action)
     {
         try
         {
-            action();
+            await action();
         }
         catch (Exception e)
         {
