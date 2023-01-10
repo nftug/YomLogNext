@@ -49,8 +49,8 @@
 
     private string ErrorSummary
         => Exception is IApiException e
-            ? e.Message ?? e.Response ?? Exception.GetType().Name
-            : $"{Exception.GetType().Name}: {Exception.Message}";
+            ? e.Response ?? e.Message ?? Exception.Message
+            : Exception.Message;
 
     private string ErrorDetails
         => "Summary:\n"

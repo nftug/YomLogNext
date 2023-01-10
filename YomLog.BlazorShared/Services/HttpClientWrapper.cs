@@ -50,8 +50,7 @@ public class HttpClientWrapper : BindBase
         return await response.Content.ReadFromJsonAsync<T>();
     }
 
-    public async Task<HttpResponseMessage> GetHttpResponseAsync
-        (Func<Task<HttpResponseMessage>> callback)
+    public async Task<HttpResponseMessage> GetHttpResponseAsync(Func<Task<HttpResponseMessage>> callback)
     {
         HttpResponseMessage response = default!;
         try
