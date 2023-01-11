@@ -117,7 +117,6 @@ public class OidcAuthService : BindableBase, IAuthService
         }
 
         await _authStateProvider.MarkUserAsLoggedOut();
-        _navigationManager.NavigateTo("");
 
         // For Auth0, you must change logout endpoint URL.
         // https://auth0.com/docs/api/authentication#logout
@@ -127,16 +126,15 @@ public class OidcAuthService : BindableBase, IAuthService
         if (_oidcClient.Options.Browser != null)
         {
             // await _oidcClient.LogoutAsync();
-            await _oidcClient.Options.Browser
-                .InvokeAsync(new(logoutUrl, options.PostLogoutRedirectUri));
+            await _oidcClient.Options.Browser.InvokeAsync(new(logoutUrl, options.PostLogoutRedirectUri));
+            _navigationManager.NavigateTo("");
+            _snackBar.Add("Logged out.", Severity.Info);
         }
         else
         {
             // string logoutUrl = await _oidcClient.PrepareLogoutAsync(new LogoutRequest());
             _navigationManager.NavigateTo(logoutUrl, forceLoad: true);
         }
-
-        _snackBar.Add("Logged out.", Severity.Info);
     }
 
     public async Task RefreshTokenAsync()

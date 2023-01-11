@@ -1,0 +1,41 @@
+@page "/login"
+@inherits LoginPageBase
+
+<PageContainer MaxWidth="MaxWidth.Small" TopPage="true" CenteredContainer>
+    <TitleContent>
+        <MudText Typo="Typo.h6" Class="mud-width-full" Style="text-align: center;">
+            @AppInfo.Name
+        </MudText>
+    </TitleContent>
+
+    <AppBarActions>
+        <MudIconButton Icon="@Icons.Material.Filled.Info"
+                       Color="Color.Inherit"
+                       Edge="Edge.End"
+                       Href="/about" />
+    </AppBarActions>
+
+    <ChildContent>
+        <div style="text-align: center">
+            <MudImage Src="images/dotnet_bot.svg" Width="128" Alt="Dotnet Bot" Class="ma-4" />
+
+            <MudText Typo="Typo.h4" Class="mt-4" GutterBottom="true">
+                Welcome to @AppInfo.Name
+            </MudText>
+            <MudText Class="mt-6 mb-8" Typo="Typo.body1">
+                You need to log in to use the app.
+            </MudText>
+
+            <div class="mx-4 mt-4">
+                <MudButton Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        FullWidth="true"
+                        StartIcon="@Icons.Material.Filled.Login"
+                        Size="Size.Large"
+                        OnClick="Login">
+                    Login
+                </MudButton>
+            </div>
+        </div>
+    </ChildContent>
+</PageContainer>

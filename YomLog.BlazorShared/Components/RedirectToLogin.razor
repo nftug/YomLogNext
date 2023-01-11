@@ -1,11 +1,16 @@
 @using YomLog.BlazorShared.Services.Auth
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthService
+@inject AppSettings AppSettings
+
+<PageContainer LeftButton="AppBarLeftButton.Back" Title="Login">
+    <MudText Class="my-8">You need to login to access this page.</MudText>
+</PageContainer>
 
 @code {
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         var currentUri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        await AuthService.LoginAsync(currentUri);
+        NavigationManager.NavigateTo($"/login?redirect={currentUri}", replace: true);
     }
 }
