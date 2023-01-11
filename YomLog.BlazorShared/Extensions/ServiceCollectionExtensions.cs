@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         // Features
         // Blazor特有の機能 (JSRuntime, NavigationManagerなど) を含むサービスは、Scoped or TransientでDIすること
         // (Singletonだと起動不可)
+        config.AppSettings.OidcClientOptions = config.OidcClientOptions;
         services.AddTransient(sp => config.AppSettings);
         services.AddScoped<LayoutService>();
         services.AddScoped<PageInfoService>();

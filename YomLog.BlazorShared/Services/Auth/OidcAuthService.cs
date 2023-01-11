@@ -19,6 +19,7 @@ public class OidcAuthService : BindableBase, IAuthService
     private readonly NavigationManager _navigationManager;
     private readonly ISessionStorageService _sessionStorage;
     private readonly ISnackbar _snackBar;
+    private readonly AppSettings _appSettings;
 
     public ReactiveTimer RefreshTimer { get; }
     public static readonly TimeSpan RefreshTimeSpan = TimeSpan.FromSeconds(30);
@@ -31,7 +32,8 @@ public class OidcAuthService : BindableBase, IAuthService
         IPopupService popupService,
         NavigationManager navigationManager,
         ISessionStorageService sessionStorage,
-        ISnackbar snackBar
+        ISnackbar snackBar,
+        AppSettings appSettings
     )
     {
         _authStateProvider = (MyAuthenticationStateProvider)authStateProvider;
@@ -40,6 +42,7 @@ public class OidcAuthService : BindableBase, IAuthService
         _navigationManager = navigationManager;
         _sessionStorage = sessionStorage;
         _snackBar = snackBar;
+        _appSettings = appSettings;
 
         IsAuthenticated = _authStateProvider.Identity
             .ObserveProperty(x => x.Value.IsAuthenticated)
@@ -115,6 +118,23 @@ public class OidcAuthService : BindableBase, IAuthService
 
         await _authStateProvider.MarkUserAsLoggedOut();
         _navigationManager.NavigateTo("");
+
+        // For Auth0, you must change logout endpoint URL.
+        // https://auth0.com/docs/api/authentication#logout
+        var options = _appSettings.OidcClientOptions;
+        var logoutUrl = $"{options.Authority}/v2/logout?client_id={options.ClientId}&returnTo={options.PostLogoutRedirectUri}";
+
+        if (_oidcClient.Options.Browser != null)
+        {
+            // await _oidcClient.LogoutAsync();
+            await _oidcClient.Options.Browser
+                .InvokeAsync(new(logoutUrl, options.PostLogoutRedirectUri));
+        }
+        else
+        {
+            // string logoutUrl = await _oidcClient.PrepareLogoutAsync(new LogoutRequest());
+            _navigationManager.NavigateTo(logoutUrl, forceLoad: true);
+        }
 
         _snackBar.Add("Logged out.", Severity.Info);
     }
