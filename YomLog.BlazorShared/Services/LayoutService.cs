@@ -12,7 +12,7 @@ using System.Reactive.Linq;
 
 namespace YomLog.BlazorShared.Services;
 
-public class LayoutService : BindBase
+public class LayoutService : BindableBase
 {
     private readonly string Key = nameof(UserPreferences);
 

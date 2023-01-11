@@ -59,5 +59,6 @@ public class MauiCacheRepository : ICacheRepositoryService
         return Task.FromResult(0);
     }
 
-    private static string AppDataPath => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private static string AppDataPath
+        => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppInfo.Name);
 }

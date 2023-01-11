@@ -1,15 +1,15 @@
 using System.ComponentModel;
 using System.Reactive.Disposables;
-using Microsoft.AspNetCore.Components;
 
 namespace YomLog.BlazorShared.Models;
 
-public class BindComponentBase : ComponentBase, INotifyPropertyChanged, IDisposable
+public abstract class BindableBase : INotifyPropertyChanged, IDisposable
 {
     private bool disposedValue;
 
     protected CompositeDisposable Disposable { get; } = new();
 
+#pragma warning disable CS0067
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void Dispose(bool disposing)

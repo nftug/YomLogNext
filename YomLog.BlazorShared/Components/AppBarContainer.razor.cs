@@ -3,10 +3,12 @@ using YomLog.BlazorShared.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Reactive.Linq;
+using YomLog.BlazorShared.Models;
+using Reactive.Bindings.Extensions;
 
 namespace YomLog.BlazorShared.Components;
 
-public partial class AppBarContainer : ComponentBase
+public partial class AppBarContainer : BindableComponentBase
 {
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
     [Inject] private LayoutService LayoutService { get; set; } = null!;
@@ -18,8 +20,8 @@ public partial class AppBarContainer : ComponentBase
 
     protected override void OnInitialized()
     {
-        LayoutService.Page.Skip(1).Subscribe(_ => StateHasChanged());
-        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => StateHasChanged());
+        LayoutService.Page.Skip(1).Subscribe(_ => StateHasChanged()).AddTo(Disposable);
+        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => StateHasChanged()).AddTo(Disposable);
         LayoutService.AppBarRerenderRequested += StateHasChanged;
     }
 

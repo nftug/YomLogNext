@@ -1,9 +1,7 @@
 ﻿@using System.Net
 @using YomLog.Shared.Exceptions
-@using YomLog.BlazorShared.Services.EventsHub
 
-@inherits BindComponentBase
-@inject IEventsHubService EventsHub
+@inherits BindableComponentBase
 
 <MudThemeProvider @ref="@_mudThemeProvider"
                   Theme="new MudTheme()"
@@ -18,54 +16,52 @@
                    CloseOnEscapeKey="false" />
 <MudSnackbarProvider />
 
-<CascadingValue Value="this">
-    <MudLayout>
-        @AppBarSection
+<MudLayout>
+    @AppBarSection
 
-        @if (DrawerSection != null)
-        {
-            @DrawerSection
-        }
+    @if (DrawerSection != null)
+    {
+        @DrawerSection
+    }
 
-        <MudMainContent Class="@LayoutService.Page.Value?.MainContentClass">
-            <ErrorBoundary @ref="_errorBoundary">
-                <ChildContent>
-                    <ExceptionReceiver />
+    <MudMainContent Class="@LayoutService.Page.Value?.MainContentClass">
+        <ErrorBoundary @ref="_errorBoundary">
+            <ChildContent>
+                <ExceptionReceiver />
 
-                    @if (LayoutService.IsInitializing.Value)
+                @if (LayoutService.IsInitializing.Value)
+                {
+                    <div class="d-flex justify-center mt-8">
+                        <MudProgressCircular Class="mt-2" Size="Size.Medium" Indeterminate="true" />
+                    </div>
+                }
+                else
+                {
+                    @ChildContent
+                }
+            </ChildContent>
+            <ErrorContent>
+                @if (context is IApiException e && e.StatusCode == HttpStatusCode.NotFound)
+                {
+                    @if (NotFoundSection != null)
                     {
-                        <div class="d-flex justify-center mt-8">
-                            <MudProgressCircular Class="mt-2" Size="Size.Medium" Indeterminate="true" />
-                        </div>
+                        @NotFoundSection
                     }
                     else
                     {
-                        @ChildContent
+                        <NotFoundPage />
                     }
-                </ChildContent>
-                <ErrorContent>
-                    @if (context is IApiException e && e.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        @if (NotFoundSection != null)
-                        {
-                            @NotFoundSection
-                        }
-                        else
-                        {
-                            <NotFoundPage />
-                        }
-                    }
-                    else
-                    {
-                        <ExceptionAlert ErrorBoundary="_errorBoundary" Exception="context" ShowDetails="true" />
-                    }
-                </ErrorContent>
-            </ErrorBoundary>
-        </MudMainContent>
+                }
+                else
+                {
+                    <ExceptionAlert ErrorBoundary="_errorBoundary" Exception="context" ShowDetails="true" />
+                }
+            </ErrorContent>
+        </ErrorBoundary>
+    </MudMainContent>
 
-        @if (LayoutService.Page.Value?.FooterContent != null)
-        {
-            @LayoutService.Page.Value.FooterContent
-        }
-    </MudLayout>
-</CascadingValue>
+    @if (LayoutService.Page.Value?.FooterContent != null)
+    {
+        @LayoutService.Page.Value.FooterContent
+    }
+</MudLayout>

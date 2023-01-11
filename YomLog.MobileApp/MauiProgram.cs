@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics;
+using System.Reflection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MudBlazor;
 using YomLog.BlazorShared.Extensions;
+using YomLog.BlazorShared.Models;
 using YomLog.MobileApp.Services;
 
 namespace YomLog.MobileApp;
@@ -19,12 +23,18 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
 
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("YomLog.MobileApp.Properties.appsettings.json");
+        var config = new ConfigurationBuilder().AddJsonStream(stream!).Build();
+        builder.Configuration.AddConfiguration(config);
+
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
 
-        string uri = "https://localhost:5011/api/";
+        string apiBaseUri = config.GetRequiredSection("ApiBaseUri").Get<string>()!;
+        var oidcSettings = config.GetRequiredSection(nameof(OidcSettings)).Get<OidcSettings>();
 
         builder.Services.AddAppServices(new()
         {
@@ -41,11 +51,11 @@ public static class MauiProgram
             },
             OidcClientOptions = new()
             {
-                Authority = "https://localhost:5022",
-                ClientId = "YomLog.MobileApp",
-                Scope = "openid profile name role offline_access",
-                RedirectUri = "yomlog://",
-                PostLogoutRedirectUri = "yomlog://",
+                Authority = oidcSettings?.Authority,
+                ClientId = oidcSettings?.ClientId,
+                Scope = "openid profile offline_access",
+                RedirectUri = "yomlog://callback",
+                PostLogoutRedirectUri = "yomlog://callback",
                 Browser = new WebAuthenticatorBrowser()
             },
             AppSettings = new()
@@ -53,7 +63,7 @@ public static class MauiProgram
                 IsNativeApp = true,
                 DefaultMaxWidth = MaxWidth.Small,
                 AppName = AppInfo.Name,
-                ApiBaseAddress = new Uri(uri)
+                ApiBaseAddress = new Uri(apiBaseUri)
             }
         });
 

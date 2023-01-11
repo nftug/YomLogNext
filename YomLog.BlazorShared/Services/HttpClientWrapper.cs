@@ -9,7 +9,7 @@ using YomLog.Shared.Exceptions;
 
 namespace YomLog.BlazorShared.Services;
 
-public class HttpClientWrapper : BindBase
+public class HttpClientWrapper : BindableBase
 {
     private readonly HttpClient _httpClient;
     private readonly IPopupService _popupService;
@@ -103,7 +103,7 @@ public class HttpClientWrapper : BindBase
                 exception = await ApiException.CreateFromHttpResponse(httpException, response);
             }
 
-            if (exception.StatusCode != null && exception.StatusCode != HttpStatusCode.NotFound)
+            if (exception.StatusCode != HttpStatusCode.NotFound)
             {
                 string message = exception.Response ?? exception.Message ?? e.Message;
                 await _popupService.ShowPopup("API Error", message);

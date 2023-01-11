@@ -1,9 +1,11 @@
+@using YomLog.BlazorShared.Services.Auth
 @inject NavigationManager NavigationManager
+@inject IAuthService AuthService
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         var currentUri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        NavigationManager.NavigateTo($"/login?redirect={currentUri}", replace: true);
+        await AuthService.LoginAsync(currentUri);
     }
 }

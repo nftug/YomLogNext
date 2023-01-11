@@ -9,7 +9,7 @@ using Reactive.Bindings.Extensions;
 
 namespace YomLog.BlazorShared.Components;
 
-public partial class ImageLoader : BindComponentBase
+public partial class ImageLoader : BindableComponentBase
 {
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 

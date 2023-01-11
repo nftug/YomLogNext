@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace YomLog.BlazorShared.Components;
 
-public partial class PageContainer : BindComponentBase
+public partial class PageContainer : BindableComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private HttpClientWrapper HttpClientWrapper { get; set; } = null!;

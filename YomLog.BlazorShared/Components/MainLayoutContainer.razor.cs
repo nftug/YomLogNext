@@ -10,7 +10,7 @@ using Reactive.Bindings;
 
 namespace YomLog.BlazorShared.Components;
 
-public partial class MainLayoutContainer : BindComponentBase
+public partial class MainLayoutContainer : BindableComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private ScrollInfoService ScrollInfoService { get; set; } = null!;
@@ -35,8 +35,10 @@ public partial class MainLayoutContainer : BindComponentBase
             .Where(v => v != null)
             .Subscribe(_ => StateHasChanged())
             .AddTo(Disposable);
-
-        LayoutService.IsInitializing.Skip(1).Subscribe(_ => StateHasChanged());
+        LayoutService.IsInitializing
+            .Skip(1)
+            .Subscribe(_ => StateHasChanged())
+            .AddTo(Disposable);
 
         await ScrollInfoService.RegisterService();
         await ApplyUserPreferences();

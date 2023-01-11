@@ -406,3 +406,9 @@ ASALocalRun/
 
 # Code counter
 .VSCodeCounter/
+
+# Key store
+*.keystore
+
+# appsettings.json
+appsettings.json

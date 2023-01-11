@@ -6,7 +6,7 @@ using YomLog.BlazorShared.Models;
 namespace YomLog.BlazorShared.Components;
 
 [AllowAnonymous]
-public abstract class LoginPageBase : BindComponentBase
+public abstract class LoginPageBase : BindableComponentBase
 {
     [Inject] protected IAuthService AuthService { get; set; } = null!;
     [Parameter, SupplyParameterFromQuery] public string? Redirect { get; set; }

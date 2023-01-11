@@ -11,7 +11,7 @@ using YomLog.BlazorShared.Services.Popup;
 
 namespace YomLog.BlazorShared.Services.Auth;
 
-public class OidcAuthService : BindBase, IAuthService
+public class OidcAuthService : BindableBase, IAuthService
 {
     private readonly MyAuthenticationStateProvider _authStateProvider;
     private readonly OidcClient _oidcClient;
@@ -86,12 +86,11 @@ public class OidcAuthService : BindBase, IAuthService
             return;
         }
 
-        var claims = loginResult.User.Claims.First().Subject!.Claims;
+        var claims = loginResult.User.Claims;
         var tokenModel = new TokenModel
         {
             UserName = claims.First(x => x.Type == "name").Value,
             UserId = claims.First(x => x.Type == "sub").Value,
-            Role = claims.First(x => x.Type == "role").Value,
             AccessToken = loginResult.AccessToken,
             RefreshToken = loginResult.RefreshToken,
             AccessTokenExpiration = loginResult.AccessTokenExpiration
@@ -117,16 +116,7 @@ public class OidcAuthService : BindBase, IAuthService
         await _authStateProvider.MarkUserAsLoggedOut();
         _navigationManager.NavigateTo("");
 
-        if (_oidcClient.Options.Browser != null)
-        {
-            await _oidcClient.LogoutAsync(new LogoutRequest());
-            _snackBar.Add("Logged out.", Severity.Info);
-        }
-        else
-        {
-            string logoutUrl = await _oidcClient.PrepareLogoutAsync(new LogoutRequest());
-            _navigationManager.NavigateTo(logoutUrl, forceLoad: true);
-        }
+        _snackBar.Add("Logged out.", Severity.Info);
     }
 
     public async Task RefreshTokenAsync()

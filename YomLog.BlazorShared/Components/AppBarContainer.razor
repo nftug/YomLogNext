@@ -1,4 +1,6 @@
-﻿<MudAppBar Elevation="0" Fixed>
+﻿@inherits BindableComponentBase
+
+<MudAppBar Elevation="0" Fixed>
     @if (LayoutService.Page.Value?.LeftButton == AppBarLeftButton.Drawer)
     {
         <MudIconButton Icon="@Icons.Material.Filled.Menu"

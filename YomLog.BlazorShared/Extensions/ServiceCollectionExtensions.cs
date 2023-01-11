@@ -4,7 +4,6 @@ using IdentityModel.OidcClient;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services;
 using YomLog.BlazorShared.Services.Auth;
-using YomLog.BlazorShared.Services.EventsHub;
 using YomLog.BlazorShared.Services.Popup;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,7 +48,6 @@ public static class ServiceCollectionExtensions
         services.AddAssemblyTypes<ICacheRepositoryService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes<IPopupService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes<IEnvironmentHelper>(assemblies, ServiceLifetime.Transient);
-        services.AddAssemblyTypes<IEventsHubService>(assemblies, ServiceLifetime.Scoped);
         services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "ApiService");
 
         return services;
