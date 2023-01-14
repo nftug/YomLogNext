@@ -1,0 +1,72 @@
+@page "/add-book"
+
+<PageContainer Title="Add Books" MaxWidth="MaxWidth.Small">
+    <MudTextField @bind-Value="_searchQuery"
+                  @bind-Value:after="ClearList"
+                  Label="Enter search text"
+                  Immediate="true"
+                  Variant="Variant.Text" />
+
+    <MudDivider Class="my-5" />
+
+    @if (_totalItems == 0)
+    {
+        return;
+    }
+
+    <MudPaper Class="overflow-y-scroll mud-theme-transparent" MaxHeight="70vh" Outlined="true">
+        <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="GetBooksAsync">
+            @foreach (var item in _results)
+            {
+                <MudCard Class="ma-2">
+                    <MudCardContent Class="d-flex flex-grow-1 gap-2">
+                        <div class="flex-grow-1">
+                            <MudText Class="mb-1">@item.Title</MudText>
+                            <MudText Typo="Typo.body2">
+                                @if (item.Authors != null)
+                                {
+                                    @foreach (var (author, index) in item.Authors.Select((item, index) => (item, index)))
+                                    {
+                                        <MudLink OnClick="(() => SearchByAuthor(author))">@author</MudLink>
+                                        @if (index + 1 < item.Authors.Count)
+                                        {
+                                            <span>,&nbsp;</span>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    @("No Author")
+                                }
+                            </MudText>
+                        </div>
+
+                        <MudImage Src="@item.Thumbnail" Height="128" />
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary">See Details</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            }
+
+            @if (_startIndex > 0 && !_reachedLast)
+            {
+                <MudCard Class="ma-2">
+                    <MudCardContent Class="d-flex flex-grow-1 gap-2">
+                        <div class="flex-grow-1">
+                            <MudSkeleton Height="30px" Class="mb-1" />
+                            <MudSkeleton Height="20px" />
+                        </div>
+
+                        <MudSkeleton Height="160px" Width="90px" />
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudSkeleton Width="100px" Height="20px" />
+                    </MudCardActions>
+                </MudCard>
+            }
+
+            <div id="observerTarget"></div>
+        </InfiniteScroll>
+    </MudPaper>
+</PageContainer>

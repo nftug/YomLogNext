@@ -6,6 +6,7 @@ using YomLog.BlazorShared.Models;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.Shared.Exceptions;
+using Dynamic.Json;
 
 namespace YomLog.BlazorShared.Services;
 
@@ -32,6 +33,9 @@ public class HttpClientWrapper : BindableBase
     public async Task<T> Get<T>(string uri)
         => (await HandleAsJsonAsync<T>(async () => await _httpClient.GetAsync(uri)))!;
 
+    public async Task<dynamic> GetAsDJson(string uri)
+        => await HandleAsDJsonAsync(async () => await _httpClient.GetAsync(uri));
+
     public async Task<TResult> Create<TResult, TCommand>
         (string uri, TCommand command)
          => (await HandleAsJsonAsync<TResult>(async () => await _httpClient.PostAsJsonAsync(uri, command)))!;
@@ -43,11 +47,17 @@ public class HttpClientWrapper : BindableBase
     public async Task Delete(string uri)
         => await GetHttpResponseAsync(async () => await _httpClient.DeleteAsync(uri));
 
-    public async Task<T?> HandleAsJsonAsync<T>
-        (Func<Task<HttpResponseMessage>> callback)
+    public async Task<T?> HandleAsJsonAsync<T>(Func<Task<HttpResponseMessage>> callback)
     {
         var response = await GetHttpResponseAsync(callback);
         return await response.Content.ReadFromJsonAsync<T>();
+    }
+
+    public async Task<dynamic> HandleAsDJsonAsync(Func<Task<HttpResponseMessage>> callback)
+    {
+        var response = await GetHttpResponseAsync(callback);
+        var rawContent = await response.Content.ReadAsStringAsync();
+        return DJson.Parse(rawContent);
     }
 
     public async Task<HttpResponseMessage> GetHttpResponseAsync(Func<Task<HttpResponseMessage>> callback)
@@ -103,11 +113,13 @@ public class HttpClientWrapper : BindableBase
                 exception = await ApiException.CreateFromHttpResponse(httpException, response);
             }
 
+            /*
             if (exception.StatusCode != HttpStatusCode.NotFound)
             {
                 string message = exception.Response ?? exception.Message ?? e.Message;
                 await _popupService.ShowPopup("API Error", message);
             }
+            */
 
             throw (Exception)exception;
         }

@@ -23,6 +23,9 @@
         <NavPathLink Href="/counter" Match="NavPathLinkMatch.All" Icon="@Icons.Material.Filled.Add">
             Counter
         </NavPathLink>
+        <NavPathLink Href="/add-book" Match="NavPathLinkMatch.All" Icon="@Icons.Material.Filled.Add">
+            Add Book
+        </NavPathLink>
 
         <MudDivider />
 
@@ -43,9 +46,9 @@
         }
         else
         {
-            <MudNavLink Icon="@Icons.Material.Filled.Login" OnClick="@(() => AuthService.LoginAsync())">
+            <NavPathLink Href="/login" Match="NavPathLinkMatch.Prefix" Icon="@Icons.Material.Filled.Login">
                 Login
-            </MudNavLink>
+            </NavPathLink>
         }
     </NavPathMenu>
 </DrawerContainer>

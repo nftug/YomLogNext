@@ -3,6 +3,7 @@ using Blazored.SessionStorage;
 using IdentityModel.OidcClient;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.WebUtilities;
 using MudBlazor;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -18,7 +19,7 @@ public class OidcAuthService : BindableBase, IAuthService
     private readonly IPopupService _popupService;
     private readonly NavigationManager _navigationManager;
     private readonly ISessionStorageService _sessionStorage;
-    private readonly ISnackbar _snackBar;
+    private readonly ISnackbar _snackbar;
     private readonly AppSettings _appSettings;
 
     public ReactiveTimer RefreshTimer { get; }
@@ -41,7 +42,7 @@ public class OidcAuthService : BindableBase, IAuthService
         _popupService = popupService;
         _navigationManager = navigationManager;
         _sessionStorage = sessionStorage;
-        _snackBar = snackBar;
+        _snackbar = snackBar;
         _appSettings = appSettings;
 
         IsAuthenticated = _authStateProvider.Identity
@@ -104,7 +105,7 @@ public class OidcAuthService : BindableBase, IAuthService
         if (redirectTo != null)
             _navigationManager.NavigateTo(redirectTo, replace: true);
 
-        _snackBar.Add("Login succeed.", Severity.Info);
+        _snackbar.Add("Login succeed.", Severity.Info);
     }
 
     public async Task LogoutAsync(bool forceLogout = false)
@@ -121,14 +122,20 @@ public class OidcAuthService : BindableBase, IAuthService
         // For Auth0, you must change logout endpoint URL.
         // https://auth0.com/docs/api/authentication#logout
         var options = _appSettings.OidcClientOptions;
-        var logoutUrl = $"{options.Authority}/v2/logout?client_id={options.ClientId}&returnTo={options.PostLogoutRedirectUri}";
+        var logoutUrl = QueryHelpers.AddQueryString(
+            $"{options.Authority}/v2/logout",
+            new Dictionary<string, string>
+            {
+                { "client_id", options.ClientId },
+                { "returnTo", options.PostLogoutRedirectUri }
+            });
 
         if (_oidcClient.Options.Browser != null)
         {
             // await _oidcClient.LogoutAsync();
             await _oidcClient.Options.Browser.InvokeAsync(new(logoutUrl, options.PostLogoutRedirectUri));
             _navigationManager.NavigateTo("");
-            _snackBar.Add("Logged out.", Severity.Info);
+            _snackbar.Add("Logged out.", Severity.Info);
         }
         else
         {
