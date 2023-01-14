@@ -45,7 +45,7 @@ public class GoogleBooksApiService
                 Authors = (List<string>?)x.VolumeInfo.Authors,
                 Description = (string?)x.VolumeInfo.Description,
                 Url = (string?)x.VolumeInfo.InfoLink,
-                Thumbnail = (string?)x.VolumeInfo.ImageLinks?.Thumbnail,
+                Thumbnail = (string?)(x.VolumeInfo.ImageLinks?.Thumbnail ?? x.VolumeInfo.ImageLinks?.SmallThumbnail),
                 TotalPage = (int?)x.VolumeInfo.PageCount
             });
 
