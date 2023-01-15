@@ -1,19 +1,40 @@
+using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
+using YomLog.BlazorShared.Models;
+using YomLog.BlazorShared.Services;
 using YomLog.MobileApp.Entities;
 using YomLog.MobileApp.Services.Api;
 using YomLog.Shared.Exceptions;
 
 namespace YomLog.MobileApp.Pages;
 
-public partial class AddBookPage : ComponentBase
+public partial class AddBookPage : BindableComponentBase
 {
     [Inject] private GoogleBooksApiService ApiService { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private LoggerService LoggerService { get; set; } = null!;
 
-    private string _searchQuery = string.Empty;
+    [Parameter, SupplyParameterFromQuery] public string? Query { get; set; }
+
+    private ReactivePropertySlim<string?> SearchQuery { get; set; } = null!;
     private int _totalItems;
     private List<BookInfo> _results = new();
     private int _startIndex;
     private bool _reachedLast;
+
+    protected override void OnInitialized()
+    {
+        SearchQuery = new ReactivePropertySlim<string?>().AddTo(Disposable);
+        SearchQuery.Skip(1).Subscribe(async _ => await ClearList());
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (SearchQuery.Value != Query)
+            SearchQuery.Value = Query;
+    }
 
     private async Task ClearList()
     {
@@ -21,22 +42,29 @@ public partial class AddBookPage : ComponentBase
         _startIndex = 0;
         _results = new();
         _reachedLast = false;
+
+        var uri = NavigationManager.GetUriWithQueryParameter(nameof(Query), SearchQuery.Value);
+        NavigationManager.NavigateTo(uri);
+
         await GetBooksAsync();
         StateHasChanged();
     }
 
-    private async Task SearchByAuthor(string author)
+    private void SearchByAuthor(string author)
     {
-        _searchQuery = $"inauthor:\"{author}\"";
-        await ClearList();
+        SearchQuery.Value = $"inauthor:\"{author}\"";
     }
 
     private async Task GetBooksAsync()
     {
+        await LoggerService.Print($"SearchQuery.Value = {SearchQuery.Value}");
+
+        if (string.IsNullOrEmpty(SearchQuery.Value)) return;
+
         int count = 12;
-        if (_totalItems <= 0)
+        if (_totalItems == 0)
         {
-            var paginated = await ApiService.GetBookList(_searchQuery, 0, 1);
+            var paginated = await ApiService.GetBookList(SearchQuery.Value, 0, 1);
             _totalItems = paginated.TotalItems;
         }
 
@@ -49,7 +77,7 @@ public partial class AddBookPage : ComponentBase
 
         try
         {
-            var data = await ApiService.GetBookList(_searchQuery, _startIndex, numItems);
+            var data = await ApiService.GetBookList(SearchQuery.Value, _startIndex, numItems);
             _results.AddRange(data.Results);
             _results = _results.DistinctBy(x => x.Id).ToList();
             _startIndex += numItems;

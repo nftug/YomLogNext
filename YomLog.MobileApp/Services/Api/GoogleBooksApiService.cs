@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.WebUtilities;
 using YomLog.BlazorShared.Services;
 using YomLog.MobileApp.Entities;
-using YomLog.Shared.Exceptions;
 using YomLog.Shared.Models;
 
 namespace YomLog.MobileApp.Services.Api;

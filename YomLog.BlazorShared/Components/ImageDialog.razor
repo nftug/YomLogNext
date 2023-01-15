@@ -1,9 +1,7 @@
-﻿@inject IJSRuntime JSRuntime
-
-<DialogBase Style="width: calc(100% - 24px);">
+﻿<DialogBase Style="width: calc(100% - 24px);">
     <TitleContent>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="OnClickCloseButton" />
+        <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="(() => context.Ok(true))" />
     </TitleContent>
 
     <DialogContent>
@@ -16,12 +14,6 @@
 @code {
     [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
     [Parameter] public string Image { get; set; } = string.Empty;
-
-    private async void OnClickCloseButton()
-    {
-        MudDialog?.Close();
-        await JSRuntime.InvokeVoidAsync("history.back");
-    }
 
     public static async Task<DialogResult> ShowDialog(IDialogService dialogService, string? image)
     {

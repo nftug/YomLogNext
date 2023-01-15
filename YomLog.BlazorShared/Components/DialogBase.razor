@@ -1,14 +1,16 @@
 @inject IJSRuntime JSRuntime
-@inject NavigationManager NavigationManager
 @implements IDisposable
 
 <MudDialog OnBackdropClick="Cancel" Class="@Class" Style="@Style">
     <TitleContent>
-        @TitleContent
+        @if (TitleContent != null)
+        {
+            @TitleContent(this)
+        }
     </TitleContent>
 
     <DialogContent>
-        @DialogContent
+        @DialogContent(this)
     </DialogContent>
 
     <DialogActions>
@@ -21,8 +23,8 @@
 
 @code {
     [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
-    [Parameter] public RenderFragment? TitleContent { get; set; } = null!;
-    [Parameter] public RenderFragment DialogContent { get; set; } = null!;
+    [Parameter] public RenderFragment<DialogBase>? TitleContent { get; set; } = null!;
+    [Parameter] public RenderFragment<DialogBase> DialogContent { get; set; } = null!;
     [Parameter] public RenderFragment<DialogBase>? DialogActions { get; set; } = null!;
     [Parameter] public string? Class { get; set; }
     [Parameter] public string? Style { get; set; }

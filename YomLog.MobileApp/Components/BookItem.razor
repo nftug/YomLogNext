@@ -1,31 +1,20 @@
-<MudCard Class="ma-2">
+@inject IDialogService DialogService
+
+<MudCard>
     @if (Item != null)
     {
         <MudCardContent Class="d-flex flex-grow-1 gap-2">
             <div class="flex-grow-1">
                 <MudText Class="mb-1">@Item.Title</MudText>
-                <MudText Typo="Typo.body2">
-                    @if (Item.Authors == null)
-                    {
-                        @("No Author")
-                        return;
-                    }
-
-                    @foreach (var (author, index) in Item.Authors.Select((item, index) => (item, index)))
-                    {
-                        <MudLink OnClick="(() => OnClickAuthor(author))">@author</MudLink>
-                        @if (index + 1 < Item.Authors.Count)
-                        {
-                            <span>,&nbsp;</span>
-                        }
-                    }
-                </MudText>
+                <AuthorsLink Authors="Item.Authors" SearchByAuthor="SearchByAuthor" />
             </div>
             <MudImage Src="@Item.Thumbnail" Height="128" />
         </MudCardContent>
 
         <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary">See Details</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDetail">
+                See Details
+            </MudButton>
         </MudCardActions>
     }
     else
@@ -52,4 +41,7 @@
         if (!SearchByAuthor.HasDelegate) return;
         await SearchByAuthor.InvokeAsync(author);
     }
+
+    private async Task OnClickDetail()
+        => await BookDetailDialog.ShowDialog(DialogService, Item!, SearchByAuthor);
 }

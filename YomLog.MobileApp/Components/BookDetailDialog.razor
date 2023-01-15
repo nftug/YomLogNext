@@ -1,0 +1,87 @@
+<DialogBase>
+    <TitleContent>
+        <div class="d-flex align-center">
+            <MudText Typo="Typo.h6">Details of the book</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="(() => context.Ok(true))" />
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        <MudSimpleTable Style="overflow-x: auto;">
+            <tbody>
+                <tr>
+                    <td style="weight: 30%">Title</td>
+                    <td>@Item.Title</td>
+                </tr>
+                <tr>
+                    <td style="weight: 30%">Author</td>
+                    <td>
+                        <AuthorsLink Authors="Item.Authors" SearchByAuthor="SearchByAuthor" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="weight: 30%">Description</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(Item.Description))
+                        {
+                            <MudPaper Class="overflow-y-scroll mud-theme-transparent pa-2" MaxHeight="200px" Outlined="true">
+                                @Item.Description
+                            </MudPaper>
+                        }
+                        else
+                        {
+                            <p>No description</p>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td style="weight: 30%">Pages</td>
+                    <td>@Item.TotalPage</td>
+                </tr>
+                <tr>
+                    <td style="weight: 30%">Cover</td>
+                    <td>
+                        <MudImage Src="@Item.Thumbnail" Height="128" />
+                    </td>
+                </tr>
+            </tbody>
+        </MudSimpleTable>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="context.Cancel">Cancel</MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Success"
+                   StartIcon="@Icons.Material.Filled.AddCircle"
+                   OnClick="@(() => context.Ok(true))">
+            Add
+        </MudButton>
+    </DialogActions>
+</DialogBase>
+
+@code {
+    [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
+    [Parameter] public BookInfo Item { get; set; } = null!;
+    [Parameter] public EventCallback<string> SearchByAuthor { get; set; }
+
+    public static async Task<DialogResult> ShowDialog(
+        IDialogService dialogService,
+        BookInfo item,
+        EventCallback<string> searchByAuthorCallback
+    )
+    {
+        var parameters = new DialogParameters
+        {
+            ["Item"] = item,
+            ["SearchByAuthor"] = searchByAuthorCallback
+        };
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.Small
+        };
+        var dialog = dialogService.Show<BookDetailDialog>("Detail", parameters, options);
+        return await dialog.Result;
+    }
+}

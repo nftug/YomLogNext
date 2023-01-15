@@ -1,30 +1,43 @@
 @page "/add-book"
+@inherits BindableComponentBase
 
-<PageContainer Title="Add Books" MaxWidth="MaxWidth.Small">
-    <MudTextField @bind-Value="_searchQuery"
-                  @bind-Value:after="ClearList"
+<PageContainer Title="Add Books" MaxWidth="MaxWidth.Large">
+    <MudTextField @bind-Value="SearchQuery.Value"
                   Label="Enter search text"
-                  Immediate="true"
                   Variant="Variant.Text" />
-
     @if (_totalItems == 0)
     {
         return;
     }
 
     <MudPaper Class="overflow-y-scroll mud-theme-transparent mt-5" MaxHeight="70vh" Outlined="true">
-        <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="GetBooksAsync">
-            @foreach (var item in _results)
-            {
-                <BookItem Item="item" SearchByAuthor="SearchByAuthor" />
-            }
+        <MudGrid Spacing="2">
+            <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="GetBooksAsync">
+                @foreach (var item in _results)
+                {
+                    <MudItem xs="12" lg="6">
+                        <BookItem Item="item" SearchByAuthor="SearchByAuthor" />
+                    </MudItem>
+                }
 
-            @if (_startIndex > 0 && !_reachedLast)
-            {
-                <BookItem />
-            }
+                @if (_startIndex > 0 && !_reachedLast)
+                {
+                    <MudItem xs="12" lg="6">
+                        <BookItem />
+                    </MudItem>
 
-            <div id="observerTarget"></div>
-        </InfiniteScroll>
+                    @if (_results.Count % 2 == 0)
+                    {
+                        <MudItem xs="12" lg="6">
+                            <BookItem />
+                        </MudItem>
+                    }
+                }
+
+                <MudItem>
+                    <div id="observerTarget"></div>
+                </MudItem>
+            </InfiniteScroll>
+        </MudGrid>
     </MudPaper>
 </PageContainer>

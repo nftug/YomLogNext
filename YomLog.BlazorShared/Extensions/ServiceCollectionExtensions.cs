@@ -35,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<PageInfoService>();
         services.AddScoped<HttpClientWrapper>();
         services.AddScoped<ScrollInfoService>();
+        services.AddTransient<LoggerService>();
 
         services.AddBlazoredLocalStorage();
         services.AddBlazoredSessionStorage();

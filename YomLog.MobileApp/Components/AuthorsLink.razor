@@ -1,0 +1,26 @@
+@if (Authors == null)
+{
+    <MudText Typo="Typo">No Author</MudText>
+    return;
+}
+
+@foreach (var (author, index) in Authors.Select((item, index) => (item, index)))
+{
+    <MudLink Typo="Typo" OnClick="(() => OnClickAuthor(author))">@author</MudLink>
+    @if (index + 1 < Authors.Count())
+    {
+        <span>,&nbsp;</span>
+    }
+}
+
+@code {
+    [Parameter] public IEnumerable<string> Authors { get; set; } = null!;
+    [Parameter] public Typo Typo { get; set; } = Typo.body2;
+    [Parameter] public EventCallback<string> SearchByAuthor { get; set; }
+
+    private async Task OnClickAuthor(string author)
+    {
+        if (!SearchByAuthor.HasDelegate) return;
+        await SearchByAuthor.InvokeAsync(author);
+    }
+}
