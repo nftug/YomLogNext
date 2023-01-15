@@ -1,4 +1,4 @@
-<DialogBase>
+<DialogBase DisableSidePadding="true">
     <TitleContent>
         <div class="d-flex align-center">
             <MudText Typo="Typo.h6">Details of the book</MudText>
@@ -8,49 +8,51 @@
     </TitleContent>
 
     <DialogContent>
-        <MudSimpleTable Style="overflow-x: auto;">
-            <tbody>
-                <tr>
-                    <td style="weight: 30%; font-weight: bold;">Title</td>
-                    <td>@Item.Title</td>
-                </tr>
-                <tr>
-                    <td style="weight: 30%; font-weight: bold;">Author</td>
-                    <td>
-                        <AuthorsLink Authors="Item.Authors" SearchByAuthor="SearchByAuthor" />
-                    </td>
-                </tr>
-                <tr>
-                    <td style="weight: 30%; font-weight: bold;">Description</td>
-                    <td>
-                        @if (!string.IsNullOrEmpty(Item.Description))
-                        {
-                            <MudPaper Class="overflow-y-scroll mud-theme-transparent pa-2" MaxHeight="200px" Outlined="true">
-                                @Item.Description
-                            </MudPaper>
-                        }
-                        else
-                        {
-                            <p>No description</p>
-                        }
-                    </td>
-                </tr>
-                <tr>
-                    <td style="weight: 30%; font-weight: bold;">Pages</td>
-                    <td>@Item.TotalPage</td>
-                </tr>
-                <tr>
-                    <td style="weight: 30%; font-weight: bold;">ISBN</td>
-                    <td>@Item.Isbn</td>
-                </tr>
-                <tr>
-                    <td style="weight: 30%; font-weight: bold;">Cover</td>
-                    <td>
-                        <MudImage Src="@Item.Thumbnail" Height="128" />
-                    </td>
-                </tr>
-            </tbody>
-        </MudSimpleTable>
+        <MudContainer Style="max-height: 500px; overflow-y: scroll">
+            <MudSimpleTable Style="overflow-x: auto;">
+                <tbody>
+                    <tr>
+                        <td style="weight: 30%; font-weight: bold;">Title</td>
+                        <td>@Item.Title</td>
+                    </tr>
+                    <tr>
+                        <td style="weight: 30%; font-weight: bold;">Author</td>
+                        <td>
+                            <AuthorsLink Authors="Item.Authors" SearchByAuthor="SearchByAuthor" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="weight: 30%; font-weight: bold;">Description</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Item.Description))
+                            {
+                                <MudPaper Class="overflow-y-scroll mud-theme-transparent pa-2" MaxHeight="200px" Outlined="true">
+                                    @Item.Description
+                                </MudPaper>
+                            }
+                            else
+                            {
+                                <p>No description</p>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="weight: 30%; font-weight: bold;">Pages</td>
+                        <td>@Item.TotalPage</td>
+                    </tr>
+                    <tr>
+                        <td style="weight: 30%; font-weight: bold;">ISBN</td>
+                        <td>@Item.Isbn</td>
+                    </tr>
+                    <tr>
+                        <td style="weight: 30%; font-weight: bold;">Cover</td>
+                        <td>
+                            <MudImage Src="@Item.Thumbnail" Height="128" />
+                        </td>
+                    </tr>
+                </tbody>
+            </MudSimpleTable>
+        </MudContainer>
     </DialogContent>
 
     <DialogActions>
