@@ -3,10 +3,5 @@
 @inject ScrollInfoService ScrollInfoService
 
 <AppBarContainer>
-    <MudText Typo="Typo.h6"
-             Class="ml-3 mud-width-full"
-             Style="cursor: pointer;"
-             @onclick="ScrollInfoService.ScrollToTopAsync">
-        @(LayoutService.Page.Value?.Title ?? AppSettings.AppName)
-    </MudText>
+    <AppBarTitle />
 </AppBarContainer>

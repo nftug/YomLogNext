@@ -52,6 +52,11 @@ public partial class PageContainer : BindableComponentBase
             await JSRuntime.InvokeVoidAsync("onRenderTopPage", DotNetObjectReference.Create(this));
     }
 
+    protected override void OnParametersSet()
+    {
+        LayoutService.RequestAppBarRerender();
+    }
+
     protected override async void Dispose(bool disposing)
     {
         if (!disposing) return;

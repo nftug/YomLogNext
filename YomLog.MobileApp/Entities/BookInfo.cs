@@ -9,4 +9,5 @@ public class BookInfo
     public string? Url { get; init; } = string.Empty;
     public string? Thumbnail { get; init; }
     public int? TotalPage { get; init; }
+    public string? Isbn { get; init; }
 }

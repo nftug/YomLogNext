@@ -11,17 +11,17 @@
         <MudSimpleTable Style="overflow-x: auto;">
             <tbody>
                 <tr>
-                    <td style="weight: 30%">Title</td>
+                    <td style="weight: 30%; font-weight: bold;">Title</td>
                     <td>@Item.Title</td>
                 </tr>
                 <tr>
-                    <td style="weight: 30%">Author</td>
+                    <td style="weight: 30%; font-weight: bold;">Author</td>
                     <td>
                         <AuthorsLink Authors="Item.Authors" SearchByAuthor="SearchByAuthor" />
                     </td>
                 </tr>
                 <tr>
-                    <td style="weight: 30%">Description</td>
+                    <td style="weight: 30%; font-weight: bold;">Description</td>
                     <td>
                         @if (!string.IsNullOrEmpty(Item.Description))
                         {
@@ -36,11 +36,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="weight: 30%">Pages</td>
+                    <td style="weight: 30%; font-weight: bold;">Pages</td>
                     <td>@Item.TotalPage</td>
                 </tr>
                 <tr>
-                    <td style="weight: 30%">Cover</td>
+                    <td style="weight: 30%; font-weight: bold;">ISBN</td>
+                    <td>@Item.Isbn</td>
+                </tr>
+                <tr>
+                    <td style="weight: 30%; font-weight: bold;">Cover</td>
                     <td>
                         <MudImage Src="@Item.Thumbnail" Height="128" />
                     </td>

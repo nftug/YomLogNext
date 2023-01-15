@@ -16,8 +16,8 @@ public class GoogleBooksApiService
 
     public async Task<Pagination<BookInfo>> GetBookList(string query, int startIndex, int limit)
     {
-        if (string.IsNullOrWhiteSpace(query))
-            return new Pagination<BookInfo>(Enumerable.Empty<BookInfo>(), 0, startIndex, limit);
+        if (string.IsNullOrWhiteSpace(query) || limit <= 0)
+            return new Pagination<BookInfo>(Enumerable.Empty<BookInfo>(), 0, startIndex, 1);
 
         var url = QueryHelpers.AddQueryString(
             "https://www.googleapis.com/books/v1/volumes",
@@ -25,7 +25,7 @@ public class GoogleBooksApiService
             {
                 { "q", query },
                 { "orderby", "relevance" },
-                { "maxResults", limit.ToString() },
+                { "maxresults", limit.ToString() },
                 { "startIndex", startIndex.ToString() }
             }
         );
@@ -45,7 +45,8 @@ public class GoogleBooksApiService
                 Description = (string?)x.VolumeInfo.Description,
                 Url = (string?)x.VolumeInfo.InfoLink,
                 Thumbnail = (string?)(x.VolumeInfo.ImageLinks?.Thumbnail ?? x.VolumeInfo.ImageLinks?.SmallThumbnail),
-                TotalPage = (int?)x.VolumeInfo.PageCount
+                TotalPage = (int?)x.VolumeInfo.PageCount,
+                Isbn = ((IEnumerable<dynamic>?)x.VolumeInfo.IndustryIdentifiers)?.FirstOrDefault()?.Identifier
             });
 
         return new Pagination<BookInfo>(books, totalItems, startIndex, limit);
