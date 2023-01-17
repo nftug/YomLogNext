@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reactive.Linq;
 using Blazored.SessionStorage;
 using IdentityModel.OidcClient;
@@ -152,12 +153,14 @@ public class OidcAuthService : BindableBase, IAuthService
         var timeSpan = tokenModel.AccessTokenExpiration - DateTimeOffset.Now;
         if (timeSpan > RefreshTimeSpan * 2) return;
 
-        var result = await _oidcClient.RefreshTokenAsync(tokenModel.RefreshToken);
+        var result = await _oidcClient.RefreshTokenAsync(tokenModel.RefreshToken, scope: "offline_access");
         if (result.IsError)
         {
             await LoginAsync(_navigationManager.ToBaseRelativePath(_navigationManager.Uri));
             await RefreshTokenAsync();
         }
+
+        Debug.WriteLine("Refreshed access token");
 
         tokenModel.AccessToken = result.AccessToken;
         tokenModel.RefreshToken = result.RefreshToken;

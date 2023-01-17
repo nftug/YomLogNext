@@ -5,6 +5,7 @@ using MudBlazor;
 using Microsoft.JSInterop;
 using Reactive.Bindings.Extensions;
 using System.Reactive.Linq;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -15,6 +16,7 @@ public partial class PageContainer : BindableComponentBase
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
     [Inject] private IEnvironmentHelper EnvironmentHelper { get; set; } = null!;
     [Inject] private AppSettings AppSettings { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     [Parameter] public string? Title { get; set; }
     [Parameter] public AppBarLeftButton LeftButton { get; set; } = AppBarLeftButton.Drawer;
@@ -42,7 +44,8 @@ public partial class PageContainer : BindableComponentBase
     protected override void OnInitialized()
     {
         LayoutService.Page.Value = this;
-        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => StateHasChanged()).AddTo(Disposable);
+        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        NavigationManager.LocationChanged += OnLocationChanged;
     }
 
     protected override async void OnAfterRender(bool firstRender)
@@ -52,7 +55,7 @@ public partial class PageContainer : BindableComponentBase
             await JSRuntime.InvokeVoidAsync("onRenderTopPage", DotNetObjectReference.Create(this));
     }
 
-    protected override void OnParametersSet()
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         LayoutService.RequestAppBarRerender();
     }
@@ -63,6 +66,7 @@ public partial class PageContainer : BindableComponentBase
         if (TopPage && AppSettings.IsNativeApp)
             await JSRuntime.InvokeVoidAsync("onLeaveTopPage");
 
+        NavigationManager.LocationChanged -= OnLocationChanged;
         base.Dispose(disposing);
     }
 

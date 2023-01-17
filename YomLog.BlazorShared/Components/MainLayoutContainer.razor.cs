@@ -29,15 +29,15 @@ public partial class MainLayoutContainer : BindableComponentBase
     {
         LayoutService.UserPreferences
             .Skip(1)
-            .Subscribe(_ => StateHasChanged())
+            .Subscribe(_ => Rerender())
             .AddTo(Disposable);
         LayoutService.Page
             .Where(v => v != null)
-            .Subscribe(_ => StateHasChanged())
+            .Subscribe(_ => Rerender())
             .AddTo(Disposable);
         LayoutService.IsInitializing
             .Skip(1)
-            .Subscribe(_ => StateHasChanged())
+            .Subscribe(_ => Rerender())
             .AddTo(Disposable);
 
         await ScrollInfoService.RegisterService();

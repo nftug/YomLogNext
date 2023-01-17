@@ -11,6 +11,6 @@
 
     protected override void OnInitialized()
     {
-        LayoutService.DrawerOpen.Skip(1).Subscribe(_ => StateHasChanged()).AddTo(Disposable);
+        LayoutService.DrawerOpen.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
     }
 }

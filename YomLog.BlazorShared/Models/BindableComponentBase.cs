@@ -31,4 +31,6 @@ public class BindableComponentBase : ComponentBase, INotifyPropertyChanged, IDis
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+
+    protected void Rerender() => InvokeAsync(StateHasChanged);
 }

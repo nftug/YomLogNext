@@ -1,51 +1,44 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
-using YomLog.BlazorShared.Services;
 
 namespace YomLog.MobileApp.Components;
 
-public partial class AppBarSearchBar : ComponentBase, IDisposable
+public partial class AppBarSearchBar : ComponentBase
 {
-    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
-    [Inject] private LayoutService LayoutService { get; set; } = null!;
-    [Inject] private PageInfoService PageInfoService { get; set; } = null!;
 
     [Parameter, EditorRequired] public string? Query { get; set; }
+    [Parameter, EditorRequired] public EventCallback<string?> NavigateAction { get; set; }
     [Parameter, EditorRequired] public EventCallback SearchAction { get; set; }
     [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; } = null!;
 
     private bool _showingSearchBar;
-    private string? _searchText;
+    private string? _searchFieldText;
     private MudTextField<string?>? _searchField;
+    private string? _previousQuery;
 
-    protected override void OnInitialized()
+    private async Task OnSubmitSearchForm()
     {
-        PageInfoService.PathChanged += OnPathChanged;
+        if (!string.IsNullOrEmpty(_searchFieldText))
+            await NavigateAction.InvokeAsync(_searchFieldText);
     }
 
-    public void Dispose()
+    protected override async Task OnParametersSetAsync()
     {
-        PageInfoService.PathChanged -= OnPathChanged;
-        GC.SuppressFinalize(this);
-    }
+        // Debug.WriteLine($"OnParameters: Query = {Query}, _previousQuery = {_previousQuery}");
 
-    protected override void OnParametersSet()
-    {
-        if (_searchText != Query) _searchText = Query;
-    }
+        if (Query != _previousQuery)
+        {
+            await RecoverSearchBarState();
+            _searchFieldText = Query;
+            await InvokeAsync(StateHasChanged);
 
-    public void NavigateForSearch(string? searchText)
-    {
-        var uri = NavigationManager.GetUriWithQueryParameter(nameof(Query), searchText);
-        NavigationManager.NavigateTo(uri);
-    }
+            if (!string.IsNullOrEmpty(Query))
+                await SearchAction.InvokeAsync();
+        }
 
-    private async void OnPathChanged(string previous, string current)
-    {
-        if (_searchField != null) await _searchField.BlurAsync();
-        await SearchAction.InvokeAsync();
+        _previousQuery = Query;
     }
 
     private async Task RecoverSearchBarState()
@@ -53,7 +46,7 @@ public partial class AppBarSearchBar : ComponentBase, IDisposable
         string activeTagName = await JSRuntime.InvokeAsync<string>("getActiveElementTagName");
         if (activeTagName != "BODY") return;
 
+        if (_searchField != null) await _searchField.BlurAsync();
         _showingSearchBar = !string.IsNullOrEmpty(Query);
-        LayoutService.RequestAppBarRerender();
     }
 }

@@ -20,9 +20,14 @@ public partial class AppBarContainer : BindableComponentBase
 
     protected override void OnInitialized()
     {
-        LayoutService.Page.Skip(1).Subscribe(_ => StateHasChanged()).AddTo(Disposable);
-        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => StateHasChanged()).AddTo(Disposable);
-        LayoutService.AppBarRerenderRequested += StateHasChanged;
+        LayoutService.Page.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.AppBarRerenderRequested += Rerender;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        LayoutService.AppBarRerenderRequested -= Rerender;
     }
 
     public async void BackButtonClicked()
