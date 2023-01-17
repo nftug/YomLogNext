@@ -16,14 +16,8 @@ public class Pagination<T>
 
     public Pagination(IEnumerable<T> results, int totalItems, int startIndex = 0, int limit = 10)
     {
-        if (limit <= 0)
-        {
-            throw new PaginationException("Limit must be greater than 0");
-        }
-        if (startIndex < 0)
-        {
-            throw new PaginationException("StartIndex must be greater than 0");
-        }
+        limit = limit > 0 ? limit : 1;
+        startIndex = startIndex >= 0 ? startIndex : 0;
 
         // var startIndex = (page - 1) * limit;
         var page = (startIndex + limit) / limit;

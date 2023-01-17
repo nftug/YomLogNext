@@ -1,6 +1,7 @@
 @inject AppSettings AppSettings
 @inject LayoutService LayoutService
 @inject ScrollInfoService ScrollInfoService
+@inherits BindableComponentBase
 
 @if (AppSettings.IsNativeApp)
 {
@@ -30,4 +31,9 @@ else
     [Parameter] public string? Title { get; set; }
 
     private string TextAlign => $"text-align: {(AlignCenter ? "center" : "left")};";
+
+    protected override void OnInitialized()
+    {
+        LayoutService.Page.Skip(1).Subscribe(_ => StateHasChanged()).AddTo(Disposable);
+    }
 }

@@ -16,7 +16,7 @@ public class GoogleBooksApiService
 
     public async Task<Pagination<BookInfo>> GetBookList(string query, int startIndex, int limit)
     {
-        if (string.IsNullOrWhiteSpace(query) || limit <= 0)
+        if (string.IsNullOrWhiteSpace(query))
             return new Pagination<BookInfo>(Enumerable.Empty<BookInfo>(), 0, startIndex, 1);
 
         var url = QueryHelpers.AddQueryString(

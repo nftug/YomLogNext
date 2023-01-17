@@ -19,15 +19,15 @@ public partial class AddBookPage : BindableComponentBase
     private int _totalItems;
     private List<BookInfo> _results = new();
     private int _startIndex;
-    private bool _reachedLast;
+    private bool ReachedLast => _totalItems <= _startIndex;
     private AppBarSearchBar? _searchbar;
+    private readonly int Limit = 12;
 
     private async Task SearchAsync()
     {
         _totalItems = 0;
         _startIndex = 0;
         _results = new();
-        _reachedLast = false;
 
         await GetBooksAsync();
         StateHasChanged();
@@ -42,7 +42,6 @@ public partial class AddBookPage : BindableComponentBase
     {
         if (string.IsNullOrEmpty(Query)) return;
 
-        int count = 12;
         if (_totalItems == 0)
         {
             var paginated = await ApiService.GetBookList(Query, 0, 1);
@@ -50,21 +49,13 @@ public partial class AddBookPage : BindableComponentBase
             await Task.Delay(500);
         }
 
-        int numItems = Math.Min(count, _totalItems - _startIndex);
+        int numItems = Math.Min(Limit, _totalItems - _startIndex);
 
         try
         {
-            await LoggerService.Print($"StartIndex: {_startIndex}, NumItems: {numItems}");
-
             var data = await ApiService.GetBookList(Query, _startIndex, numItems);
             _results.AddRange(data.Results);
             _startIndex += data.Results.Count();
-
-            if (_totalItems <= _startIndex)
-            {
-                _reachedLast = true;
-                return;
-            }
         }
         catch (Exception e) when (e is IApiException exception)
         {
