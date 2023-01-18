@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<PageInfoService>();
         services.AddScoped<HttpClientWrapper>();
         services.AddScoped<ScrollInfoService>();
-        services.AddTransient<LoggerService>();
+        services.AddScoped<ExceptionHubService>();
 
         services.AddBlazoredLocalStorage();
         services.AddBlazoredSessionStorage();
@@ -50,6 +50,7 @@ public static class ServiceCollectionExtensions
         services.AddAssemblyTypes<ICacheRepositoryService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes<IPopupService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes<IEnvironmentHelper>(assemblies, ServiceLifetime.Transient);
+        services.AddAssemblyTypes<IDebugLoggerService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "ApiService");
 
         return services;

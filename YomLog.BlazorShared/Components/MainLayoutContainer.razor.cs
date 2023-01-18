@@ -15,6 +15,7 @@ public partial class MainLayoutContainer : BindableComponentBase
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private ScrollInfoService ScrollInfoService { get; set; } = null!;
     [Inject] private IAuthService AuthService { get; set; } = null!;
+    [Inject] private ExceptionHubService ExceptionHub { get; set; } = null!;
 
     [Parameter] public bool? IsDarkModeDefault { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
@@ -27,18 +28,10 @@ public partial class MainLayoutContainer : BindableComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        LayoutService.UserPreferences
-            .Skip(1)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
-        LayoutService.Page
-            .Where(v => v != null)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
-        LayoutService.IsInitializing
-            .Skip(1)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
+        LayoutService.UserPreferences.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.IsDarkMode.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.Page.Where(v => v != null).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.IsInitializing.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
 
         await ScrollInfoService.RegisterService();
         await ApplyUserPreferences();
@@ -63,7 +56,7 @@ public partial class MainLayoutContainer : BindableComponentBase
         catch (Exception e)
         {
             // Notify exception to ExceptionReceiver
-            LayoutService.Exception.Value = e;
+            ExceptionHub.Exception.Value = e;
         }
         finally
         {

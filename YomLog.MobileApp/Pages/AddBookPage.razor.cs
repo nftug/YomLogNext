@@ -1,11 +1,9 @@
-using System.Diagnostics;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services;
-using YomLog.MobileApp.Components;
 using YomLog.MobileApp.Entities;
 using YomLog.MobileApp.Services.Api;
 using YomLog.Shared.Exceptions;
@@ -15,8 +13,8 @@ namespace YomLog.MobileApp.Pages;
 public partial class AddBookPage : BindableComponentBase
 {
     [Inject] private GoogleBooksApiService ApiService { get; set; } = null!;
-    [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IDebugLoggerService DebugLogger { get; set; } = null!;
 
     [Parameter, SupplyParameterFromQuery] public string? Query { get; set; }
 
@@ -76,7 +74,7 @@ public partial class AddBookPage : BindableComponentBase
         }
         catch (Exception e) when (e is IApiException exception)
         {
-            // await LoggerService.Print(exception.Message!);
+            DebugLogger.Print<AddBookPage>(exception.Message!);
         }
         finally
         {

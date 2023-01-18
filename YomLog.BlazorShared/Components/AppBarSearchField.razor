@@ -1,17 +1,17 @@
 <MudHidden Invert="true" Breakpoint="Breakpoint.Xs">
-    @if (_showingSearchBar)
+    @if (_showingSearchField)
     {
         <form class="mud-width-full" @onsubmit="OnSubmitSearchForm">
             <MudTextField @ref="_searchField"
-                      Class="ml-3"
                       Style="font-size: var(--mud-typography-body1-size); margin-top: 0px; color: var(--mud-palette-appbar-text);"
                       @bind-Value="_searchFieldText"
-                      Placeholder="Enter search text"
+                      Placeholder="Enter search keywords"
                       InputType="InputType.Search"
                       Clearable="true"
+                      Immediate="true"
                       Margin="Margin.Dense"
-                      AutoFocus="true"
-                      OnBlur="RecoverSearchBarState" />
+                      AutoFocus="IsQueryEmpty || AutoFocus"
+                      OnBlur="() => RecoverSearchFieldState(checkFocus: true)" />
         </form>
     }
     else
@@ -21,7 +21,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Search"
                    Color="Color.Inherit"
                    Edge="Edge.End"
-                   OnClick="(() => _showingSearchBar = true)" />
+                   OnClick="(() => _showingSearchField = true)" />
     }
 </MudHidden>
 
@@ -30,13 +30,14 @@
 
     <form style="width: 450px" @onsubmit="OnSubmitSearchForm">
         <MudTextField @ref="_searchField"
-                      Class="ml-3"
                       Style="font-size: var(--mud-typography-body1-size); margin-top: 0px; color: var(--mud-palette-appbar-text);"
                       @bind-Value="_searchFieldText"
-                      Placeholder="Enter search text"
+                      Placeholder="Enter search keywords"
                       InputType="InputType.Search"
                       Clearable="true"
+                      Immediate="true"
                       Margin="Margin.Dense"
-                      Variant="Variant.Outlined" />
+                      Variant="Variant.Outlined"
+                      AutoFocus="IsQueryEmpty || AutoFocus" />
     </form>
 </MudHidden>

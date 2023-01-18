@@ -6,7 +6,7 @@
 @if (AppSettings.IsNativeApp)
 {
     <MudText Typo="Typo.h6"
-             Class="ml-3 mud-width-full"
+             Class="mud-width-full"
              Style=@($"cursor: pointer; {TextAlign}")
              @onclick="ScrollInfoService.ScrollToTopAsync">
         @(Title ?? LayoutService.Page.Value?.Title ?? AppSettings.AppName)
@@ -15,12 +15,12 @@
 else
 {
     <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-        <MudText Typo="Typo.h6" Class="ml-3 mud-width-full" Style="cursor: pointer;">
+        <MudText Typo="Typo.h6" Class="mud-width-full" Style="cursor: pointer;">
             @(Title ?? LayoutService.Page.Value?.Title ?? AppSettings.AppName)
         </MudText>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
-        <MudText Typo="Typo.h6" Class="ml-3 mud-width-full" Style="cursor: pointer;">
+        <MudText Typo="Typo.h6" Class="mud-width-full" Style="cursor: pointer;">
             @AppSettings.AppName
         </MudText>
     </MudHidden>

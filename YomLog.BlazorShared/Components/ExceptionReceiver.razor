@@ -1,13 +1,13 @@
 @inherits BindableComponentBase
-@inject LayoutService LayoutService
+@inject ExceptionHubService ExceptionHub
 
 @code {
     protected override void OnInitialized()
     {
-        LayoutService.Exception
+        ExceptionHub.Exception
             .Where(v => v != null)
             .Subscribe(v => {
-                LayoutService.Exception.Value = null;
+                ExceptionHub.Exception.Value = null;
                 throw v!;
             })
             .AddTo(Disposable);

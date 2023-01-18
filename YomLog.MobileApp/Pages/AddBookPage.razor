@@ -4,15 +4,21 @@
 
 <PageContainer Title="Add Books" MaxWidth="MaxWidth.Large" LeftButton="AppBarLeftButton.Back">
     <TitleContent>
-        <AppBarSearchBar Query="@Query" NavigateAction="OnNavigateForSearch" SearchAction="SearchAsync">
+        <AppBarSearchField Query="@Query" NavigateAction="OnNavigateForSearch" SearchAction="SearchAsync" AutoFocus="true">
             <AppBarTitle />
-        </AppBarSearchBar>
+        </AppBarSearchField>
     </TitleContent>
 
     <MainContent>
         @if (string.IsNullOrEmpty(Query))
         {
-            <p>Enter some words to search books.</p>
+            <div style="text-align: center;" class="mt-8">
+                <MudText Typo="Typo.h6" Class="mb-5">Search new books</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Search" Size="Size.Large" Class="mb-5" />
+                <MudText Typo="Typo.body2">
+                    To search new books, enter search keywords on the top field.
+                </MudText>
+            </div>
             return;
         }
 

@@ -5,8 +5,7 @@
 
 <MudThemeProvider @ref="@_mudThemeProvider"
                   Theme="new MudTheme()"
-                  IsDarkMode="@LayoutService.IsDarkMode"
-                  IsDarkModeChanged="LayoutService.SetDarkMode" />
+                  @bind-IsDarkMode="LayoutService.IsDarkMode.Value" />
 <MudDialogProvider FullWidth="true"
                    MaxWidth="MaxWidth.ExtraSmall"
                    CloseButton="false"

@@ -6,14 +6,16 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
                 Color="Color.Inherit"
                 Edge="Edge.Start"
-                OnClick="DrawerToggle" />
+                OnClick="DrawerToggle"
+                Class="mr-3" />
     }
     else
     {
         <MudIconButton Icon="@Icons.Material.Filled.ArrowBack"
                 Color="Color.Inherit"
                 Edge="Edge.Start"
-                OnClick="BackButtonClicked" />
+                OnClick="BackButtonClicked"
+                Class="mr-3" />
     }
 
     @if (LayoutService.Page.Value?.TitleContent != null)

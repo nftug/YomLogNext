@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using System.Reactive.Linq;
 using YomLog.BlazorShared.Models;
 using Reactive.Bindings.Extensions;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -23,11 +24,13 @@ public partial class AppBarContainer : BindableComponentBase
         LayoutService.Page.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
         HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
         LayoutService.AppBarRerenderRequested += Rerender;
+        NavigationManager.LocationChanged += OnLocationChanged;
     }
 
     protected override void Dispose(bool disposing)
     {
         LayoutService.AppBarRerenderRequested -= Rerender;
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 
     public async void BackButtonClicked()
@@ -44,4 +47,6 @@ public partial class AppBarContainer : BindableComponentBase
     {
         LayoutService.DrawerOpen.Value = !LayoutService.DrawerOpen.Value;
     }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => Rerender();
 }

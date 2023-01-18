@@ -8,7 +8,6 @@ using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Entities;
 using YomLog.BlazorShared.Services.Repository;
-using System.Reactive.Linq;
 
 namespace YomLog.BlazorShared.Services;
 
@@ -18,11 +17,11 @@ public class LayoutService : BindableBase
 
     private readonly IPreferenceRepositoryService _preference;
 
-    public ReactivePropertySlim<UserPreferences> UserPreferences { get; } = null!;
+    public ReactivePropertySlim<UserPreferences> UserPreferences { get; }
     public ReactivePropertySlim<bool> DrawerOpen { get; }
     public ReactivePropertySlim<PageContainer?> Page { get; }
-    public ReactivePropertySlim<Exception?> Exception = new();
     public ReactivePropertySlim<bool> IsInitializing { get; }
+    public ReactivePropertySlim<bool> IsDarkMode { get; }
 
     public event Action? AppBarRerenderRequested;
     public void RequestAppBarRerender() => AppBarRerenderRequested?.Invoke();
@@ -33,38 +32,30 @@ public class LayoutService : BindableBase
 
         DrawerOpen = new ReactivePropertySlim<bool>().AddTo(Disposable);
         Page = new ReactivePropertySlim<PageContainer?>().AddTo(Disposable);
-
         UserPreferences = new ReactivePropertySlim<UserPreferences>().AddTo(Disposable);
-        UserPreferences
-            .Skip(1)
-            .Subscribe(async v => await _preference.SaveAsync(Key, v));
-
-        Exception = Exception.AddTo(Disposable);
         IsInitializing = new ReactivePropertySlim<bool>(true).AddTo(Disposable);
+        IsDarkMode = new ReactivePropertySlim<bool>().AddTo(Disposable);
     }
-
-    public bool IsDarkMode { get; private set; }
-
-    public void SetDarkMode(bool value) => IsDarkMode = value;
 
     public async Task ApplyUserPreferences(bool isDarkModeDefaultTheme)
     {
+        UserPreferences.Value = new() { DarkTheme = isDarkModeDefaultTheme };
+        IsDarkMode.Value = isDarkModeDefaultTheme;
+
         var userPreferences = await _preference.GetAsync<UserPreferences>(Key) ?? new();
         if (userPreferences.DarkTheme != null)
         {
-            IsDarkMode = (bool)userPreferences.DarkTheme;
-            UserPreferences.Value = userPreferences;
+            IsDarkMode.Value = (bool)userPreferences.DarkTheme;
+            userPreferences.DarkTheme = IsDarkMode.Value;
         }
-        else
-        {
-            IsDarkMode = isDarkModeDefaultTheme;
-            UserPreferences.Value = new() { DarkTheme = IsDarkMode };
-        }
+
+        UserPreferences.Value = userPreferences;
     }
 
-    public void ToggleDarkMode()
+    public async Task ToggleDarkMode()
     {
-        IsDarkMode = !IsDarkMode;
-        UserPreferences.Value = new() { DarkTheme = IsDarkMode };
+        IsDarkMode.Value = !IsDarkMode.Value;
+        UserPreferences.Value.DarkTheme = IsDarkMode.Value;
+        await _preference.SaveAsync(Key, UserPreferences.Value);
     }
 }

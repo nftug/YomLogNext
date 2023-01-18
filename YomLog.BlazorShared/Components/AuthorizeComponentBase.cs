@@ -10,6 +10,7 @@ public abstract class AuthorizeComponentBase : ComponentBase
     protected Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
 
     protected IIdentity? CurrentUser;
+    protected bool IsAuthenticated => CurrentUser?.IsAuthenticated == true;
 
     protected async override Task OnParametersSetAsync()
     {
