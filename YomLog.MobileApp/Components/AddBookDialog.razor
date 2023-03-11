@@ -1,35 +1,28 @@
-<DialogBase DisableSidePadding="true" CloseButton="true" Title="Details of the book">
+<DialogBase DisableSidePadding="true" CloseButton="true" Title="本の追加">
     <DialogContent>
-        <MudContainer Style="max-height: 500px; overflow-y: scroll">
+        <MudContainer Style="max-height: 95vh; overflow-y: scroll">
             <MudSimpleTable Style="overflow-x: auto;">
                 <tbody>
                     <tr>
-                        <td style="width: 30%; font-weight: bold;">Title</td>
+                        <td style="width: 30%; font-weight: bold;">書名</td>
                         <td>@Item.Title</td>
                     </tr>
                     <tr>
-                        <td style="width: 30%; font-weight: bold;">Author</td>
+                        <td style="width: 30%; font-weight: bold;">著者</td>
                         <td>
                             <AuthorsLink Authors="Item.Authors" SearchByAuthor="SearchByAuthor" />
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 30%; font-weight: bold;">Description</td>
+                        <td style="width: 30%; font-weight: bold;">説明</td>
                         <td>
-                            @if (!string.IsNullOrEmpty(Item.Description))
-                            {
-                                <MudPaper Class="overflow-y-scroll mud-theme-transparent pa-2" MaxHeight="200px" Outlined="true">
-                                    @Item.Description
-                                </MudPaper>
-                            }
-                            else
-                            {
-                                <p>No description</p>
-                            }
+                            <MudPaper Class="overflow-y-scroll mud-theme-transparent pa-2" Height="30vh" Outlined="true">
+                                @(Item.Description is { Length: > 0 } ? Item.Description : "説明がありません")
+                            </MudPaper>
                         </td>
                     </tr>
                     <tr>
-                        <td style="width: 30%; font-weight: bold;">Pages</td>
+                        <td style="width: 30%; font-weight: bold;">ページ数</td>
                         <td>@Item.TotalPage</td>
                     </tr>
                     <tr>
@@ -37,7 +30,7 @@
                         <td>@Item.Isbn</td>
                     </tr>
                     <tr>
-                        <td style="width: 30%; font-weight: bold;">Cover</td>
+                        <td style="width: 30%; font-weight: bold;">書影</td>
                         <td>
                             <MudImage Src="@Item.Thumbnail" Height="128" />
                         </td>
@@ -48,13 +41,13 @@
     </DialogContent>
 
     <DialogActions>
-        <MudButton OnClick="context.Cancel">Cancel</MudButton>
+        <MudButton OnClick="context.Cancel">キャンセル</MudButton>
 
         <MudButton Variant="Variant.Filled"
                    Color="Color.Success"
                    StartIcon="@Icons.Material.Filled.AddCircle"
                    OnClick="() => context.Ok(true)">
-            Add
+            追加
         </MudButton>
     </DialogActions>
 </DialogBase>
@@ -75,11 +68,8 @@
             ["Item"] = item,
             ["SearchByAuthor"] = searchByAuthorCallback
         };
-        var options = new DialogOptions
-        {
-            MaxWidth = MaxWidth.Small
-        };
-        var dialog = dialogService.Show<BookDetailsDialog>("Detail", parameters, options);
+        var options = new DialogOptions { FullScreen = true };
+        var dialog = dialogService.Show<AddBookDialog>("AddBook", parameters, options);
         return await dialog.Result;
     }
 }

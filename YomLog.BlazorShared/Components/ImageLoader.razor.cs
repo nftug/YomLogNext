@@ -69,7 +69,7 @@ public partial class ImageLoader : BindableComponentBase
         }
         catch (IOException)
         {
-            Snackbar.Add("Cannot upload the image.", Severity.Error);
+            Snackbar.Add("この画像ファイルは設定できません。", Severity.Error);
         }
         finally
         {

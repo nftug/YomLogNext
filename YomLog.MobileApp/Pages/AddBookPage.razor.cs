@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
-using YomLog.BlazorShared.Services;
 using YomLog.MobileApp.Entities;
 using YomLog.MobileApp.Services.Api;
 using YomLog.Shared.Exceptions;

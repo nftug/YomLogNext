@@ -12,8 +12,8 @@
         </MudCardContent>
 
         <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDetail">
-                See Details
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDetails">
+                詳細を見る
             </MudButton>
         </MudCardActions>
     }
@@ -42,6 +42,6 @@
         await SearchByAuthor.InvokeAsync(author);
     }
 
-    private async Task OnClickDetail()
-        => await BookDetailsDialog.ShowDialog(DialogService, Item!, SearchByAuthor);
+    private Task OnClickDetails()
+        => AddBookDialog.ShowDialog(DialogService, Item!, SearchByAuthor);
 }

@@ -13,7 +13,7 @@ public class MauiPopupService : IPopupService
         _dialogService = dialogService;
     }
 
-    public async Task<bool> ShowConfirm(string title, string message, string okText = "OK", string cancelText = "Cancel")
+    public async Task<bool> ShowConfirm(string title, string message, string okText = "OK", string cancelText = "キャンセル")
     {
         var dialog = await Dialog.ShowDialog(_dialogService, title, message, okText, cancelText);
         return !dialog.Canceled;
@@ -29,11 +29,11 @@ public class MauiPopupService : IPopupService
         => Application.Current!.MainPage!.DisplayAlert(title, message, okText);
 
     public Task<bool> ShowNativeConfirm
-        (string title, string message, string okText = "OK", string cancelText = "Cancel")
+        (string title, string message, string okText = "OK", string cancelText = "キャンセル")
         => Application.Current!.MainPage!.DisplayAlert(title, message, okText, cancelText);
 
     public Task<string> ShowNativePrompt
-        (string title, string message, string okText = "OK", string cancelText = "Cancel")
+        (string title, string message, string okText = "OK", string cancelText = "キャンセル")
         => Application.Current!.MainPage!.DisplayPromptAsync(title, message, okText, cancelText);
 
     /*
@@ -41,7 +41,7 @@ public class MauiPopupService : IPopupService
         string title,
         string message,
         string okText = "OK",
-        string cancelText = "Cancel",
+        string cancelText = "キャンセル",
         string? placeHolder = null
     )
         => await Application.Current!.MainPage!.DisplayPromptAsync(title, message, okText, cancelText, placeHolder);

@@ -1,12 +1,10 @@
 ﻿@page "/"
 
-<PageContainer Title="Home" TopPage="true">
-    <MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-    <MudText Class="mb-8">Welcome to your new app, powered by MudBlazor!</MudText>
+<PageContainer CenteredContainer="true">
+    <MudImage Src="images/dotnet_bot.svg" Height="128px" Alt="Dotnet Bot" Class="ma-4" />
+
+    <MudText Typo="Typo.h4" Class="mt-2" GutterBottom="true">@AppInfo.Name</MudText>
     <MudAlert Severity="Severity.Normal">
-        You can find documentation and examples on our website here:
-        <MudLink Href="https://mudblazor.com" Typo="Typo.body2" Color="Color.Inherit">
-            <b>www.mudblazor.com</b>
-        </MudLink>
+        これは仮のホーム画面です。
     </MudAlert>
 </PageContainer>

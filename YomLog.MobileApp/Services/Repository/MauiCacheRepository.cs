@@ -1,7 +1,7 @@
 using System.Text.Json;
 using YomLog.BlazorShared.Services.Repository;
 
-namespace YomLog.MobileApp.Services;
+namespace YomLog.MobileApp.Services.Repository;
 
 public class MauiCacheRepository : ICacheRepositoryService
 {

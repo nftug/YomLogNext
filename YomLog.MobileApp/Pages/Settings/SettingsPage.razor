@@ -2,13 +2,13 @@
 
 @inject LayoutService LayoutService
 
-<PageContainer Title="Settings" MaxWidth="MaxWidth.Small">
+<PageContainer Title="設定" MaxWidth="MaxWidth.Small">
     <MudExpansionPanels>
-        <MudExpansionPanel Text="Appearance" IsExpanded="true">
+        <MudExpansionPanel Text="外観の設定" IsExpanded="true">
             <MudList>
                 <MudListItem>
                     <MudSwitch @bind-Checked="@_isDarkMode" @onclick="LayoutService.ToggleDarkMode"
-                               Color="Color.Primary" Label="Dark mode" />
+                               Color="Color.Primary" Label="ダークモード" />
                 </MudListItem>
             </MudList>
         </MudExpansionPanel>

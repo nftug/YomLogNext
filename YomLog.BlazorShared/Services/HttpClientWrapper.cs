@@ -136,7 +136,7 @@ public class HttpClientWrapper : BindableBase
                     !string.IsNullOrEmpty(exception.Response) && exception.Response.Length <= 100
                     ? exception.Response
                     : exception.Message ?? e.Message;
-                await _popupService.ShowPopup("API Error", message);
+                await _popupService.ShowPopup("APIエラー", message);
             }
 
             throw (Exception)exception;

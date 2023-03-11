@@ -8,9 +8,9 @@ public static class DateTimeExtension
         var now = DateTime.Now;
 
         if (localDateTime.Date == now.Date)
-            return $"Today {localDateTime:HH:mm}";
+            return $"今日 {localDateTime:HH:mm}";
         else if (now.Date - localDateTime.Date == TimeSpan.FromDays(1))
-            return $"Yesterday {localDateTime:HH:MM}";
+            return $"昨日 {localDateTime:HH:MM}";
         else if (now.Date - localDateTime.Date < TimeSpan.FromDays(7))
             return $"{localDateTime:dddd HH:MM}";
         else if (now.Year == localDateTime.Year)

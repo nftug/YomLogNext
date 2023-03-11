@@ -14,7 +14,7 @@ public class EnvironmentHelper : IEnvironmentHelper
 
     public async void QuitApp()
     {
-        bool result = await _popupService.ShowConfirm("Confirm", "Are you sure to quit the app?");
+        bool result = await _popupService.ShowConfirm("確認", "アプリを終了しますか？");
         if (result) Application.Current?.Quit();
     }
 }

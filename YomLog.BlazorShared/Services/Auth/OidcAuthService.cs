@@ -64,7 +64,7 @@ public class OidcAuthService : AuthServiceBase
     {
         if (loginResult.IsError)
         {
-            await _popupService.ShowPopup("Error", "Login process failed.");
+            await _popupService.ShowPopup("エラー", "ログインに失敗しました。");
             return;
         }
 

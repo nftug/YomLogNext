@@ -9,31 +9,31 @@
             {
                 var errorTitle = e switch
                 {
-                    ModelErrorException err => "Invalid values",
-                    ForbiddenException err => "Access forbidden",
-                    UnauthorizedException err => "Unauthorized",
-                    NotFoundException err => "Not found",
-                    _ => "Something is wrong"
+                    ModelErrorException err => "不正な値です",
+                    ForbiddenException err => "アクセスが禁止されています",
+                    UnauthorizedException err => "認証が必要です",
+                    NotFoundException err => "アイテムが見つかりません",
+                    _ => "何かがおかしいです"
                 };
 
-                <b>API Error: @errorTitle</b>
+                <b>APIエラー: @errorTitle</b>
             }
             else
             {
-                <b>An unhandled error has occured.</b>
+                <b>エラーが発生しました。</b>
             }
         </MudText>
 
-        <MudText Typo="Typo.body2">Click close button to recover.</MudText>
+        <MudText Typo="Typo.body2">閉じるボタンを押して再試行できます。</MudText>
     </MudAlert>
 
     @if (ShowDetails)
     {
         <MudExpansionPanels Class="mb-5" MultiExpansion="true">
-            <MudExpansionPanel Text="Summary">
+            <MudExpansionPanel Text="エラー内容">
                 @ErrorSummary
             </MudExpansionPanel>
-            <MudExpansionPanel Text="Details">
+            <MudExpansionPanel Text="エラーの詳細">
                 <MudTextField T="string" Variant="Variant.Outlined" Text="@ErrorDetails"
                               Lines="10" ReadOnly="true" Style="font-size: var(--mud-typography-body2-size);" />
             </MudExpansionPanel>

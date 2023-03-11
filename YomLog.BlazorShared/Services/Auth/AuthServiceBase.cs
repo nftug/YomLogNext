@@ -79,7 +79,7 @@ public abstract class AuthServiceBase : BindableBase, IAuthService
         if (redirectTo != null)
             _navigationManager.NavigateTo(redirectTo, replace: true);
 
-        _snackbar.Add("Login succeed.", Severity.Info);
+        _snackbar.Add("ログインしました。", Severity.Info);
     }
 
     protected virtual async Task LogoutCoreAsync(bool forceLogout)
@@ -87,7 +87,7 @@ public abstract class AuthServiceBase : BindableBase, IAuthService
         if (!forceLogout)
         {
             bool answer = await _popupService.ShowConfirm
-                ("Logout", "Are you sure to logout?", okText: "Logout");
+                ("ログアウト", "現在のセッションからログアウトしますか？", okText: "ログアウト");
             if (!answer) return;
         }
 
@@ -95,7 +95,7 @@ public abstract class AuthServiceBase : BindableBase, IAuthService
         IsTokenValid.Value = false;
 
         _navigationManager.NavigateTo("");
-        _snackbar.Add("Logged out.", Severity.Info);
+        _snackbar.Add("ログアウトしました。", Severity.Info);
     }
 
     public Task<AuthenticationState> GetAuthenticationStateAsync() => _authStateProvider.GetAuthenticationStateAsync();

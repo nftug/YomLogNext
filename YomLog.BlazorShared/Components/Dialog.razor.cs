@@ -20,7 +20,7 @@ public partial class Dialog : ComponentBase
         string title,
         string contentText,
         string okText = "OK",
-        string? cancelText = "Cancel",
+        string? cancelText = "キャンセル",
         Color okColor = Color.Primary,
         Variant okVariant = Variant.Text,
         MaxWidth maxWidth = MaxWidth.Small,
