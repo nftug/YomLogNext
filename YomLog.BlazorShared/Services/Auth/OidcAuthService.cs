@@ -13,7 +13,6 @@ public class OidcAuthService : AuthServiceBase
 {
     private readonly OidcClient _oidcClient;
     private readonly ISessionStorageService _sessionStorage;
-    private readonly AppSettings _appSettings;
 
     public OidcAuthService(
         AuthenticationStateProvider authStateProvider,
@@ -22,14 +21,12 @@ public class OidcAuthService : AuthServiceBase
         ISnackbar snackbar,
         OidcClient oidcClient,
         ISessionStorageService sessionStorage,
-        ExceptionHubService exceptionHub,
-        AppSettings appSettings
+        ExceptionHubService exceptionHub
 
     ) : base(authStateProvider, popupService, navigationManager, snackbar, exceptionHub)
     {
         _oidcClient = oidcClient;
         _sessionStorage = sessionStorage;
-        _appSettings = appSettings;
     }
 
     public override async Task LoginAsync(string? redirectTo = null)
@@ -87,21 +84,21 @@ public class OidcAuthService : AuthServiceBase
 
         // For Auth0, you must change logout endpoint URL.
         // https://auth0.com/docs/api/authentication#logout
-        var options = _appSettings.OidcClientOptions;
+
         var logoutUrl = QueryHelpers.AddQueryString(
-            $"{options.Authority}/v2/logout",
+            $"{_oidcClient.Options.Authority}/v2/logout",
             new Dictionary<string, string>
             {
-                { "client_id", options.ClientId },
-                { "returnTo", options.PostLogoutRedirectUri }
+                { "client_id", _oidcClient.Options.ClientId },
+                { "returnTo", _oidcClient.Options.PostLogoutRedirectUri }
             });
 
         if (_oidcClient.Options.Browser != null)
         {
             // await _oidcClient.LogoutAsync();
-            await _oidcClient.Options.Browser.InvokeAsync(new(logoutUrl, options.PostLogoutRedirectUri));
+            await _oidcClient.Options.Browser.InvokeAsync(new(logoutUrl, _oidcClient.Options.PostLogoutRedirectUri));
             _navigationManager.NavigateTo("");
-            _snackbar.Add("Logged out.", Severity.Info);
+            _snackbar.Add("ログアウトしました。", Severity.Info);
         }
         else
         {

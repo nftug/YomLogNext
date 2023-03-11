@@ -2,6 +2,9 @@
 @inherits BindableComponentBase
 @inject IPopupService PopupService
 @inject LayoutService LayoutService
+@inject IJSRuntime JSRuntime
+
+@if (!RenderDialog) return;
 
 <NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 

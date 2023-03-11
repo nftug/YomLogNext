@@ -1,5 +1,21 @@
 'use strict'
 
+// Back to close (on top page)
+window.onGoBackOnTopPage = () => {
+  window.pageContainer?.invokeMethodAsync('GoBackOnTopPage')
+}
+
+window.onRenderTopPage = (pageContainer) => {
+  history.pushState(null, null, location.href)
+  window.pageContainer = pageContainer
+  window.addEventListener('popstate', window.onGoBackOnTopPage)
+}
+
+window.onLeaveTopPage = () => {
+  window.pageContainer = null
+  window.removeEventListener('popstate', window.onGoBackOnTopPage)
+}
+
 // Scroll
 window.onload = () => {
   // Since app manages scroll position, scrollRestoration should set to 'manual'
@@ -34,6 +50,20 @@ window.onscroll = () => {
 
 window.setScrollY = (scrollY) => {
   window.scrollTo(0, scrollY)
+}
+
+const preventDefault = (event) => event.preventDefault()
+
+window.disableScroll = () => {
+  const app = document.querySelector('.mud-main-content')
+  app.addEventListener('touchmove', preventDefault, { passive: false })
+  app.addEventListener('mousewheel', preventDefault, { passive: false })
+}
+
+window.enableScroll = () => {
+  const app = document.querySelector('.mud-main-content')
+  app.removeEventListener('touchmove', preventDefault, { passive: false })
+  app.removeEventListener('mousewheel', preventDefault, { passive: false })
 }
 
 // Timeline

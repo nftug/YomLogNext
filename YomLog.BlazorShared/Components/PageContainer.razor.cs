@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Reactive.Bindings.Extensions;
 using System.Reactive.Linq;
-using Microsoft.AspNetCore.Components.Routing;
 using YomLog.BlazorShared.Enums;
+using Microsoft.JSInterop;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -15,6 +15,7 @@ public partial class PageContainer : BindableComponentBase
     [Inject] private HttpClientWrapper HttpClientWrapper { get; set; } = null!;
     [Inject] private IEnvironmentHelper EnvironmentHelper { get; set; } = null!;
     [Inject] private AppSettings AppSettings { get; set; } = null!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
 
     [Parameter] public string? Title { get; set; }
     [Parameter] public AppBarLeftButton LeftButton { get; set; } = AppBarLeftButton.Drawer;
@@ -47,12 +48,20 @@ public partial class PageContainer : BindableComponentBase
         HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
     }
 
-    private void OnBeforeInternalNavigation(LocationChangingContext context)
+    protected override async void OnAfterRender(bool firstRender)
     {
-        if (!context.IsNavigationIntercepted && IsTopPage)
-        {
-            context.PreventNavigation();
-            EnvironmentHelper.QuitApp();
-        }
+        if (!firstRender) return;
+        if (IsTopPage)
+            await JSRuntime.InvokeVoidAsync("onRenderTopPage", DotNetObjectReference.Create(this));
     }
+
+    protected override async void Dispose(bool disposing)
+    {
+        if (!disposing) return;
+        if (IsTopPage)
+            await JSRuntime.InvokeVoidAsync("onLeaveTopPage");
+    }
+
+    [JSInvokable("GoBackOnTopPage")]
+    public void OnGoBackOnTopPage() => EnvironmentHelper.QuitApp();
 }
