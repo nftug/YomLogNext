@@ -1,0 +1,13 @@
+@page "/about"
+@attribute [AllowAnonymous]
+
+<PageContainer Title=@($"{AppInfo.Name}について") MaxWidth="MaxWidth.Small" CenteredContainer="true">
+    <MudImage Src="images/dotnet_bot.svg" Width="128px" Alt="Dotnet Bot" Class="ma-4" />
+
+    <MudText Typo="Typo.h4" Class="mt-2" GutterBottom="true">@AppInfo.Name</MudText>
+    <MudText Class="mb-2">@AppInfo.VersionString</MudText>
+    <MudText Class="mb-6">&copy; 2023 V-nyang</MudText>
+    <MudText Class="mb-6" Typo="Typo.body2">
+        読書量の管理アプリ
+    </MudText>
+</PageContainer>
