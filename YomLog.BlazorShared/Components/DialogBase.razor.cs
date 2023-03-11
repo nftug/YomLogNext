@@ -23,6 +23,7 @@ public partial class DialogBase : BindableComponentBase
 
     private object? Result { get; set; }
     public MudDialog? Dialog { get; set; }
+    public static readonly string ShouldForceNavigate = nameof(ShouldForceNavigate);
 
     protected override void OnInitialized()
     {
@@ -47,8 +48,10 @@ public partial class DialogBase : BindableComponentBase
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)
     {
+        if (context.HistoryEntryState != ShouldForceNavigate && !context.IsNavigationIntercepted)
+            context.PreventNavigation();
+
         await CloseDialog();
-        context.PreventNavigation();
     }
 
     private async Task CloseDialog()
