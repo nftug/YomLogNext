@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
 using YomLog.BlazorShared.Extensions;
-using YomLog.BlazorShared.Models;
 using YomLog.MobileApp.Services;
 
 namespace YomLog.MobileApp;
@@ -33,25 +32,22 @@ public static class MauiProgram
         // #endif
 
         string apiBaseUri = config.GetRequiredSection("ApiBaseUri").Get<string>()!;
-        var oidcSettings = config.GetRequiredSection(nameof(OidcSettings)).Get<OidcSettings>();
+        string oidcClientId = config.GetRequiredSection("Oidc").GetValue<string>("ClientId")!;
+        string oidcAuthority = config.GetRequiredSection("Oidc").GetValue<string>("Authority")!;
 
         builder.Services.AddAppServices(new()
         {
             MudServicesConfiguration = config =>
             {
-                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
-                config.SnackbarConfiguration.PreventDuplicates = false;
-                config.SnackbarConfiguration.NewestOnTop = true;
-                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.ShowCloseIcon = false;
                 config.SnackbarConfiguration.VisibleStateDuration = 3000;
                 config.SnackbarConfiguration.HideTransitionDuration = 200;
                 config.SnackbarConfiguration.ShowTransitionDuration = 200;
-                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             },
             OidcClientOptions = new()
             {
-                Authority = oidcSettings?.Authority,
-                ClientId = oidcSettings?.ClientId,
+                Authority = oidcAuthority,
+                ClientId = oidcClientId,
                 Scope = "openid profile offline_access",
                 RedirectUri = "yomlog://callback",
                 PostLogoutRedirectUri = "yomlog://callback",
@@ -63,9 +59,21 @@ public static class MauiProgram
                 DefaultMaxWidth = MaxWidth.Small,
                 AppName = AppInfo.Name,
                 ApiBaseAddress = new Uri(apiBaseUri)
-            }
+            },
+            HttpMessageHandler = GetInsecureHttpHandler()
         });
 
         return builder.Build();
+    }
+
+    private static HttpMessageHandler GetInsecureHttpHandler()
+    {
+#if ANDROID
+        var handler = new Platforms.Android.CustomAndroidMessageHandler();
+#else
+		var handler = new HttpClientHandler();
+#endif
+        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+        return handler;
     }
 }

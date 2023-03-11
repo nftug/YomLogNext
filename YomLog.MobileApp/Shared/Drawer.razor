@@ -40,7 +40,7 @@
 
         @if (CurrentUser?.IsAuthenticated == true)
         {
-            <MudNavLink Icon="@Icons.Material.Filled.Logout" OnClick="@(() => AuthService.LogoutAsync())">
+            <MudNavLink Icon="@Icons.Material.Filled.Logout" OnClick="() => AuthService.LogoutAsync()">
                 Logout
             </MudNavLink>
         }

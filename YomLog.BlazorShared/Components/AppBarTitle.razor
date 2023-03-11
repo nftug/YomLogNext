@@ -6,8 +6,7 @@
 @if (AppSettings.IsNativeApp)
 {
     <MudText Typo="Typo.h6"
-             Class="mud-width-full"
-             Style=@($"cursor: pointer; {TextAlign}")
+             Class="mud-width-full cursor-pointer"
              @onclick="ScrollInfoService.ScrollToTopAsync">
         @(Title ?? LayoutService.Page.Value?.Title ?? AppSettings.AppName)
     </MudText>

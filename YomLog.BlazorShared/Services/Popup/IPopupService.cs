@@ -5,6 +5,7 @@ public interface IPopupService
     Task ShowPopup(string title, string message, string okText = "OK");
     Task<bool> ShowConfirm
         (string title, string message, string okText = "OK", string cancelText = "Cancel");
+    Task ShowImagePopup(string? uri);
     /*
     public Task<string?> ShowPrompt(
         string title,

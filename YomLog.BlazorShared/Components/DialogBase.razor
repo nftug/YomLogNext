@@ -1,15 +1,36 @@
-@inject IJSRuntime JSRuntime
-@implements IDisposable
+@using YomLog.BlazorShared.Services.Popup
+@inherits BindableComponentBase
+@inject IPopupService PopupService
+@inject LayoutService LayoutService
 
-<MudDialog OnBackdropClick="Cancel" Class="@Class" Style="@Style" DisableSidePadding="DisableSidePadding">
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+<MudDialog @ref="Dialog"
+           OnBackdropClick="() => _ = Cancel()"
+           Class="@Class"
+           Style="@Style"
+           DisableSidePadding="DisableSidePadding">
     <TitleContent>
         @if (TitleContent != null)
         {
             @TitleContent(this)
         }
+        else
+        {
+            <MudText Typo="Typo.h6">@(Title ?? MudDialog?.Title)</MudText>
+        }
+
+        @if (CloseButton)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="Cancel" Class="mud-button-close" />
+        }
     </TitleContent>
 
     <DialogContent>
+        <MudOverlay Visible="LayoutService.IsProcessing.Value" DarkBackground="true">
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Large" />
+        </MudOverlay>
+
         @DialogContent(this)
     </DialogContent>
 
@@ -20,37 +41,3 @@
         }
     </DialogActions>
 </MudDialog>
-
-@code {
-    [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
-    [Parameter] public RenderFragment<DialogBase>? TitleContent { get; set; } = null!;
-    [Parameter] public RenderFragment<DialogBase> DialogContent { get; set; } = null!;
-    [Parameter] public RenderFragment<DialogBase>? DialogActions { get; set; } = null!;
-    [Parameter] public string? Class { get; set; }
-    [Parameter] public string? Style { get; set; }
-    [Parameter] public bool DisableSidePadding { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await JSRuntime.InvokeVoidAsync("onOpenDialog");
-    }
-
-    public async Task Ok<T>(T result)
-    {
-        MudDialog?.Close(DialogResult.Ok(result));
-        await JSRuntime.InvokeVoidAsync("history.back");
-    }
-
-    public async void Cancel()
-    {
-        MudDialog?.Cancel();
-        await JSRuntime.InvokeVoidAsync("history.back");
-    }
-
-    public async void Dispose()
-    {
-        await Task.Delay(100);
-        await JSRuntime.InvokeVoidAsync("onRemoveDialog");
-        GC.SuppressFinalize(this);
-    }
-}

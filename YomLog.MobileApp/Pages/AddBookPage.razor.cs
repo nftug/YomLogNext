@@ -14,7 +14,6 @@ public partial class AddBookPage : BindableComponentBase
 {
     [Inject] private GoogleBooksApiService ApiService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
-    [Inject] private IDebugLoggerService DebugLogger { get; set; } = null!;
 
     [Parameter, SupplyParameterFromQuery] public string? Query { get; set; }
 
@@ -74,7 +73,7 @@ public partial class AddBookPage : BindableComponentBase
         }
         catch (Exception e) when (e is IApiException exception)
         {
-            DebugLogger.Print<AddBookPage>(exception.Message!);
+            System.Diagnostics.Debug.WriteLine(exception.Message!);
         }
         finally
         {

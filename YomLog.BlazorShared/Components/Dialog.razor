@@ -14,7 +14,7 @@
         {
             <MudButton OnClick="context.Cancel">@CancelText</MudButton>
         }
-        <MudButton Variant="@OkVariant" Color="@OkColor" OnClick="@(() => context.Ok(true))">
+        <MudButton Variant="@OkVariant" Color="@OkColor" OnClick="() => context.Ok(true)">
             @OkText
         </MudButton>
     </DialogActions>

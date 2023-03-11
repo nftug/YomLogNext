@@ -1,4 +1,4 @@
-﻿namespace YomLog.BlazorShared.Services.Auth;
+﻿namespace YomLog.BlazorShared.Models;
 
 public class TokenModel
 {

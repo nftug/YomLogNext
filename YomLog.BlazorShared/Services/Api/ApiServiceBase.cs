@@ -7,41 +7,65 @@ using YomLog.Shared.Queries;
 
 namespace YomLog.BlazorShared.Services.Api;
 
-public abstract class ApiServiceBase<TModel, TResultDTO, TCommandDTO, TQueryParameter>
-    : IApiService<TModel, TResultDTO, TCommandDTO, TQueryParameter>
-    where TModel : EntityBase<TModel>
-    where TResultDTO : ModelResultDTOBase<TModel, TResultDTO>
-    where TCommandDTO : ICommandDTO<TModel>
-    where TQueryParameter : IQueryParameter<TModel>
+public abstract class ApiServiceBase<TModel>
 {
     protected readonly HttpClientWrapper _httpClientWrapper;
+    protected virtual string Resource => typeof(TModel).Name.Pluralize();
 
     protected ApiServiceBase(HttpClientWrapper httpClientWrapper)
     {
         _httpClientWrapper = httpClientWrapper;
     }
 
-    protected virtual string Resource => $"{typeof(TModel).Name}s";
+}
 
-    public virtual async Task<Pagination<TResultDTO>> GetList(TQueryParameter param)
+public abstract class ApiGetServiceBase<TModel, TDetailsDTO> : ApiServiceBase<TModel>, IApiGetService<TModel, TDetailsDTO>
+    where TModel : EntityBase<TModel>
+    where TDetailsDTO : ModelDetailsDTOBase<TModel, TDetailsDTO>
+{
+    protected ApiGetServiceBase(HttpClientWrapper httpClientWrapper) : base(httpClientWrapper)
     {
-        var queries = param
-            .AsDictionary()
-            .Where(x => x.Value is not null)
-            .ToDictionary(x => x.Key, x => x.Value!.ToString());
-        var uri = QueryHelpers.AddQueryString(Resource, queries);
-        return await _httpClientWrapper.Get<Pagination<TResultDTO>>(uri);
     }
 
-    public virtual async Task<TResultDTO> Get(Guid id)
-        => await _httpClientWrapper.Get<TResultDTO>($"{Resource}/{id}");
+    public virtual Task<TDetailsDTO> Get(Guid id)
+        => _httpClientWrapper.Get<TDetailsDTO>($"{Resource}/{id}");
+}
 
-    public virtual async Task<TResultDTO> Create(TCommandDTO command)
-         => await _httpClientWrapper.Create<TResultDTO, TCommandDTO>(Resource, command);
+public abstract class ApiQueryFilterServiceBase<TModel, TDetailsDTO, TQueryParameter>
+    : ApiGetServiceBase<TModel, TDetailsDTO>, IApiQueryFilterService<TModel, TDetailsDTO, TQueryParameter>
+    where TModel : EntityBase<TModel>
+    where TDetailsDTO : ModelDetailsDTOBase<TModel, TDetailsDTO>
+    where TQueryParameter : IQueryParameter<TModel>
+{
+    protected ApiQueryFilterServiceBase(HttpClientWrapper httpClientWrapper) : base(httpClientWrapper)
+    {
+    }
 
-    public virtual async Task<TResultDTO> Put(Guid id, TCommandDTO command)
-        => await _httpClientWrapper.Put<TResultDTO, TCommandDTO>($"{Resource}/{id}", command);
+    public async Task<Pagination<TDetailsDTO>> GetList(TQueryParameter param)
+    {
+        var queries = param.AsDictionary();
+        var uri = QueryHelpers.AddQueryString(Resource, queries);
+        return await _httpClientWrapper.Get<Pagination<TDetailsDTO>>(uri);
+    }
+}
 
-    public virtual async Task Delete(Guid id)
-         => await _httpClientWrapper.Delete($"{Resource}/{id}");
+public abstract class ApiCrudServiceBase<TModel, TDetailsDTO, TCommandDTO, TQueryParameter>
+    : ApiQueryFilterServiceBase<TModel, TDetailsDTO, TQueryParameter>, IApiService<TModel, TDetailsDTO, TCommandDTO, TQueryParameter>
+    where TModel : EntityBase<TModel>
+    where TDetailsDTO : ModelDetailsDTOBase<TModel, TDetailsDTO>
+    where TCommandDTO : ICommandDTO<TModel>
+    where TQueryParameter : IQueryParameter<TModel>
+{
+    protected ApiCrudServiceBase(HttpClientWrapper httpClientWrapper) : base(httpClientWrapper)
+    {
+    }
+
+    public virtual Task<TDetailsDTO> Create(TCommandDTO command)
+         => _httpClientWrapper.Create<TDetailsDTO, TCommandDTO>(Resource, command);
+
+    public virtual Task<TDetailsDTO> Put(Guid id, TCommandDTO command)
+        => _httpClientWrapper.Put<TDetailsDTO, TCommandDTO>($"{Resource}/{id}", command);
+
+    public virtual Task Delete(Guid id)
+         => _httpClientWrapper.Delete($"{Resource}/{id}");
 }

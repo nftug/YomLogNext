@@ -12,6 +12,8 @@ public partial class Dialog : ComponentBase
     [Parameter] public string? CancelText { get; set; }
     [Parameter] public Color OkColor { get; set; } = Color.Primary;
     [Parameter] public Variant OkVariant { get; set; } = Variant.Text;
+    [Parameter] public bool CloseButton { get; set; } = false;
+    [Parameter] public bool CloseByHistoryBack { get; set; } = true;
 
     public static async Task<DialogResult> ShowDialog(
         IDialogService dialogService,
@@ -21,23 +23,23 @@ public partial class Dialog : ComponentBase
         string? cancelText = "Cancel",
         Color okColor = Color.Primary,
         Variant okVariant = Variant.Text,
-        MaxWidth maxWidth = MaxWidth.Small
+        MaxWidth maxWidth = MaxWidth.Small,
+        bool closeButton = false,
+        bool closeByHistoryBack = true
     )
     {
         var parameters = new DialogParameters
         {
-            ["ContentText"] = contentText,
-            ["OkText"] = okText,
-            ["CancelText"] = cancelText,
-            ["OkColor"] = okColor,
-            ["OkVariant"] = okVariant
+            [nameof(ContentText)] = contentText,
+            [nameof(OkText)] = okText,
+            [nameof(CancelText)] = cancelText,
+            [nameof(OkColor)] = okColor,
+            [nameof(OkVariant)] = okVariant,
+            [nameof(CloseButton)] = closeButton,
+            [nameof(CloseByHistoryBack)] = closeByHistoryBack
         };
         var options = new DialogOptions { MaxWidth = maxWidth };
         var dialog = dialogService.Show<Dialog>(title, parameters, options);
-        var result = await dialog.Result;
-
-        // Wait for window.showingDialog changed into false
-        await Task.Delay(200);
-        return result;
+        return await dialog.Result;
     }
 }

@@ -19,19 +19,22 @@ public class MauiPopupService : IPopupService
         return !dialog.Canceled;
     }
 
-    public async Task ShowPopup(string title, string message, string okText = "OK")
-        => await Dialog.ShowDialog(_dialogService, title, message, okText, cancelText: null);
+    public Task ShowPopup(string title, string message, string okText = "OK")
+        => Dialog.ShowDialog(_dialogService, title, message, okText, cancelText: null);
 
-    public async Task ShowNativePopup(string title, string message, string okText = "OK")
-        => await Application.Current!.MainPage!.DisplayAlert(title, message, okText);
+    public Task ShowImagePopup(string? uri)
+        => ImageDialog.ShowDialog(_dialogService, uri);
 
-    public async Task<bool> ShowNativeConfirm
+    public Task ShowNativePopup(string title, string message, string okText = "OK")
+        => Application.Current!.MainPage!.DisplayAlert(title, message, okText);
+
+    public Task<bool> ShowNativeConfirm
         (string title, string message, string okText = "OK", string cancelText = "Cancel")
-        => await Application.Current!.MainPage!.DisplayAlert(title, message, okText, cancelText);
+        => Application.Current!.MainPage!.DisplayAlert(title, message, okText, cancelText);
 
-    public async Task<string> ShowNativePrompt
+    public Task<string> ShowNativePrompt
         (string title, string message, string okText = "OK", string cancelText = "Cancel")
-        => await Application.Current!.MainPage!.DisplayPromptAsync(title, message, okText, cancelText);
+        => Application.Current!.MainPage!.DisplayPromptAsync(title, message, okText, cancelText);
 
     /*
     public async Task<string?> ShowPrompt(

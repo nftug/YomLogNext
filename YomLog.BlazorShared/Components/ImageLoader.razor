@@ -1,20 +1,21 @@
-﻿@inherits BindableComponentBase
-@inject IDialogService DialogService
+﻿@using YomLog.BlazorShared.Services.Popup
+@inherits BindableComponentBase
+@inject IPopupService PopupService
 
 <div class="d-flex justify-center mt-5">
-    <InputFile id="fileInput" OnChange="OnSelectImage" hidden accept="image/*" />
+    <InputFile id="fileInput" OnChange="OnSelectImage" hidden accept="@ContentType" />
 
-    @if (_isLoading.Value)
+    @if (IsLoading.Value)
     {
         <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
     }
-    else if (ImageSrc != null)
+    else if (_imageSrc != null)
     {
         <MudBadge Icon="@Icons.Material.Filled.Close" Color="Color.Error" Overlap="true"
               Class="mx-6 my-4" BadgeClass="cursor-pointer" OnClick="OnDeleteImage">
-                <MudImage Src="@ImageSrc" Width="200" Height="200"
-                      ObjectFit="ObjectFit.Contain" Class="rounded-sm cursor-pointer"
-                      @onclick="@(() => ImageDialog.ShowDialog(DialogService, ImageSrc))" />
+            <MudImage Src="@_imageSrc" Width="200" Height="200"
+                  ObjectFit="ObjectFit.Contain" Class="rounded-sm cursor-pointer"
+                  @onclick="() => PopupService.ShowImagePopup(_imageSrc)" />
         </MudBadge>
     }
     else
@@ -27,7 +28,7 @@
     }
 </div>
 
-@if (!Photo.Id.HasValue && _photoOrigin.Id.HasValue)
+@if (PictureId == default && _pictureIdOrigin != default)
 {
     <MudButton Color="Color.Primary" FullWidth="true" StartIcon="@Icons.Material.Filled.Refresh" OnClick="OnResetImage">
         Reset picture

@@ -1,0 +1,33 @@
+@typeparam T
+
+<MudText Typo="Typo">
+    @if (Items is null)
+    {
+        <span>@NoItemsText</span>
+        return;
+    }
+
+    @foreach (var (item, index) in Items.Select((item, index) => (item, index)))
+    {
+        @if (OnClickItem.HasDelegate)
+        {
+            <MudLink Typo="Typo" OnClick="() => OnClickItem.InvokeAsync(item)">@item</MudLink>
+        }
+        else
+        {
+            @item
+        }
+
+        @if (index + 1 < Items.Count())
+        {
+            <span>,&nbsp;</span>
+        }
+    }
+</MudText>
+
+@code {
+    [Parameter, EditorRequired] public IEnumerable<T>? Items { get; set; }
+    [Parameter] public Typo Typo { get; set; } = Typo.body2;
+    [Parameter] public EventCallback<T> OnClickItem { get; set; }
+    [Parameter] public string NoItemsText { get; set; } = "No items";
+}

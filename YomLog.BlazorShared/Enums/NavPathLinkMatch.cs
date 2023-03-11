@@ -1,4 +1,4 @@
-﻿namespace YomLog.BlazorShared.Models;
+﻿namespace YomLog.BlazorShared.Enums;
 
 public enum NavPathLinkMatch
 {

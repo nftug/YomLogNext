@@ -11,6 +11,8 @@ using MudBlazor.Services;
 using YomLog.BlazorShared.Services.Repository;
 using System.Reflection;
 using YomLog.Shared.Extensions;
+using YomLog.BlazorShared.Services.Api;
+using MudBlazor;
 
 namespace YomLog.BlazorShared.Extensions;
 
@@ -19,23 +21,49 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAppServices(this IServiceCollection services, AppConfiguration config)
     {
         services.AddSingleton(sp =>
-            new HttpClient { BaseAddress = config.AppSettings.ApiBaseAddress, Timeout = TimeSpan.FromSeconds(30) }
-        );
+        {
+            var httpClient =
+                config.HttpMessageHandler != null
+                ? new HttpClient(config.HttpMessageHandler) : new HttpClient();
+            httpClient.BaseAddress = config.AppSettings.ApiBaseAddress;
+            httpClient.Timeout = TimeSpan.FromSeconds(130);
 
-        services.AddMudServices(config.MudServicesConfiguration);
+            return httpClient;
+        });
 
-        AddAuthServices(services, config.OidcClientOptions);
+        services.AddMudServices(mudConfig =>
+        {
+            mudConfig.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
+            mudConfig.SnackbarConfiguration.PreventDuplicates = false;
+            mudConfig.SnackbarConfiguration.NewestOnTop = true;
+            mudConfig.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            mudConfig.SnackbarConfiguration.ShowTransitionDuration = 200;
+
+            config.MudServicesConfiguration(mudConfig);
+        });
+
+        // Add auth services
+        services.AddOptions();
+        services.AddAuthorizationCore();
+        services.AddScoped<AuthenticationStateProvider, MyAuthenticationStateProvider>();
+
+        if (config.OidcClientOptions != null)
+        {
+            services.AddTransient(sp => new OidcClient(config.OidcClientOptions));
+            services.AddScoped<IAuthService, OidcAuthService>();
+        }
 
         // Features
         // Blazor特有の機能 (JSRuntime, NavigationManagerなど) を含むサービスは、Scoped or TransientでDIすること
         // (Singletonだと起動不可)
-        config.AppSettings.OidcClientOptions = config.OidcClientOptions;
         services.AddTransient(sp => config.AppSettings);
+        services.AddScoped<ExceptionHubService>();
         services.AddScoped<LayoutService>();
         services.AddScoped<PageInfoService>();
         services.AddScoped<HttpClientWrapper>();
         services.AddScoped<ScrollInfoService>();
-        services.AddScoped<ExceptionHubService>();
+        // PictureApiService may be called many times repeatedly, so inject as a scoped service.
+        services.AddScoped<PictureApiService>();
 
         services.AddBlazoredLocalStorage();
         services.AddBlazoredSessionStorage();
@@ -50,19 +78,9 @@ public static class ServiceCollectionExtensions
         services.AddAssemblyTypes<ICacheRepositoryService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes<IPopupService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes<IEnvironmentHelper>(assemblies, ServiceLifetime.Transient);
-        services.AddAssemblyTypes<IDebugLoggerService>(assemblies, ServiceLifetime.Transient);
         services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "ApiService");
 
         return services;
-    }
-
-    private static void AddAuthServices(this IServiceCollection services, OidcClientOptions options)
-    {
-        services.AddOptions();
-        services.AddAuthorizationCore();
-        services.AddTransient(sp => new OidcClient(options));
-        services.AddScoped<AuthenticationStateProvider, MyAuthenticationStateProvider>();
-        services.AddScoped<IAuthService, OidcAuthService>();
     }
 }
 
@@ -70,5 +88,6 @@ public class AppConfiguration
 {
     public AppSettings AppSettings { get; set; } = new();
     public Action<MudServicesConfiguration> MudServicesConfiguration { get; set; } = _ => { };
-    public OidcClientOptions OidcClientOptions { get; set; } = new();
+    public OidcClientOptions? OidcClientOptions { get; set; }
+    public HttpMessageHandler? HttpMessageHandler { get; set; }
 }

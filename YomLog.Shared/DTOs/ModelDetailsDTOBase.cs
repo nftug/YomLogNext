@@ -3,10 +3,10 @@ using YomLog.Shared.ValueObjects;
 
 namespace YomLog.Shared.DTOs;
 
-public abstract class ModelResultDTOBase<TModel, TModelDTO>
+public abstract class ModelDetailsDTOBase<TModel, TModelDTO>
     : ModelDTOBase<TModel, TModelDTO>, IResultDTO
     where TModel : EntityBase<TModel>
-    where TModelDTO : ModelResultDTOBase<TModel, TModelDTO>
+    where TModelDTO : ModelDetailsDTOBase<TModel, TModelDTO>
 {
     public long PK { get; init; }
     public DateTime CreatedOn { get; init; }
@@ -14,7 +14,7 @@ public abstract class ModelResultDTOBase<TModel, TModelDTO>
     public UserReference CreatedBy { get; init; } = null!;
     public UserReference UpdatedBy { get; init; } = null!;
 
-    protected ModelResultDTOBase(EntityBase<TModel> model) : base(model)
+    protected ModelDetailsDTOBase(EntityBase<TModel> model) : base(model)
     {
         PK = model.PK;
         CreatedOn = model.DateTimeRecord.CreatedOn;

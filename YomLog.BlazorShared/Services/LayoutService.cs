@@ -6,7 +6,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Models;
-using YomLog.BlazorShared.Entities;
 using YomLog.BlazorShared.Services.Repository;
 
 namespace YomLog.BlazorShared.Services;
@@ -20,7 +19,7 @@ public class LayoutService : BindableBase
     public ReactivePropertySlim<UserPreferences> UserPreferences { get; }
     public ReactivePropertySlim<bool> DrawerOpen { get; }
     public ReactivePropertySlim<PageContainer?> Page { get; }
-    public ReactivePropertySlim<bool> IsInitializing { get; }
+    public ReactivePropertySlim<bool> IsProcessing { get; }
     public ReactivePropertySlim<bool> IsDarkMode { get; }
 
     public event Action? AppBarRerenderRequested;
@@ -33,7 +32,7 @@ public class LayoutService : BindableBase
         DrawerOpen = new ReactivePropertySlim<bool>().AddTo(Disposable);
         Page = new ReactivePropertySlim<PageContainer?>().AddTo(Disposable);
         UserPreferences = new ReactivePropertySlim<UserPreferences>().AddTo(Disposable);
-        IsInitializing = new ReactivePropertySlim<bool>(true).AddTo(Disposable);
+        IsProcessing = new ReactivePropertySlim<bool>().AddTo(Disposable);
         IsDarkMode = new ReactivePropertySlim<bool>().AddTo(Disposable);
     }
 

@@ -2,9 +2,10 @@ using YomLog.BlazorShared.Services;
 using YomLog.BlazorShared.Models;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using Microsoft.JSInterop;
 using Reactive.Bindings.Extensions;
 using System.Reactive.Linq;
+using Microsoft.AspNetCore.Components.Routing;
+using YomLog.BlazorShared.Enums;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -12,7 +13,6 @@ public partial class PageContainer : BindableComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private HttpClientWrapper HttpClientWrapper { get; set; } = null!;
-    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
     [Inject] private IEnvironmentHelper EnvironmentHelper { get; set; } = null!;
     [Inject] private AppSettings AppSettings { get; set; } = null!;
 
@@ -31,12 +31,14 @@ public partial class PageContainer : BindableComponentBase
 
     private MaxWidth ContainerMaxWidth => MaxWidth ?? AppSettings.DefaultMaxWidth;
 
+    private bool IsTopPage => AppSettings.IsNativeApp && TopPage;
+
     public string MainContentClass
         => FooterContent != null ? "mud-main-content-with-footer" : string.Empty;
 
     private string OuterContainerClass
         => CenteredContainer
-            ? $"outer-centered-container {Class}"
+            ? $"outer-centered-container"
             : $"{(HttpClientWrapper.IsOffline.Value ? "mt-10 " : null)}{Class}";
 
     protected override void OnInitialized()
@@ -45,22 +47,12 @@ public partial class PageContainer : BindableComponentBase
         HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
     }
 
-    protected override async void OnAfterRender(bool firstRender)
+    private void OnBeforeInternalNavigation(LocationChangingContext context)
     {
-        if (!firstRender) return;
-        if (TopPage && AppSettings.IsNativeApp)
-            await JSRuntime.InvokeVoidAsync("onRenderTopPage", DotNetObjectReference.Create(this));
+        if (!context.IsNavigationIntercepted && IsTopPage)
+        {
+            context.PreventNavigation();
+            EnvironmentHelper.QuitApp();
+        }
     }
-
-    protected override async void Dispose(bool disposing)
-    {
-        if (!disposing) return;
-        if (TopPage && AppSettings.IsNativeApp)
-            await JSRuntime.InvokeVoidAsync("onLeaveTopPage");
-
-        base.Dispose(disposing);
-    }
-
-    [JSInvokable("GoBackOnTopPage")]
-    public void OnGoBackOnTopPage() => EnvironmentHelper.QuitApp();
 }

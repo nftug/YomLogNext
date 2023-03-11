@@ -12,14 +12,11 @@ public class WebAuthenticatorBrowser : IBrowser
     {
         try
         {
-            WebAuthenticatorResult authResult =
+            var authResult =
                 await WebAuthenticator.AuthenticateAsync(new Uri(options.StartUrl), new Uri(options.EndUrl));
             var authorizeResponse = ToRawIdentityUrl(options.EndUrl, authResult);
 
-            return new BrowserResult
-            {
-                Response = authorizeResponse
-            };
+            return new BrowserResult { Response = authorizeResponse };
         }
         catch (Exception ex)
         {

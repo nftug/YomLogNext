@@ -1,4 +1,4 @@
-namespace YomLog.BlazorShared.Entities;
+namespace YomLog.BlazorShared.Models;
 
 public class UserPreferences
 {

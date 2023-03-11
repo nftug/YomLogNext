@@ -1,12 +1,9 @@
-﻿<DialogBase Style="width: calc(100% - 24px);">
-    <TitleContent>
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="(() => context.Ok(true))" Class="mud-button-close" />
-    </TitleContent>
-
+﻿<DialogBase Style="width: calc(100% - 24px); max-height: 95vh;"
+            CloseButton="true"
+            DisableSidePadding="true">
     <DialogContent>
-        <div class="d-flex justify-center mx-n4">
-            <MudImage Src="@Image" Class="my-4" Fluid="true" />
+        <div class="d-flex justify-center">
+            <MudImage Src="@Image" Class="my-4" Fluid="true" Style="max-height: 85vh;" />
         </div>
     </DialogContent>
 </DialogBase>
@@ -19,10 +16,10 @@
     {
         var parameters = new DialogParameters { ["Image"] = image };
         var options = new DialogOptions
-            {
-                MaxWidth = MaxWidth.Small,
-                DisableBackdropClick = false
-            };
+        {
+            MaxWidth = MaxWidth.Small,
+            DisableBackdropClick = false
+        };
         var dialog = dialogService.Show<ImageDialog>("Image", parameters, options);
         return await dialog.Result;
     }

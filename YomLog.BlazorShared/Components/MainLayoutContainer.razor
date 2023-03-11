@@ -7,7 +7,7 @@
                   Theme="new MudTheme()"
                   @bind-IsDarkMode="LayoutService.IsDarkMode.Value" />
 <MudDialogProvider FullWidth="true"
-                   MaxWidth="MaxWidth.ExtraSmall"
+                   MaxWidth="MaxWidth.Small"
                    CloseButton="false"
                    DisableBackdropClick="true"
                    NoHeader="false"
@@ -28,19 +28,14 @@
             <ChildContent>
                 <ExceptionReceiver />
 
-                @if (LayoutService.IsInitializing.Value)
-                {
-                    <div class="d-flex justify-center mt-8">
-                        <MudProgressCircular Class="mt-2" Size="Size.Medium" Indeterminate="true" />
-                    </div>
-                }
-                else
-                {
-                    @ChildContent
-                }
+                <MudOverlay Visible="LayoutService.IsProcessing.Value" DarkBackground="true">
+                    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Large" />
+                </MudOverlay>
+
+                @ChildContent
             </ChildContent>
             <ErrorContent>
-                @if (context is IApiException e && e.StatusCode == HttpStatusCode.NotFound)
+                @if (context is NotFoundException)
                 {
                     @if (NotFoundSection != null)
                     {

@@ -1,36 +1,5 @@
 'use strict'
 
-// Back to close (on top page)
-window.onGoBackOnTopPage = () => {
-  if (window.showingDialog) return
-  window.pageContainer?.invokeMethodAsync('GoBackOnTopPage')
-}
-
-window.onRenderTopPage = (pageContainer) => {
-  history.pushState(null, null, location.href)
-  window.pageContainer = pageContainer
-  window.addEventListener('popstate', window.onGoBackOnTopPage)
-}
-
-window.onLeaveTopPage = () => {
-  window.pageContainer = null
-  window.removeEventListener('popstate', window.onGoBackOnTopPage)
-}
-
-// Dialog
-window.onOpenDialog = () => {
-  window.showingDialog = true
-  // When showing dialog, scrollRestoration should set to 'auto'
-  history.scrollRestoration = 'auto'
-  history.pushState('dialog', null, location.href)
-}
-
-window.onRemoveDialog = () => {
-  window.showingDialog = false
-  // Recover scrollRestoration
-  history.scrollRestoration = 'manual'
-}
-
 // Scroll
 window.onload = () => {
   // Since app manages scroll position, scrollRestoration should set to 'manual'
@@ -43,7 +12,6 @@ window.registerScrollInfoService = (scrollInfoService) => {
   }
 
   window.addEventListener('popstate', () => {
-    if (window.showingDialog) return
     window.scrollInfoService?.invokeMethodAsync('OnPopState')
   })
 }

@@ -6,7 +6,7 @@
         <MudCardContent Class="d-flex flex-grow-1 gap-2">
             <div class="flex-grow-1">
                 <MudText Class="mb-1">@Item.Title</MudText>
-                <AuthorsLink Authors="Item.Authors" SearchByAuthor="SearchByAuthor" />
+                <ItemList Items="Item.Authors" OnClickItem="(string author) => OnClickAuthor(author)" />
             </div>
             <MudImage Src="@Item.Thumbnail" Height="128" />
         </MudCardContent>
@@ -43,5 +43,5 @@
     }
 
     private async Task OnClickDetail()
-        => await BookDetailDialog.ShowDialog(DialogService, Item!, SearchByAuthor);
+        => await BookDetailsDialog.ShowDialog(DialogService, Item!, SearchByAuthor);
 }

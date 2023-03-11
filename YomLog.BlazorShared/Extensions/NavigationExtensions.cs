@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Web;
-using YomLog.BlazorShared.Models;
 using Microsoft.AspNetCore.Components;
+using YomLog.BlazorShared.Enums;
 
 namespace YomLog.BlazorShared.Extensions;
 

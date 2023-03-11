@@ -46,14 +46,12 @@ public static class ObjectExtensions
         return someObject;
     }
 
-    public static IDictionary<string, object?> AsDictionary<T>(
+    public static Dictionary<string, string?> AsDictionary<T>(
         this T source,
         BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance
-    )
-        where T : notnull
-        => source.GetType().GetProperties(bindingAttr).ToDictionary
-            (
-                propInfo => propInfo.Name,
-                propInfo => propInfo.GetValue(source, null)
-            );
+    ) where T : notnull
+        => source.GetType().GetProperties(bindingAttr)
+            .Select(x => new { x.Name, Value = x.GetValue(source, null) })
+            .Where(x => x.Value != null)
+            .ToDictionary(x => x.Name, x => x.Value?.ToString());
 }

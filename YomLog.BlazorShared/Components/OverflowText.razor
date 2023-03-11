@@ -1,0 +1,31 @@
+@if (OverflowTextStyle == OverflowTextStyle.None)
+{
+    @ChildContent
+}
+else
+{
+    <div style="@OutsideStyle">
+        <p style="@InnerStyle">@ChildContent</p>
+    </div>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+    [Parameter] public OverflowTextStyle OverflowTextStyle { get; set; }
+
+    protected string OutsideStyle
+        => OverflowTextStyle switch
+        {
+            OverflowTextStyle.Scroll => "overflow-x: scroll;",
+            OverflowTextStyle.Ellipsis => "display: block;",
+            _ => string.Empty
+        };
+
+    protected string InnerStyle
+        => OverflowTextStyle switch
+        {
+            OverflowTextStyle.Scroll => "white-space: nowrap;",
+            OverflowTextStyle.Ellipsis => "white-space: nowrap; text-overflow: ellipsis; overflow: hidden;",
+            _ => string.Empty
+        };
+}

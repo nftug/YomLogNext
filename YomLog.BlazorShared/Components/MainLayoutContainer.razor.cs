@@ -5,7 +5,6 @@ using MudBlazor;
 using System.Reactive.Linq;
 using YomLog.BlazorShared.Models;
 using Reactive.Bindings.Extensions;
-using YomLog.BlazorShared.Services.Auth;
 using Reactive.Bindings;
 
 namespace YomLog.BlazorShared.Components;
@@ -14,8 +13,6 @@ public partial class MainLayoutContainer : BindableComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private ScrollInfoService ScrollInfoService { get; set; } = null!;
-    [Inject] private IAuthService AuthService { get; set; } = null!;
-    [Inject] private ExceptionHubService ExceptionHub { get; set; } = null!;
 
     [Parameter] public bool? IsDarkModeDefault { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
@@ -31,38 +28,10 @@ public partial class MainLayoutContainer : BindableComponentBase
         LayoutService.UserPreferences.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
         LayoutService.IsDarkMode.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
         LayoutService.Page.Where(v => v != null).Subscribe(_ => Rerender()).AddTo(Disposable);
-        LayoutService.IsInitializing.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.IsProcessing.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
 
         await ScrollInfoService.RegisterService();
         await ApplyUserPreferences();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-
-        // Initializing application
-        LayoutService.IsInitializing.Value = true;
-
-        try
-        {
-            // Refresh token, and start automatic token renew after 30 secs
-            if (AuthService.IsAuthenticated.Value)
-            {
-                await AuthService.RefreshTokenAsync();
-                AuthService.RefreshTimer.Start();
-            }
-        }
-        catch (Exception e)
-        {
-            // Notify exception to ExceptionReceiver
-            ExceptionHub.Exception.Value = e;
-        }
-        finally
-        {
-            // Initialization finished
-            LayoutService.IsInitializing.Value = false;
-        }
     }
 
     protected override void OnParametersSet()

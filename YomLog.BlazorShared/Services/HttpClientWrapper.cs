@@ -19,7 +19,8 @@ public class HttpClientWrapper : BindableBase
     private int _retryCount;
     private readonly int RetryLimit = 3;
 
-    public ReactivePropertySlim<bool> IsOffline { get; }
+    private ReactivePropertySlim<bool> _isOffline;
+    public ReadOnlyReactivePropertySlim<bool> IsOffline { get; }
 
     public HttpClientWrapper(HttpClient httpClient, IPopupService popupService, IAuthService authService)
     {
@@ -27,25 +28,33 @@ public class HttpClientWrapper : BindableBase
         _popupService = popupService;
         _authService = authService;
 
-        IsOffline = new ReactivePropertySlim<bool>().AddTo(Disposable);
+        _isOffline = new ReactivePropertySlim<bool>().AddTo(Disposable);
+        IsOffline = _isOffline.ToReadOnlyReactivePropertySlim();
     }
 
-    public async Task<T> Get<T>(string uri)
-        => (await HandleAsJsonAsync<T>(async () => await _httpClient.GetAsync(uri)))!;
+    public Task<T> Get<T>(string uri)
+        => HandleAsJsonAsync<T>(() => _httpClient.GetAsync(uri))!;
 
-    public async Task<dynamic> GetAsDJson(string uri)
-        => await HandleAsDJsonAsync(async () => await _httpClient.GetAsync(uri));
+    public Task<dynamic> GetAsDJson(string uri)
+        => HandleAsDJsonAsync(() => _httpClient.GetAsync(uri));
 
-    public async Task<TResult> Create<TResult, TCommand>
-        (string uri, TCommand command)
-         => (await HandleAsJsonAsync<TResult>(async () => await _httpClient.PostAsJsonAsync(uri, command)))!;
+    public Task<TResult> Create<TResult, TCommand>(string uri, TCommand command)
+        => HandleAsJsonAsync<TResult>(() => _httpClient.PostAsJsonAsync(uri, command))!;
 
-    public async Task<TResult> Put<TResult, TCommand>
-        (string uri, TCommand command)
-        => (await HandleAsJsonAsync<TResult>(async () => await _httpClient.PutAsJsonAsync(uri, command)))!;
+    public Task<TResult> Create<TResult>(string uri, MultipartFormDataContent formData)
+        => HandleAsJsonAsync<TResult>(() => _httpClient.PostAsync(uri, formData))!;
 
-    public async Task Delete(string uri)
-        => await GetHttpResponseAsync(async () => await _httpClient.DeleteAsync(uri));
+    public Task CreateWithoutResult<TCommand>(string uri, TCommand command)
+        => GetHttpResponseAsync(() => _httpClient.PostAsJsonAsync(uri, command));
+
+    public Task CreateWithoutResult(string uri, MultipartFormDataContent formData)
+        => GetHttpResponseAsync(() => _httpClient.PostAsync(uri, formData));
+
+    public Task<TResult> Put<TResult, TCommand>(string uri, TCommand command)
+        => HandleAsJsonAsync<TResult>(() => _httpClient.PutAsJsonAsync(uri, command))!;
+
+    public Task Delete(string uri)
+        => GetHttpResponseAsync(() => _httpClient.DeleteAsync(uri));
 
     public async Task<T?> HandleAsJsonAsync<T>(Func<Task<HttpResponseMessage>> callback)
     {
@@ -60,14 +69,19 @@ public class HttpClientWrapper : BindableBase
         return DJson.Parse(rawContent);
     }
 
+    public void RecoverConnectivityState() => _isOffline.Value = false;
+
     public async Task<HttpResponseMessage> GetHttpResponseAsync(Func<Task<HttpResponseMessage>> callback)
     {
         HttpResponseMessage response = default!;
+
         try
         {
+            if (IsOffline.Value) throw new HttpRequestException();
+
             response = await callback();
             response.EnsureSuccessStatusCode();
-            IsOffline.Value = false;
+            _isOffline.Value = false;
             return response;
         }
         catch (Exception e)
@@ -96,30 +110,34 @@ public class HttpClientWrapper : BindableBase
                         }
                         await _authService.RefreshTokenAsync();
                         return await GetHttpResponseAsync(callback);
+                    case HttpStatusCode.InternalServerError:
+                        exception = await ApiException.CreateFromHttpResponse(httpException, response);
+                        break;
                     case null:
-                        IsOffline.Value = true;
+                        _isOffline.Value = true;
                         exception = await ApiException.CreateFromHttpResponse(httpException, response);
                         break;
                     default:
-                        IsOffline.Value = true;
+                        _isOffline.Value = true;
                         exception = await ApiException.CreateFromHttpResponse(httpException, response);
                         break;
                 }
             }
             else
             {
-                IsOffline.Value = true;
+                _isOffline.Value = true;
                 httpException = new HttpRequestException(e.Message);
                 exception = await ApiException.CreateFromHttpResponse(httpException, response);
             }
 
-            /*
-            if (exception.StatusCode != HttpStatusCode.NotFound)
+            if (!IsOffline.Value)
             {
-                string message = exception.Response ?? exception.Message ?? e.Message;
+                string message =
+                    !string.IsNullOrEmpty(exception.Response) && exception.Response.Length <= 100
+                    ? exception.Response
+                    : exception.Message ?? e.Message;
                 await _popupService.ShowPopup("API Error", message);
             }
-            */
 
             throw (Exception)exception;
         }

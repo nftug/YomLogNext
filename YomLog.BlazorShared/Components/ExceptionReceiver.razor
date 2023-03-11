@@ -6,10 +6,13 @@
     {
         ExceptionHub.Exception
             .Where(v => v != null)
-            .Subscribe(v => {
-                ExceptionHub.Exception.Value = null;
-                throw v!;
-            })
+            .Subscribe(v =>
+                InvokeAsync(() =>
+                {
+                    ExceptionHub.Exception.Value = null;
+                    throw v!;
+                })
+            )
             .AddTo(Disposable);
     }
 }

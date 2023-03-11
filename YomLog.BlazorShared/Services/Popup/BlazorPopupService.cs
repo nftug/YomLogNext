@@ -21,17 +21,20 @@ public class BlazorPopupService : IPopupService
         return !dialog.Canceled;
     }
 
-    public async Task ShowPopup(string title, string message, string okText = "OK")
-        => await Dialog.ShowDialog(_dialogService, title, message, okText, cancelText: null);
+    public Task ShowImagePopup(string? uri)
+        => ImageDialog.ShowDialog(_dialogService, uri);
 
-    public async Task ShowNativePopup(string title, string message, string okText = "OK")
-        => await _jsRuntime.InvokeVoidAsync("alert", message);
+    public Task ShowPopup(string title, string message, string okText = "OK")
+        => Dialog.ShowDialog(_dialogService, title, message, okText, cancelText: null);
 
-    public async Task<bool> ShowNativeConfirm
+    public Task ShowNativePopup(string title, string message, string okText = "OK")
+        => _jsRuntime.InvokeVoidAsync("alert", message).AsTask();
+
+    public Task<bool> ShowNativeConfirm
         (string title, string message, string okText = "OK", string cancelText = "Cancel")
-        => await _jsRuntime.InvokeAsync<bool>("confirm", message);
+        => _jsRuntime.InvokeAsync<bool>("confirm", message).AsTask();
 
-    public async Task<string> ShowNativePrompt
+    public Task<string> ShowNativePrompt
         (string title, string message, string okText = "OK", string cancelText = "Cancel")
-        => await _jsRuntime.InvokeAsync<string>("prompt", message);
+        => _jsRuntime.InvokeAsync<string>("prompt", message).AsTask();
 }

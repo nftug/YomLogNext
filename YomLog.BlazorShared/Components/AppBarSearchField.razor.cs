@@ -1,15 +1,12 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
-using YomLog.BlazorShared.Services;
 
 namespace YomLog.BlazorShared.Components;
 
 public partial class AppBarSearchField : ComponentBase
 {
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
-    [Inject] private IDebugLoggerService DebugLogger { get; set; } = null!;
 
     [Parameter, EditorRequired] public string? Query { get; set; }
     [Parameter, EditorRequired] public EventCallback<string?> NavigateAction { get; set; }
@@ -32,17 +29,17 @@ public partial class AppBarSearchField : ComponentBase
 
     protected override async Task OnParametersSetAsync()
     {
-        DebugLogger.Print($"IsQueryEmpty = {IsQueryEmpty}, AutoFocus = {AutoFocus}");
+        // DebugLogger.Print($"IsQueryEmpty = {IsQueryEmpty}, AutoFocus = {AutoFocus}");
 
         if (IsQueryEmpty && AutoFocus)
         {
             _showingSearchField = true;
-            DebugLogger.Print("Focus");
+            // DebugLogger.Print("Focus");
         }
         else
         {
             await RecoverSearchFieldState();
-            DebugLogger.Print("Blur");
+            // DebugLogger.Print("Blur");
         }
 
         if (Query != _previousQuery)

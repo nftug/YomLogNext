@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Net.Http.Headers;
 using Reactive.Bindings;
 using YomLog.BlazorShared.Services.Repository;
+using YomLog.BlazorShared.Models;
 
 namespace YomLog.BlazorShared.Services.Auth;
 
@@ -60,9 +61,7 @@ public class MyAuthenticationStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
-    public async Task<TokenModel?> GetTokenModelAsync()
-        => await _preferenceRepository.GetAsync<TokenModel>(Key);
+    public Task<TokenModel?> GetTokenModelAsync() => _preferenceRepository.GetAsync<TokenModel>(Key);
 
-    public async Task SaveTokenModelAsync(TokenModel tokenModel)
-        => await _preferenceRepository.SaveAsync(Key, tokenModel);
+    public Task SaveTokenModelAsync(TokenModel tokenModel) => _preferenceRepository.SaveAsync(Key, tokenModel);
 }
