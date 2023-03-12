@@ -71,9 +71,9 @@ public static class MauiProgram
 #if ANDROID
         var handler = new Platforms.Android.CustomAndroidMessageHandler();
 #else
-		var handler = new HttpClientHandler();
+        var handler = new HttpClientHandler();
 #endif
-        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; };
+        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
         return handler;
     }
 }

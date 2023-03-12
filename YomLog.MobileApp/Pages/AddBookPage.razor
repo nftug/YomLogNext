@@ -26,7 +26,7 @@
                 @foreach (var item in _results)
                 {
                     <MudItem xs="12" lg="6">
-                        <BookItem Item="item" SearchByAuthor="(string author) => SearchByAuthor(author)" />
+                        <BookItem Item="item" SearchByAuthor="SearchByAuthor" />
                     </MudItem>
                 }
 

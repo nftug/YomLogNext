@@ -1,12 +1,17 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using MudBlazor;
+using YomLog.BlazorShared.Models;
+using YomLog.BlazorShared.Services;
 
 namespace YomLog.BlazorShared.Components;
 
-public partial class AppBarSearchField : ComponentBase
+public partial class AppBarSearchField : BindableComponentBase
 {
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private LayoutService LayoutService { get; set; } = null!;
 
     [Parameter, EditorRequired] public string? Query { get; set; }
     [Parameter, EditorRequired] public EventCallback<string?> NavigateAction { get; set; }
@@ -20,6 +25,19 @@ public partial class AppBarSearchField : ComponentBase
     private string? _previousQuery;
 
     private bool IsQueryEmpty => string.IsNullOrEmpty(Query);
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+        => LayoutService.RequestAppBarRerender();
 
     private async Task OnSubmitSearchForm()
     {

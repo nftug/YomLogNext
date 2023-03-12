@@ -12,9 +12,9 @@ public class EnvironmentHelper : IEnvironmentHelper
         _popupService = popupService;
     }
 
-    public async void QuitApp()
+    public async Task QuitApp()
     {
-        bool result = await _popupService.ShowConfirm("確認", "アプリを終了しますか？");
+        bool result = await _popupService.ShowNativeConfirm("確認", "アプリを終了しますか？");
         if (result) Application.Current?.Quit();
     }
 }

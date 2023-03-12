@@ -6,6 +6,7 @@ using Reactive.Bindings.Extensions;
 using System.Reactive.Linq;
 using YomLog.BlazorShared.Enums;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -33,6 +34,7 @@ public partial class PageContainer : BindableComponentBase
     private MaxWidth ContainerMaxWidth => MaxWidth ?? AppSettings.DefaultMaxWidth;
 
     private bool IsTopPage => AppSettings.IsNativeApp && TopPage;
+    private bool _historyBackOnTopPage;
 
     public string MainContentClass
         => FooterContent != null ? "mud-main-content-with-footer" : string.Empty;
@@ -63,5 +65,18 @@ public partial class PageContainer : BindableComponentBase
     }
 
     [JSInvokable("GoBackOnTopPage")]
-    public void OnGoBackOnTopPage() => EnvironmentHelper.QuitApp();
+    public async Task OnGoBackOnTopPage()
+    {
+        _historyBackOnTopPage = true;
+        await EnvironmentHelper.QuitApp();
+    }
+
+    private void OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        if (_historyBackOnTopPage)
+        {
+            context.PreventNavigation();
+            _historyBackOnTopPage = false;
+        }
+    }
 }

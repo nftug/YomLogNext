@@ -1,6 +1,6 @@
 <DialogBase DisableSidePadding="true" CloseButton="true" Title="本の追加">
     <DialogContent>
-        <MudContainer Style="max-height: 82vh; overflow-y: scroll">
+        <MudContainer Style="height: 100%; overflow-y: scroll">
             <MudSimpleTable Style="overflow-x: auto;">
                 <tbody>
                     <tr>
@@ -16,7 +16,7 @@
                     <tr>
                         <td style="width: 30%; font-weight: bold;">説明</td>
                         <td>
-                            <MudPaper Class="overflow-y-scroll mud-theme-transparent pa-2" Height="30vh" Outlined="true">
+                            <MudPaper Class="overflow-y-scroll mud-theme-transparent pa-2" Height="27vh" Outlined="true">
                                 @(Item.Description is { Length: > 0 } ? Item.Description : "説明がありません")
                             </MudPaper>
                         </td>

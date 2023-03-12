@@ -2,10 +2,10 @@ namespace YomLog.BlazorShared.Services;
 
 public class EnvironmentHelper : IEnvironmentHelper
 {
-    public virtual void QuitApp() { }
+    public virtual Task QuitApp() => Task.FromResult(0);
 }
 
 public interface IEnvironmentHelper
 {
-    void QuitApp();
+    Task QuitApp();
 }
