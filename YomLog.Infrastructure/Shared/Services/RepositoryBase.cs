@@ -101,28 +101,6 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
         return new(data.PK, data.Id);
     }
 
-    public virtual async Task<EntityReference<TEntity>> DeletePhysicallyAsync(Guid id, User operatedBy)
-    {
-        var item = await FindAsync(id, operatedBy);
-        if (item == null) throw new NotFoundException();
-        if (!item.CheckCanDelete(operatedBy)) throw new ForbiddenException();
-
-        var data = await _context.Set<TDataModel>().FirstAsync(x => x.Id == id);
-        _context.Remove(data);
-        await _context.SaveChangesAsync();
-
-        return new(data.PK, data.Id);
-    }
-
-    public virtual async Task DeleteRangePhysicallyAsync(IEnumerable<Guid> ids)
-    {
-        if (!ids.Any()) return;
-
-        var items = await _context.Set<TDataModel>().Where(x => ids.Contains(x.Id)).ToListAsync();
-        _context.RemoveRange(items);
-        await _context.SaveChangesAsync();
-    }
-
     public virtual Task<List<TEntity>> FindAllAsync(User? operatedBy = null)
         => FindAllByPredicateAsync(null, operatedBy);
 

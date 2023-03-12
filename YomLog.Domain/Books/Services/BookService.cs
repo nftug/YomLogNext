@@ -30,7 +30,7 @@ public class BookService
         return await _bookRepository.CreateAsync(book);
     }
 
-    private async Task<IReadOnlyList<Author>> GetOrCreateAuthors(IEnumerable<AuthorName> authorNames, User createdBy)
+    public async Task<IReadOnlyList<Author>> GetOrCreateAuthors(IEnumerable<AuthorName> authorNames, User createdBy)
     {
         var authors = await _authorRepository.FindAllByNameAsync(authorNames);
         var newAuthors = authorNames
