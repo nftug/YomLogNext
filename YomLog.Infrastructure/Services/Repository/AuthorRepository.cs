@@ -1,6 +1,6 @@
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
-using YomLog.Domain.ValueObjects;
+using YomLog.Domain.Books.ValueObjects;
 using YomLog.Infrastructure.DataModels;
 using YomLog.Infrastructure.Shared.Services;
 

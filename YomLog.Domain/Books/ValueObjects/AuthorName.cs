@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using YomLog.Shared.ValueObjects;
 
-namespace YomLog.Domain.ValueObjects;
+namespace YomLog.Domain.Books.ValueObjects;
 
 public partial class AuthorName : ValueObject<AuthorName>
 {
@@ -9,14 +9,15 @@ public partial class AuthorName : ValueObject<AuthorName>
 
     public AuthorName(string name)
     {
+        string jpPattern = @"[\p{IsHiragana}\p{IsKatakana}\p{IsCJKUnifiedIdeographs}]+";
+
         name = name.Replace("\u3000", " ");
-        name = JapaneseRegex().Replace(name, "$1$2");
+        name = new Regex($@"({jpPattern}) ({jpPattern})").Replace(name, "$1$2");
         Value = name;
+
+        System.Diagnostics.Debug.WriteLine($"AUTHOR: {Value}");
     }
 
     protected override bool EqualsCore(AuthorName other) => Value == other.Value;
     public override int GetHashCode() => Value.GetHashCode();
-
-    [GeneratedRegex("([亜-熙ぁ-んァ-ヶ]) ([亜-熙ぁ-んァ-ヶ])")]
-    private static partial Regex JapaneseRegex();
 }

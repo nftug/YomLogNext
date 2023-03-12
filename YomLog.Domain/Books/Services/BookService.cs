@@ -1,7 +1,7 @@
 using YomLog.Domain.Books.Commands;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
-using YomLog.Domain.ValueObjects;
+using YomLog.Domain.Books.ValueObjects;
 using YomLog.Shared.Entities;
 using YomLog.Shared.Exceptions;
 
@@ -23,7 +23,7 @@ public class BookService
         if (await _bookRepository.FindByGoogleBooksIdAsync(command.Id) != null)
             throw new EntityValidationException("この本は既に登録されています。");
 
-        var authorNames = command.Authors.Select(x => new AuthorName(x));
+        var authorNames = command.Authors.Select(x => new AuthorName(x)).ToList();
         var authors = await GetOrCreateAuthors(authorNames, createdBy);
         var book = Book.Create(command, authors, createdBy);
 

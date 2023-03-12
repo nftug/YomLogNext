@@ -1,7 +1,7 @@
 using YomLog.Shared.Exceptions;
 using YomLog.Shared.ValueObjects;
 
-namespace YomLog.Domain.ValueObjects;
+namespace YomLog.Domain.Books.ValueObjects;
 
 public class BookPage : ValueObject<BookPage>
 {

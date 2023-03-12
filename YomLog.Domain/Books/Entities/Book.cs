@@ -1,6 +1,6 @@
 using YomLog.Domain.Books.Commands;
 using YomLog.Domain.Books.Enums;
-using YomLog.Domain.ValueObjects;
+using YomLog.Domain.Books.ValueObjects;
 using YomLog.Shared.Entities;
 
 namespace YomLog.Domain.Books.Entities;

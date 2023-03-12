@@ -1,5 +1,5 @@
 using YomLog.Domain.Books.Entities;
-using YomLog.Domain.ValueObjects;
+using YomLog.Domain.Books.ValueObjects;
 using YomLog.Shared.Interfaces;
 
 namespace YomLog.Domain.Books.Interfaces;
