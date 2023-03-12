@@ -5,6 +5,8 @@ namespace YomLog.MobileApp.Services.Repository;
 
 public class MauiCacheRepository : ICacheRepositoryService
 {
+    private static string AppDataPath => FileSystem.AppDataDirectory;
+
     public async Task<T?> GetAsync<T>(string key)
     {
         string fullPath = Path.Combine(AppDataPath, key);
@@ -58,7 +60,4 @@ public class MauiCacheRepository : ICacheRepositoryService
         Directory.Delete(fullPath, true);
         return Task.FromResult(0);
     }
-
-    private static string AppDataPath
-        => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppInfo.Name);
 }
