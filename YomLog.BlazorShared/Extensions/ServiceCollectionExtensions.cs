@@ -43,7 +43,6 @@ public static class ServiceCollectionExtensions
         });
 
         // Add auth services
-        services.AddOptions();
         services.AddAuthorizationCore();
         services.AddScoped<AuthenticationStateProvider, MyAuthenticationStateProvider>();
 
