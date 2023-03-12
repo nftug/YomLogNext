@@ -1,8 +1,6 @@
 // Copyright (c) 2021 Welcome Bonginhlahla Sithole
 // Reference: https://github.com/SitholeWB/Pagination.EntityFrameworkCore.Extensions
 
-using System.Runtime.Serialization;
-
 namespace YomLog.Shared.Models;
 
 public class Pagination<T>

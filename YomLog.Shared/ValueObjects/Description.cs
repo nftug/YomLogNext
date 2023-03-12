@@ -11,7 +11,7 @@ public class Description : ValueObject<Description>
     public Description(string? value)
     {
         if (value?.Length > MaxContentLength)
-            throw new ModelErrorException(nameof(Description), $"The length of the field is too long.");
+            throw new EntityValidationException(nameof(Description), $"The length of the field is too long.");
 
         Value = value;
     }

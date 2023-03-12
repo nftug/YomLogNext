@@ -2,8 +2,8 @@ using YomLog.Shared.Entities;
 
 namespace YomLog.Shared.Queries;
 
-public interface IQueryParameter<TModel>
-    where TModel : EntityBase<TModel>
+public interface IQueryParameter<TEntity>
+    where TEntity : EntityBase<TEntity>
 {
     int StartIndex { get; set; }
     int Limit { get; set; }

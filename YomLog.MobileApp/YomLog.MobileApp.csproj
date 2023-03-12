@@ -55,15 +55,28 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageReference Include="ReactiveProperty" Version="8.2.0" />
+    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="2.1.4" />
     <PackageReference Include="Sve.Blazor.InfiniteScroll" Version="1.0.0-alpha" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\YomLog.BlazorShared\YomLog.BlazorShared.csproj" />
+    <ProjectReference Include="..\YomLog.Domain\YomLog.Domain.csproj" />
+    <ProjectReference Include="..\YomLog.Infrastructure\YomLog.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include=".\Properties\appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+    <None Remove="Platforms\iOS\Linker.xml" />
+    <LinkDescription Include="Platforms\iOS\Linker.xml" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <None Remove="Platforms\Android\Linker.xml" />
+    <LinkDescription Include="Platforms\Android\Linker.xml" />
   </ItemGroup>
 
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
@@ -76,5 +89,11 @@
     <AndroidSigningKeyAlias>key</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass></AndroidSigningKeyPass>
     <AndroidSigningStorePass></AndroidSigningStorePass>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-android|AnyCPU'">
+    <AndroidLinkMode>None</AndroidLinkMode>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
+    <AndroidDexTool>dx</AndroidDexTool>
   </PropertyGroup>
 </Project>

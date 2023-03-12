@@ -3,27 +3,27 @@ using System.Text.Json.Serialization;
 
 namespace YomLog.Shared.Exceptions;
 
-public class ModelErrorException : ApiExceptionBase<ModelErrorException>
+public class EntityValidationException : ApiExceptionBase<EntityValidationException>
 {
     [JsonPropertyName("errors")]
     public Dictionary<string, List<string>> Errors { get; init; } = new() { };
 
-    public ModelErrorException(string field, string message)
+    public EntityValidationException(string field, string message)
     {
         Errors[field] = new List<string> { message };
     }
 
-    public ModelErrorException(string message)
+    public EntityValidationException(string message)
         : this("other", message)
     {
     }
 
-    public ModelErrorException(IDictionary<string, List<string>> errors)
+    public EntityValidationException(IDictionary<string, List<string>> errors)
     {
         Errors = new(errors);
     }
 
-    public ModelErrorException() { }
+    public EntityValidationException() { }
 
     public void Add(string field, string message)
     {
@@ -31,7 +31,7 @@ public class ModelErrorException : ApiExceptionBase<ModelErrorException>
         Errors[field].Add(message);
     }
 
-    public static new async Task<ModelErrorException> CreateFromHttpResponse
+    public static new async Task<EntityValidationException> CreateFromHttpResponse
         (HttpRequestException exception, HttpResponseMessage response)
     {
         var body = await response.Content.ReadAsStringAsync();

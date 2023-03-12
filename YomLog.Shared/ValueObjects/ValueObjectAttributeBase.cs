@@ -20,7 +20,7 @@ public abstract class ValueObjectAttributeBase<T, TValue> : ValidationAttribute
             var item = CreateValueObject(_value);
             return ValidationResult.Success;
         }
-        catch (ModelErrorException e)
+        catch (EntityValidationException e)
         {
             return new ValidationResult(e.Message, memberNames);
         }

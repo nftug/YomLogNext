@@ -7,10 +7,10 @@ using YomLog.Shared.Queries;
 
 namespace YomLog.BlazorShared.Services.Api;
 
-public abstract class ApiServiceBase<TModel>
+public abstract class ApiServiceBase<TEntity>
 {
     protected readonly HttpClientWrapper _httpClientWrapper;
-    protected virtual string Resource => typeof(TModel).Name.Pluralize();
+    protected virtual string Resource => typeof(TEntity).Name.Pluralize();
 
     protected ApiServiceBase(HttpClientWrapper httpClientWrapper)
     {
@@ -19,9 +19,9 @@ public abstract class ApiServiceBase<TModel>
 
 }
 
-public abstract class ApiGetServiceBase<TModel, TDetailsDTO> : ApiServiceBase<TModel>, IApiGetService<TModel, TDetailsDTO>
-    where TModel : EntityBase<TModel>
-    where TDetailsDTO : ModelDetailsDTOBase<TModel, TDetailsDTO>
+public abstract class ApiGetServiceBase<TEntity, TDetailsDTO> : ApiServiceBase<TEntity>, IApiGetService<TEntity, TDetailsDTO>
+    where TEntity : EntityBase<TEntity>
+    where TDetailsDTO : EntityDetailsDTOBase<TEntity, TDetailsDTO>
 {
     protected ApiGetServiceBase(HttpClientWrapper httpClientWrapper) : base(httpClientWrapper)
     {
@@ -31,11 +31,11 @@ public abstract class ApiGetServiceBase<TModel, TDetailsDTO> : ApiServiceBase<TM
         => _httpClientWrapper.Get<TDetailsDTO>($"{Resource}/{id}");
 }
 
-public abstract class ApiQueryFilterServiceBase<TModel, TDetailsDTO, TQueryParameter>
-    : ApiGetServiceBase<TModel, TDetailsDTO>, IApiQueryFilterService<TModel, TDetailsDTO, TQueryParameter>
-    where TModel : EntityBase<TModel>
-    where TDetailsDTO : ModelDetailsDTOBase<TModel, TDetailsDTO>
-    where TQueryParameter : IQueryParameter<TModel>
+public abstract class ApiQueryFilterServiceBase<TEntity, TDetailsDTO, TQueryParameter>
+    : ApiGetServiceBase<TEntity, TDetailsDTO>, IApiQueryFilterService<TEntity, TDetailsDTO, TQueryParameter>
+    where TEntity : EntityBase<TEntity>
+    where TDetailsDTO : EntityDetailsDTOBase<TEntity, TDetailsDTO>
+    where TQueryParameter : IQueryParameter<TEntity>
 {
     protected ApiQueryFilterServiceBase(HttpClientWrapper httpClientWrapper) : base(httpClientWrapper)
     {
@@ -49,12 +49,12 @@ public abstract class ApiQueryFilterServiceBase<TModel, TDetailsDTO, TQueryParam
     }
 }
 
-public abstract class ApiCrudServiceBase<TModel, TDetailsDTO, TCommandDTO, TQueryParameter>
-    : ApiQueryFilterServiceBase<TModel, TDetailsDTO, TQueryParameter>, IApiService<TModel, TDetailsDTO, TCommandDTO, TQueryParameter>
-    where TModel : EntityBase<TModel>
-    where TDetailsDTO : ModelDetailsDTOBase<TModel, TDetailsDTO>
-    where TCommandDTO : ICommandDTO<TModel>
-    where TQueryParameter : IQueryParameter<TModel>
+public abstract class ApiCrudServiceBase<TEntity, TDetailsDTO, TCommandDTO, TQueryParameter>
+    : ApiQueryFilterServiceBase<TEntity, TDetailsDTO, TQueryParameter>, IApiService<TEntity, TDetailsDTO, TCommandDTO, TQueryParameter>
+    where TEntity : EntityBase<TEntity>
+    where TDetailsDTO : EntityDetailsDTOBase<TEntity, TDetailsDTO>
+    where TCommandDTO : ICommandDTO<TEntity>
+    where TQueryParameter : IQueryParameter<TEntity>
 {
     protected ApiCrudServiceBase(HttpClientWrapper httpClientWrapper) : base(httpClientWrapper)
     {

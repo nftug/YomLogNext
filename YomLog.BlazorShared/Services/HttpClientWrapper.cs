@@ -93,7 +93,7 @@ public class HttpClientWrapper : BindableBase
                 switch (httpException.StatusCode)
                 {
                     case HttpStatusCode.BadRequest:
-                        exception = await ModelErrorException.CreateFromHttpResponse(httpException, response);
+                        exception = await EntityValidationException.CreateFromHttpResponse(httpException, response);
                         break;
                     case HttpStatusCode.NotFound:
                         exception = await NotFoundException.CreateFromHttpResponse(httpException, response);

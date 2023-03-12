@@ -46,30 +46,8 @@
         <MudButton Variant="Variant.Filled"
                    Color="Color.Success"
                    StartIcon="@Icons.Material.Filled.AddCircle"
-                   OnClick="() => context.Ok(true)">
+                   OnClick="() => AddBookAsync(context)">
             追加
         </MudButton>
     </DialogActions>
 </DialogBase>
-
-@code {
-    [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
-    [Parameter] public BookInfo Item { get; set; } = null!;
-    [Parameter] public EventCallback<string> SearchByAuthor { get; set; }
-
-    public static async Task<DialogResult> ShowDialog(
-        IDialogService dialogService,
-        BookInfo item,
-        EventCallback<string> searchByAuthorCallback
-    )
-    {
-        var parameters = new DialogParameters
-        {
-            ["Item"] = item,
-            ["SearchByAuthor"] = searchByAuthorCallback
-        };
-        var options = new DialogOptions { FullScreen = true };
-        var dialog = dialogService.Show<AddBookDialog>("AddBook", parameters, options);
-        return await dialog.Result;
-    }
-}

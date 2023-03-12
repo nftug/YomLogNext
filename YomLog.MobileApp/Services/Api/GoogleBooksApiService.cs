@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.WebUtilities;
 using YomLog.BlazorShared.Services;
-using YomLog.MobileApp.Entities;
+using YomLog.Domain.Books.Commands;
 using YomLog.Shared.Models;
 
 namespace YomLog.MobileApp.Services.Api;
@@ -14,10 +14,10 @@ public class GoogleBooksApiService
         _httpClientWrapper = httpClientWrapper;
     }
 
-    public async Task<Pagination<BookInfo>> GetBookList(string query, int startIndex, int limit)
+    public async Task<Pagination<BookCommandDTO>> GetBookList(string query, int startIndex, int limit)
     {
         if (string.IsNullOrWhiteSpace(query))
-            return new Pagination<BookInfo>(Enumerable.Empty<BookInfo>(), 0, startIndex, 1);
+            return new Pagination<BookCommandDTO>(Enumerable.Empty<BookCommandDTO>(), 0, startIndex, 1);
 
         var url = QueryHelpers.AddQueryString(
             "https://www.googleapis.com/books/v1/volumes",
@@ -34,22 +34,22 @@ public class GoogleBooksApiService
 
         int totalItems = (int)data.TotalItems;
         if (data.Items == null)
-            return new Pagination<BookInfo>(Enumerable.Empty<BookInfo>(), totalItems, startIndex, limit);
+            return new Pagination<BookCommandDTO>(Enumerable.Empty<BookCommandDTO>(), totalItems, startIndex, limit);
 
         var books = ((IEnumerable<dynamic>)data.Items)
-            .Select(x => new BookInfo
+            .Select(x => new BookCommandDTO
             {
                 Id = (string)x.Id,
                 Title = (string)x.VolumeInfo.Title,
-                Authors = (List<string>?)x.VolumeInfo.Authors,
+                Authors = (List<string>?)x.VolumeInfo.Authors ?? new(),
                 Description = (string?)x.VolumeInfo.Description,
-                Url = (string?)x.VolumeInfo.InfoLink,
+                Url = (string?)x.VolumeInfo.CommandLink,
                 Thumbnail = ((string?)(x.VolumeInfo.ImageLinks?.Thumbnail ?? x.VolumeInfo.ImageLinks?.SmallThumbnail))
                     ?.Replace("http://", "https://"),
                 TotalPage = (int?)x.VolumeInfo.PageCount,
                 Isbn = ((IEnumerable<dynamic>?)x.VolumeInfo.IndustryIdentifiers)?.FirstOrDefault()?.Identifier
             });
 
-        return new Pagination<BookInfo>(books, totalItems, startIndex, limit);
+        return new Pagination<BookCommandDTO>(books, totalItems, startIndex, limit);
     }
 }

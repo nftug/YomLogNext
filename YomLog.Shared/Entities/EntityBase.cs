@@ -6,19 +6,20 @@ namespace YomLog.Shared.Entities;
 public abstract class EntityBase<T> : ValueObject<T>
     where T : EntityBase<T>
 {
-    public ModelReference<T> Reference { get; private set; } = null!;
-    public DateTimeRecord DateTimeRecord { get; private set; } = null!;
-    public UserRecord UserRecord { get; private set; } = null!;
+    public EntityReference<T> Reference { get; protected set; } = null!;
+    public DateTimeRecord DateTimeRecord { get; protected set; } = null!;
+    public UserRecord UserRecord { get; protected set; } = null!;
 
     public long PK => Reference.PK;
     public Guid Id => Reference.Id;
 
     // データモデルからの変換用
-    protected EntityBase(ModelReference<T> reference, DateTimeRecord dateTimeRecord, UserRecord userRecord)
+    public T Transfer(EntityReference<T> reference, DateTimeRecord dateTimeRecord, UserRecord userRecord)
     {
         Reference = reference;
         DateTimeRecord = dateTimeRecord;
         UserRecord = userRecord;
+        return (T)this;
     }
 
     // 新規作成用
@@ -28,7 +29,7 @@ public abstract class EntityBase<T> : ValueObject<T>
     {
         Reference = new(default, Guid.NewGuid());
         DateTimeRecord = new(DateTime.UtcNow);
-        UserRecord = new(new UserReference(createdBy));
+        UserRecord = new(createdBy.UserReference);
 
         if (!CheckCanCreate(createdBy)) throw new ForbiddenException();
         return (T)this;
@@ -43,7 +44,7 @@ public abstract class EntityBase<T> : ValueObject<T>
     protected void UpdateModel(User updatedBy, DateTime updatedOn, bool throughCheck = false)
     {
         DateTimeRecord.ChangeUpdatedOn(updatedOn);
-        UserRecord.ChangeUpdatedBy(new UserReference(updatedBy));
+        UserRecord.ChangeUpdatedBy(new(updatedBy));
 
         if (!throughCheck && !CheckCanEdit(updatedBy))
             throw new ForbiddenException();
@@ -57,9 +58,11 @@ public abstract class EntityBase<T> : ValueObject<T>
 
     public virtual bool CheckCanEdit(User user)
        => user.Role == UserRole.Admin
-           || (CheckCanGet(user) && CheckCanCreate(user) && UserRecord.CreatedBy == new UserReference(user));
+           || (CheckCanGet(user) && CheckCanCreate(user) && UserRecord.CreatedBy == user.UserReference);
 
     public virtual bool CheckCanDelete(User user) => CheckCanEdit(user);
 
     protected override bool EqualsCore(T other) => Id == other.Id;
+
+    public override int GetHashCode() => Id.GetHashCode();
 }

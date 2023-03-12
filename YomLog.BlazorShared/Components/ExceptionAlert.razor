@@ -2,14 +2,14 @@
 
 <MudContainer Class="mt-8 mb-8">
     <MudAlert Class="mb-5" Severity="Severity" ShowCloseIcon="true"
-              CloseIconClicked="(() => ErrorBoundary?.Recover())"
+              CloseIconClicked="() => ErrorBoundary?.Recover()"
               Variant="Variant.Filled">
         <MudText Typo="Typo.body2">
             @if (Exception is IApiException e)
             {
                 var errorTitle = e switch
                 {
-                    ModelErrorException err => "不正な値です",
+                    EntityValidationException err => "不正な値です",
                     ForbiddenException err => "アクセスが禁止されています",
                     UnauthorizedException err => "認証が必要です",
                     NotFoundException err => "アイテムが見つかりません",

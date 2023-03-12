@@ -14,7 +14,7 @@ public class Title : ValueObject<Title>
             throw new ArgumentNullException(value);
 
         if (value.Length > MaxTitleLength)
-            throw new ModelErrorException(nameof(Title), $"The length of the field is too long.");
+            throw new EntityValidationException(nameof(Title), $"The length of the field is too long.");
 
         Value = value;
     }

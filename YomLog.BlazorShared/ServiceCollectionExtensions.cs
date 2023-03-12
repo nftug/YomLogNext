@@ -14,7 +14,7 @@ using YomLog.Shared.Extensions;
 using YomLog.BlazorShared.Services.Api;
 using MudBlazor;
 
-namespace YomLog.BlazorShared.Extensions;
+namespace YomLog.BlazorShared;
 
 public static class ServiceCollectionExtensions
 {

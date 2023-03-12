@@ -4,7 +4,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Models;
-using YomLog.MobileApp.Entities;
+using YomLog.Domain.Books.Commands;
 using YomLog.MobileApp.Services.Api;
 using YomLog.Shared.Exceptions;
 
@@ -18,7 +18,7 @@ public partial class AddBookPage : BindableComponentBase
     [Parameter, SupplyParameterFromQuery] public string? Query { get; set; }
 
     private int _totalItems;
-    private List<BookInfo> _results = new();
+    private List<BookCommandDTO> _results = new();
     private int _startIndex;
     private bool ReachedLast => _totalItems <= _startIndex;
     private ReactivePropertySlim<bool> IsLoading { get; set; } = null!;

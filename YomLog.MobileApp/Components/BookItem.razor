@@ -1,3 +1,4 @@
+@using YomLog.Domain.Books.Commands
 @inject IDialogService DialogService
 
 <MudCard>
@@ -12,9 +13,12 @@
         </MudCardContent>
 
         <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDetails">
-                詳細を見る
-            </MudButton>
+            @if (Item.Entity is null)
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickAddDetails">
+                    追加する
+                </MudButton>
+            }
         </MudCardActions>
     }
     else
@@ -33,7 +37,7 @@
 </MudCard>
 
 @code {
-    [Parameter] public BookInfo? Item { get; set; } = null!;
+    [Parameter] public BookCommandDTO Item { get; set; } = null!;
     [Parameter] public EventCallback<string> SearchByAuthor { get; set; }
 
     private async Task OnClickAuthor(string author)
@@ -42,6 +46,6 @@
         await SearchByAuthor.InvokeAsync(author);
     }
 
-    private Task OnClickDetails()
-        => AddBookDialog.ShowDialog(DialogService, Item!, SearchByAuthor);
+    private Task OnClickAddDetails()
+        => AddBookDialog.ShowDialog(DialogService, Item, SearchByAuthor);
 }

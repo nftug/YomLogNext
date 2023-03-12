@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
-using YomLog.BlazorShared.Extensions;
+using YomLog.BlazorShared;
+using YomLog.Domain;
+using YomLog.Infrastructure;
 using YomLog.MobileApp.Services;
 
 namespace YomLog.MobileApp;
@@ -63,7 +65,13 @@ public static class MauiProgram
             HttpMessageHandler = GetInsecureHttpHandler()
         });
 
-        return builder.Build();
+        builder.Services.AddInfrastructure(FileSystem.AppDataDirectory);
+        builder.Services.AddDomainServices();
+
+        var app = builder.Build();
+        app.Services.UseInfrastructure();
+
+        return app;
     }
 
     private static HttpMessageHandler GetInsecureHttpHandler()

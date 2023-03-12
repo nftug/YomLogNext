@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YomLog.BlazorShared", "YomL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YomLog.Shared", "YomLog.Shared\YomLog.Shared.csproj", "{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YomLog.Infrastructure", "YomLog.Infrastructure\YomLog.Infrastructure.csproj", "{C402098F-E47C-47B2-8803-3EA8A69AEB31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YomLog.Domain", "YomLog.Domain\YomLog.Domain.csproj", "{96872AC0-6121-4E48-99AE-01A6E4C8434B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +33,14 @@ Global
 		{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{622130F8-3C21-43D3-ABC1-F1E1D5F8F09D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C402098F-E47C-47B2-8803-3EA8A69AEB31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C402098F-E47C-47B2-8803-3EA8A69AEB31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C402098F-E47C-47B2-8803-3EA8A69AEB31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C402098F-E47C-47B2-8803-3EA8A69AEB31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96872AC0-6121-4E48-99AE-01A6E4C8434B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96872AC0-6121-4E48-99AE-01A6E4C8434B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96872AC0-6121-4E48-99AE-01A6E4C8434B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96872AC0-6121-4E48-99AE-01A6E4C8434B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

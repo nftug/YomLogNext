@@ -1,10 +1,32 @@
-﻿@page "/"
+﻿@using YomLog.Domain.Books.Interfaces
+@using YomLog.Domain.Books.Commands
+@using YomLog.MobileApp.Components
 
-<PageContainer CenteredContainer="true" TopPage="true">
-    <MudImage Src="images/dotnet_bot.svg" Height="128" Alt="Dotnet Bot" Class="ma-4" />
+@page "/"
+@inject IBookRepository BookRepository
+@inject LayoutService LayoutService
 
-    <MudText Typo="Typo.h4" Class="mt-2" GutterBottom="true">@AppInfo.Name</MudText>
-    <MudAlert Severity="Severity.Normal">
-        これは仮のホーム画面です。
-    </MudAlert>
+<PageContainer TopPage="true">
+    <MudGrid Spacing="2">
+        @foreach (var item in MyBooks)
+        {
+            <MudItem xs="12" lg="6">
+                <BookItem Item="item" />
+            </MudItem>
+        }
+    </MudGrid>
 </PageContainer>
+
+@code {
+    private List<BookCommandDTO> MyBooks { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        LayoutService.IsProcessing.Value = true;
+        MyBooks = (await BookRepository.FindAllAsync()).Select(x => x.ToCommand()).ToList();
+        LayoutService.IsProcessing.Value = false;
+        StateHasChanged();
+    }
+}

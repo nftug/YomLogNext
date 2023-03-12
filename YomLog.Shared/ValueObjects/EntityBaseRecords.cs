@@ -1,21 +1,24 @@
+using YomLog.Shared.Entities;
+
 namespace YomLog.Shared.ValueObjects;
 
 public class UserRecord : ValueObject<UserRecord>
 {
-    public UserReference CreatedBy { get; }
-    public UserReference UpdatedBy { get; private set; }
+    public EntityReferenceWithName<User> CreatedBy { get; }
+    public EntityReferenceWithName<User>? UpdatedBy { get; private set; }
 
-    public UserRecord(UserReference createdBy, UserReference updatedBy)
+    public UserRecord(EntityReferenceWithName<User> createdBy, EntityReferenceWithName<User>? updatedBy)
     {
         CreatedBy = createdBy;
         UpdatedBy = updatedBy;
     }
 
-    public UserRecord(UserReference createdBy) : this(createdBy, createdBy)
+    public UserRecord(EntityReferenceWithName<User> createdBy)
     {
+        CreatedBy = createdBy;
     }
 
-    public void ChangeUpdatedBy(UserReference updatedBy)
+    public void ChangeUpdatedBy(EntityReferenceWithName<User> updatedBy)
     {
         UpdatedBy = updatedBy;
     }
@@ -27,16 +30,17 @@ public class UserRecord : ValueObject<UserRecord>
 public class DateTimeRecord : ValueObject<DateTimeRecord>
 {
     public DateTime CreatedOn { get; }
-    public DateTime UpdatedOn { get; private set; }
+    public DateTime? UpdatedOn { get; private set; }
 
-    public DateTimeRecord(DateTime createdOn, DateTime updatedOn)
+    public DateTimeRecord(DateTime createdOn, DateTime? updatedOn)
     {
         CreatedOn = createdOn;
         UpdatedOn = updatedOn;
     }
 
-    public DateTimeRecord(DateTime createdOn) : this(createdOn, createdOn)
+    public DateTimeRecord(DateTime createdOn)
     {
+        CreatedOn = createdOn;
     }
 
     public void ChangeUpdatedOn(DateTime updatedOn)
