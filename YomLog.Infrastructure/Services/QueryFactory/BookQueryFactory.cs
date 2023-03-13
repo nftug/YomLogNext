@@ -25,7 +25,8 @@ public class BookQueryFactory : QueryFactoryBase<Book, BookDataModel>
                     })
                     .ToList()
             })
-            .OrderBy(x => x.PK);
+            .ToQueryable()
+            .OrderByDescending(x => x.PK);
 
     // TODO: ステータスの更新日時で並び替える
     public override IQueryable<BookDataModel> ListSource

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.JSInterop;
 using MudBlazor;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
@@ -30,12 +29,6 @@ public partial class DialogBase : BindableComponentBase
         LayoutService.IsProcessing.Subscribe(_ => Rerender()).AddTo(Disposable);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender || MudDialog == null) return;
-        await JSRuntime.InvokeVoidAsync("disableScroll");
-    }
-
     public Task Ok<T>(T result) => OnCloseDialog(result);
 
     public Task Cancel() => OnCloseDialog(null);
@@ -56,7 +49,6 @@ public partial class DialogBase : BindableComponentBase
 
     private async Task CloseDialog()
     {
-        await JSRuntime.InvokeVoidAsync("enableScroll");
         if (Result != null)
         {
             MudDialog?.Close(DialogResult.Ok(Result));

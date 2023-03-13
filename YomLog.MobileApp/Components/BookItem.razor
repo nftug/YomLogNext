@@ -1,5 +1,10 @@
 @using YomLog.Domain.Books.Commands
+@using YomLog.BlazorShared.Services.Popup
+@using YomLog.MobileApp.Services.Api
+@using MediatR
 @inject IDialogService DialogService
+@inject IPopupService PopupService
+@inject BookApiService BookApiService
 
 <MudCard>
     @if (Item != null)
@@ -17,6 +22,12 @@
             {
                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickAddDetails">
                     追加する
+                </MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDelete">
+                    削除する
                 </MudButton>
             }
         </MudCardActions>
@@ -46,6 +57,7 @@
         await SearchByAuthor.InvokeAsync(author);
     }
 
-    private Task OnClickAddDetails()
-        => AddBookDialog.ShowDialog(DialogService, Item, SearchByAuthor);
+    private Task OnClickAddDetails() => AddBookDialog.ShowDialog(DialogService, Item, SearchByAuthor);
+
+    private Task OnClickDelete() => BookApiService.DeleteAsync(Item.Entity!);
 }

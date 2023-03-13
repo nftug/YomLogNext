@@ -51,6 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
@@ -63,6 +64,7 @@
     <ProjectReference Include="..\YomLog.BlazorShared\YomLog.BlazorShared.csproj" />
     <ProjectReference Include="..\YomLog.Domain\YomLog.Domain.csproj" />
     <ProjectReference Include="..\YomLog.Infrastructure\YomLog.Infrastructure.csproj" />
+    <ProjectReference Include="..\YomLog.UseCase\YomLog.UseCase.csproj" />
   </ItemGroup>
 
   <ItemGroup>

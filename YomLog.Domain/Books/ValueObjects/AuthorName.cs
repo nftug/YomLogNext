@@ -10,12 +10,9 @@ public partial class AuthorName : ValueObject<AuthorName>
     public AuthorName(string name)
     {
         string jpPattern = @"[\p{IsHiragana}\p{IsKatakana}\p{IsCJKUnifiedIdeographs}]+";
-
         name = name.Replace("\u3000", " ");
         name = new Regex($@"({jpPattern}) ({jpPattern})").Replace(name, "$1$2");
         Value = name;
-
-        System.Diagnostics.Debug.WriteLine($"AUTHOR: {Value}");
     }
 
     protected override bool EqualsCore(AuthorName other) => Value == other.Value;

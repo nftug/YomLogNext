@@ -93,9 +93,12 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
         if (item == null) throw new NotFoundException();
         if (!item.CheckCanDelete(operatedBy)) throw new ForbiddenException();
 
-        var data = await _context.Set<TDataModel>().FirstAsync(x => x.Id == id);
-
+        var data = await _context.Set<TDataModel>()
+            .AsTracking()
+            .FirstAsync(x => x.Id == id);
+        System.Diagnostics.Debug.WriteLine($"Delete: {data.PK}");
         _context.Remove(data);
+        await _context.SaveChangesAsync();
 
         // returns deleted item's reference
         return new(data.PK, data.Id);

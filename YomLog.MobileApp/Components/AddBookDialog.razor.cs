@@ -2,16 +2,13 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using YomLog.BlazorShared.Components;
 using YomLog.Domain.Books.Commands;
-using YomLog.Domain.Books.Services;
-using YomLog.Shared.Entities;
-using YomLog.Shared.Exceptions;
+using YomLog.MobileApp.Services.Api;
 
 namespace YomLog.MobileApp.Components;
 
 public partial class AddBookDialog : ComponentBase
 {
-    [Inject] private BookService BookService { get; set; } = null!;
-    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private BookApiService ApiService { get; set; } = null!;
 
     [CascadingParameter] protected MudDialogInstance? MudDialog { get; set; }
     [Parameter] public BookCommandDTO Item { get; set; } = null!;
@@ -19,16 +16,8 @@ public partial class AddBookDialog : ComponentBase
 
     private async Task AddBookAsync(DialogBase context)
     {
-        try
-        {
-            var book = await BookService.CreateNewBook(Item, User.GetDummyUser());
-            Snackbar.Add("本を追加しました。", Severity.Info);
-            await context.Ok(book);
-        }
-        catch (EntityValidationException e)
-        {
-            Snackbar.Add(e.Errors.First().Value.First(), Severity.Error);
-        }
+        var result = await ApiService.AddAsync(Item);
+        if (result != null) await context.Ok(result);
     }
 
     public static async Task<DialogResult> ShowDialog(

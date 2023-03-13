@@ -52,19 +52,5 @@ window.setScrollY = (scrollY) => {
   window.scrollTo(0, scrollY)
 }
 
-const preventDefault = (event) => event.preventDefault()
-
-window.disableScroll = () => {
-  const app = document.querySelector('.mud-main-content')
-  app.addEventListener('touchmove', preventDefault, { passive: false })
-  app.addEventListener('mousewheel', preventDefault, { passive: false })
-}
-
-window.enableScroll = () => {
-  const app = document.querySelector('.mud-main-content')
-  app.removeEventListener('touchmove', preventDefault, { passive: false })
-  app.removeEventListener('mousewheel', preventDefault, { passive: false })
-}
-
 // Timeline
 window.getActiveElementTagName = () => document.activeElement.tagName

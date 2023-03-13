@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MudBlazor;
@@ -6,6 +7,8 @@ using YomLog.BlazorShared;
 using YomLog.Domain;
 using YomLog.Infrastructure;
 using YomLog.MobileApp.Services;
+using YomLog.MobileApp.Services.Stores;
+using YomLog.UseCase.Books;
 
 namespace YomLog.MobileApp;
 
@@ -67,6 +70,8 @@ public static class MauiProgram
 
         builder.Services.AddInfrastructure(FileSystem.AppDataDirectory);
         builder.Services.AddDomainServices();
+        builder.Services.AddMediatR(typeof(AddBook).Assembly);
+        builder.Services.AddScoped<BookStoreService>();
 
         var app = builder.Build();
         app.Services.UseInfrastructure();
