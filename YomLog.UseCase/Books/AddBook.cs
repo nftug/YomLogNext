@@ -1,5 +1,6 @@
 using MediatR;
 using YomLog.Domain.Books.Commands;
+using YomLog.Domain.Books.DTOs;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
 using YomLog.Domain.Books.Services;
@@ -11,14 +12,14 @@ namespace YomLog.UseCase.Books;
 
 public class AddBook
 {
-    public class Command : IRequest<Book>
+    public class Command : IRequest<BookDetailsDTO>
     {
         public BookCommandDTO Item { get; }
         public static User OperatedBy => User.GetDummyUser();
         public Command(BookCommandDTO item) => Item = item;
     }
 
-    public class Handler : IRequestHandler<Command, Book>
+    public class Handler : IRequestHandler<Command, BookDetailsDTO>
     {
         private readonly IBookRepository _repository;
         private readonly BookService _bookService;
@@ -29,7 +30,7 @@ public class AddBook
             _bookService = bookService;
         }
 
-        public async Task<Book> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<BookDetailsDTO> Handle(Command request, CancellationToken cancellationToken)
         {
             if (await _repository.FindByGoogleBooksIdAsync(request.Item.Id) != null)
                 throw new EntityValidationException("この本は既に登録されています。");
@@ -38,7 +39,8 @@ public class AddBook
             var authors = await _bookService.GetOrCreateAuthors(authorNames, Command.OperatedBy);
             var book = Book.Create(request.Item, authors, Command.OperatedBy);
 
-            return await _repository.CreateAsync(book);
+            var result = await _repository.CreateAsync(book);
+            return new(result);
         }
     }
 }

@@ -2,7 +2,7 @@ using MediatR;
 using MudBlazor;
 using YomLog.BlazorShared.Services.Popup;
 using YomLog.Domain.Books.Commands;
-using YomLog.Domain.Books.Entities;
+using YomLog.Domain.Books.DTOs;
 using YomLog.MobileApp.Services.Stores;
 using YomLog.Shared.Exceptions;
 using YomLog.UseCase.Books;
@@ -24,7 +24,7 @@ public class BookApiService
         _store = store;
     }
 
-    public async Task<Book?> AddAsync(BookCommandDTO item)
+    public async Task<BookDetailsDTO?> AddAsync(BookCommandDTO item)
     {
         try
         {
@@ -40,7 +40,7 @@ public class BookApiService
         }
     }
 
-    public async Task DeleteAsync(Book item)
+    public async Task DeleteAsync(BookDetailsDTO item)
     {
         bool confirm = await _popupService.ShowConfirm("確認", "この本を削除しますか？");
         if (!confirm) return;
@@ -50,9 +50,9 @@ public class BookApiService
         _snackbar.Add("本を削除しました。", Severity.Info);
     }
 
-    public async Task GetAllBooks()
+    public async Task GetAllBooksAsync()
     {
         var items = await _mediator.Send(new GetBookList.Query());
-        _store.Bind(items);
+        _store.Set(items);
     }
 }

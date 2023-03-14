@@ -13,6 +13,8 @@ public abstract class EntityDetailsDTOBase<TEntity, TEntityDTO> : EntityDTOBase<
     public EntityReferenceWithName<User> CreatedBy { get; init; } = null!;
     public EntityReferenceWithName<User>? UpdatedBy { get; init; }
 
+    public EntityDetailsDTOBase() { }
+
     protected EntityDetailsDTOBase(EntityBase<TEntity> model) : base(model)
     {
         PK = model.PK;

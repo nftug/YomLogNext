@@ -1,5 +1,6 @@
 using MediatR;
 using YomLog.Domain.Books.Commands;
+using YomLog.Domain.Books.DTOs;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
 using YomLog.Domain.Books.Services;
@@ -11,7 +12,7 @@ namespace YomLog.UseCase.Books;
 
 public class EditBook
 {
-    public class Command : IRequest<Book>
+    public class Command : IRequest<BookDetailsDTO>
     {
         public Guid Id { get; }
         public BookCommandDTO Item { get; }
@@ -24,7 +25,7 @@ public class EditBook
         }
     }
 
-    public class Handler : IRequestHandler<Command, Book>
+    public class Handler : IRequestHandler<Command, BookDetailsDTO>
     {
         private readonly IBookRepository _repository;
         private readonly BookService _bookService;
@@ -35,7 +36,7 @@ public class EditBook
             _bookService = bookService;
         }
 
-        public async Task<Book> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<BookDetailsDTO> Handle(Command request, CancellationToken cancellationToken)
         {
             var book = await _repository.FindAsync(request.Id) ?? throw new NotFoundException();
 
@@ -49,7 +50,8 @@ public class EditBook
                 Command.OperatedBy
             );
 
-            return await _repository.UpdateAsync(book);
+            var result = await _repository.UpdateAsync(book);
+            return new(result);
         }
     }
 }

@@ -1,7 +1,7 @@
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
-using YomLog.Domain.Books.Entities;
+using YomLog.Domain.Books.DTOs;
 
 namespace YomLog.MobileApp.Services.Stores;
 
@@ -9,20 +9,20 @@ public class BookStoreService : BindableBase
 {
     public BookStoreService()
     {
-        Books = new ReactiveCollection<Book>().AddTo(Disposable);
-        BookList = Books.ToReadOnlyReactiveCollection();
+        _books = new ReactiveCollection<BookDetailsDTO>().AddTo(Disposable);
+        BookList = _books.ToReadOnlyReactiveCollection();
     }
 
-    private ReactiveCollection<Book> Books { get; set; }
-    public ReadOnlyReactiveCollection<Book> BookList { get; }
+    private readonly ReactiveCollection<BookDetailsDTO> _books;
+    public ReadOnlyReactiveCollection<BookDetailsDTO> BookList { get; }
 
-    public void Insert(Book item) => Books.InsertOnScheduler(0, item);
+    public void Insert(BookDetailsDTO item) => _books.InsertOnScheduler(0, item);
 
-    public void Bind(List<Book> items)
+    public void Set(List<BookDetailsDTO> items)
     {
-        if (Books.Any()) Books.ClearOnScheduler();
-        Books.AddRangeOnScheduler(items);
+        if (_books.Any()) _books.ClearOnScheduler();
+        _books.AddRangeOnScheduler(items);
     }
 
-    public void Remove(Book item) => Books.RemoveOnScheduler(item);
+    public void Remove(BookDetailsDTO item) => _books.RemoveOnScheduler(item);
 }

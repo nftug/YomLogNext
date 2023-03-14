@@ -23,7 +23,7 @@
                     </tr>
                     <tr>
                         <td style="width: 30%; font-weight: bold;">ページ数</td>
-                        <td>@Item.TotalPage</td>
+                        <td>@Item.TotalPage.Page</td>
                     </tr>
                     <tr>
                         <td style="width: 30%; font-weight: bold;">ISBN</td>
@@ -32,7 +32,7 @@
                     <tr>
                         <td style="width: 30%; font-weight: bold;">書影</td>
                         <td>
-                            <MudImage Src="@Item.Thumbnail" Height="128" />
+                            <MudImage Src="@Item.ThumbnailUrl" Height="128" />
                         </td>
                     </tr>
                 </tbody>

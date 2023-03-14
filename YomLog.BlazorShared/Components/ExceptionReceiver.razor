@@ -1,5 +1,7 @@
+@using YomLog.BlazorShared.Services.Popup
 @inherits BindableComponentBase
 @inject ExceptionHubService ExceptionHub
+@inject IPopupService PopupService
 
 @code {
     protected override void OnInitialized()
@@ -7,12 +9,12 @@
         ExceptionHub.Exception
             .Where(v => v != null)
             .Subscribe(v =>
-                InvokeAsync(() =>
-                {
-                    ExceptionHub.Exception.Value = null;
-                    throw v!;
-                })
-            )
+            {
+                ExceptionHub.Exception.Value = null;
+                InvokeAsync(() => PopupService.ShowPopup("Error", v!.Message));
+                // NOTE: Exception from another thread cannot catch with error boundary.
+                // InvokeAsync(() => throw v!);
+            })
             .AddTo(Disposable);
     }
 }

@@ -1,7 +1,7 @@
-@using YomLog.Domain.Books.Commands
+@using YomLog.Domain.Books.DTOs
 @using YomLog.BlazorShared.Services.Popup
 @using YomLog.MobileApp.Services.Api
-@using MediatR
+
 @inject IDialogService DialogService
 @inject IPopupService PopupService
 @inject BookApiService BookApiService
@@ -14,17 +14,15 @@
                 <MudText Class="mb-1">@Item.Title</MudText>
                 <ItemList Items="Item.Authors" OnClickItem="(string author) => OnClickAuthor(author)" />
             </div>
-            <MudImage Src="@Item.Thumbnail" Height="128" />
+            <MudImage Src="@Item.ThumbnailUrl" Height="128" />
         </MudCardContent>
 
         <MudCardActions>
-            @if (Item.Entity is null)
-            {
-                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickAddDetails">
-                    追加する
-                </MudButton>
-            }
-            else
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickAddDetails">
+                追加する
+            </MudButton>
+
+            @if (Item.Id != default)
             {
                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDelete">
                     削除する
@@ -48,7 +46,7 @@
 </MudCard>
 
 @code {
-    [Parameter] public BookCommandDTO Item { get; set; } = null!;
+    [Parameter] public BookDetailsDTO Item { get; set; } = null!;
     [Parameter] public EventCallback<string> SearchByAuthor { get; set; }
 
     private async Task OnClickAuthor(string author)
@@ -59,5 +57,5 @@
 
     private Task OnClickAddDetails() => AddBookDialog.ShowDialog(DialogService, Item, SearchByAuthor);
 
-    private Task OnClickDelete() => BookApiService.DeleteAsync(Item.Entity!);
+    private Task OnClickDelete() => BookApiService.DeleteAsync(Item);
 }

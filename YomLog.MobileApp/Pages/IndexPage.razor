@@ -1,37 +1,34 @@
-﻿@using YomLog.Domain.Books.Interfaces
-@using YomLog.Domain.Books.Commands
+﻿@using YomLog.Domain.Books.Commands
 @using YomLog.MobileApp.Services.Stores
 @using YomLog.MobileApp.Services.Api
-@using Reactive.Bindings
-@using Reactive.Bindings.Extensions
+@using System.Collections.Specialized
 
 @page "/"
 @inject BookApiService ApiService
 @inject BookStoreService Store
-@inject LayoutService LayoutService
 
 <PageContainer TopPage="true">
     <MudGrid Spacing="2">
-        @foreach (var item in Books)
-            {
+        @foreach (var item in Store.BookList)
+        {
             <MudItem xs="12" lg="6">
                 <BookItem Item="item" />
             </MudItem>
-            }
+        }
     </MudGrid>
 </PageContainer>
 
 @code {
-    private ReadOnlyReactiveCollection<BookCommandDTO> Books { get; set; } = null!;
-
     protected override void OnInitialized()
     {
-        Books = Store.BookList.ToReadOnlyReactiveCollection(x => x.ToCommand());
-        Books.ToCollectionChanged().Subscribe(_ => InvokeAsync(StateHasChanged));
+        Store.BookList
+            .ToCollectionChanged()
+            .Where(x => x.Action != NotifyCollectionChangedAction.Reset)
+            .Subscribe(_ => InvokeAsync(StateHasChanged));
     }
 
     protected override async Task OnInitializedAsync()
     {
-        if (!Books.Any()) await ApiService.GetAllBooks();
+        if (!Store.BookList.Any()) await ApiService.GetAllBooksAsync();
     }
 }

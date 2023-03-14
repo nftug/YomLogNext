@@ -64,20 +64,4 @@ public class Book : EntityWithNameBase<Book>
         TotalPage = totalPage;
         UpdateModel(updatedBy);
     }
-
-    public BookCommandDTO ToCommand()
-        => new()
-        {
-            Entity = this,
-            Id = GoogleBooksId,
-            Title = Name,
-            Authors = Authors.Select(x => x.Name.Value).ToList(),
-            Description = Description,
-            Url = GoogleBooksUrl?.AbsoluteUri,
-            Thumbnail = ThumbnailUrl?.AbsoluteUri,
-            Isbn = Isbn,
-            BookType = BookType,
-            TotalPage = TotalPage.Page,
-            TotalKindleLocation = TotalPage.KindleLocation,
-        };
 }

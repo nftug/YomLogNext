@@ -96,7 +96,7 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
         var data = await _context.Set<TDataModel>()
             .AsTracking()
             .FirstAsync(x => x.Id == id);
-        System.Diagnostics.Debug.WriteLine($"Delete: {data.PK}");
+
         _context.Remove(data);
         await _context.SaveChangesAsync();
 
