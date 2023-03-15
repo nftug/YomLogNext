@@ -29,11 +29,11 @@ public static class ServiceCollectionAssemblyExtensions
 {
     public static IServiceCollection AddByAttribute(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
-        var attributes = new Type[]
+        var attributes = new (Type Type, ServiceLifetime Lifetime)[]
         {
-            typeof(InjectAsTransientAttribute),
-            typeof(InjectAsScopedAttribute),
-            typeof(InjectAsSingletonAttribute)
+            (typeof(InjectAsTransientAttribute), ServiceLifetime.Transient),
+            (typeof(InjectAsScopedAttribute), ServiceLifetime.Scoped),
+            (typeof(InjectAsSingletonAttribute), ServiceLifetime.Singleton)
         };
         var types = assemblies
             .SelectMany((Assembly asm) => asm.GetExportedTypes())
@@ -42,20 +42,11 @@ public static class ServiceCollectionAssemblyExtensions
         var typeGroup =
             attributes.GroupJoin(
                 types,
-                o => o,
+                o => o.Type,
                 i => i.CustomAttributes
                     .Select(x => x.AttributeType)
                     .FirstOrDefault(at => at.Name.StartsWith("InjectAs")),
-                (o, i) => new
-                {
-                    Types = i,
-                    Lifetime = o.Name switch
-                    {
-                        nameof(InjectAsTransientAttribute) => ServiceLifetime.Transient,
-                        nameof(InjectAsScopedAttribute) => ServiceLifetime.Scoped,
-                        _ => ServiceLifetime.Singleton
-                    }
-                }
+                (o, i) => new { Types = i, o.Lifetime }
             )
             .SelectMany(x => x.Types, (x, t) => new { Type = t, x.Lifetime });
 

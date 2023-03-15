@@ -11,14 +11,6 @@ public static class ServiceCollectionExtensions
         SQLitePCL.Batteries_V2.Init();
         services.AddScoped(_ => new DataContext(appDataPath));
         services.AddByAttribute();
-
-        /*
-        var assemblies = new[] { System.Reflection.Assembly.GetExecutingAssembly() };
-        services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "Repository");
-        services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "Service");
-        services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "Factory");
-        */
-
         return services;
     }
 
