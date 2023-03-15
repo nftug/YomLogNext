@@ -1,7 +1,9 @@
 using Blazored.LocalStorage;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services.Repository;
 
+[InjectAsScoped]
 public class BlazorCacheRepository : ICacheRepositoryService
 {
     private readonly ILocalStorageService _localStorage;

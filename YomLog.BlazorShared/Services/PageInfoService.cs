@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using YomLog.BlazorShared.Models;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services;
 
+[InjectAsScoped]
 public class PageInfoService : BindableBase
 {
     private readonly NavigationManager _navigationManager;

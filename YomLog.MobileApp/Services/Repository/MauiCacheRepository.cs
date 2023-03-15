@@ -1,8 +1,10 @@
 using System.Text.Json;
 using YomLog.BlazorShared.Services.Repository;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.MobileApp.Services.Repository;
 
+[InjectAsScoped]
 public class MauiCacheRepository : ICacheRepositoryService
 {
     private static string AppDataPath => FileSystem.AppDataDirectory;

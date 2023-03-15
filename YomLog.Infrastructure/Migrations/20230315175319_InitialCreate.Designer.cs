@@ -11,7 +11,7 @@ using YomLog.Infrastructure;
 namespace YomLog.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230312150324_InitialCreate")]
+    [Migration("20230315175319_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -77,7 +77,7 @@ namespace YomLog.Infrastructure.Migrations
 
                     b.HasIndex("FKBook");
 
-                    b.ToTable("BookAuthorEDM");
+                    b.ToTable("BookAuthor");
                 });
 
             modelBuilder.Entity("YomLog.Infrastructure.EDMs.BookEDM", b =>

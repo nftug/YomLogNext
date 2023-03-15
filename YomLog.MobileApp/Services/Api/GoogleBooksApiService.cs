@@ -1,10 +1,12 @@
 using Dynamic.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using YomLog.Domain.Books.DTOs;
+using YomLog.Shared.Extensions;
 using YomLog.Shared.Models;
 
 namespace YomLog.MobileApp.Services.Api;
 
+[InjectAsScoped]
 public class GoogleBooksApiService
 {
     private readonly HttpClient _httpClient;

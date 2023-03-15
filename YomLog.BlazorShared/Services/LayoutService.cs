@@ -7,9 +7,11 @@ using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services.Repository;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services;
 
+[InjectAsScoped]
 public class LayoutService : BindableBase
 {
     private readonly string Key = nameof(UserPreferences);

@@ -2,16 +2,12 @@ using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using IdentityModel.OidcClient;
 using YomLog.BlazorShared.Models;
-using YomLog.BlazorShared.Services;
 using YomLog.BlazorShared.Services.Auth;
-using YomLog.BlazorShared.Services.Popup;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using YomLog.BlazorShared.Services.Repository;
 using System.Reflection;
 using YomLog.Shared.Extensions;
-using YomLog.BlazorShared.Services.Api;
 using MudBlazor;
 
 namespace YomLog.BlazorShared;
@@ -56,13 +52,6 @@ public static class ServiceCollectionExtensions
         // Blazor特有の機能 (JSRuntime, NavigationManagerなど) を含むサービスは、Scoped or TransientでDIすること
         // (Singletonだと起動不可)
         services.AddTransient(sp => config.AppSettings);
-        services.AddScoped<ExceptionHubService>();
-        services.AddScoped<LayoutService>();
-        services.AddScoped<PageInfoService>();
-        services.AddScoped<HttpClientWrapper>();
-        services.AddScoped<ScrollInfoService>();
-        // PictureApiService may be called many times repeatedly, so inject as a scoped service.
-        services.AddScoped<PictureApiService>();
 
         services.AddBlazoredLocalStorage();
         services.AddBlazoredSessionStorage();
@@ -73,11 +62,7 @@ public static class ServiceCollectionExtensions
                 .Select(x => x.GetName().Name!);
         var assemblies = Assembly.GetCallingAssembly().CollectReferencedAssemblies(assemblyNames);
 
-        services.AddAssemblyTypes<IPreferenceRepositoryService>(assemblies, ServiceLifetime.Transient);
-        services.AddAssemblyTypes<ICacheRepositoryService>(assemblies, ServiceLifetime.Transient);
-        services.AddAssemblyTypes<IPopupService>(assemblies, ServiceLifetime.Transient);
-        services.AddAssemblyTypes<IEnvironmentHelper>(assemblies, ServiceLifetime.Transient);
-        services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "ApiService");
+        services.AddByAttribute(assemblies);
 
         return services;
     }

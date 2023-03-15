@@ -1,9 +1,11 @@
 ﻿using YomLog.BlazorShared.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services.Popup;
 
+[InjectAsScoped]
 public class BlazorPopupService : IPopupService
 {
     private readonly IDialogService _dialogService;

@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using YomLog.Infrastructure.Shared.EDMs;
 
 namespace YomLog.Infrastructure.EDMs;
 
+[Table("BookAuthor")]
 public class BookAuthorEDM : JoinTableEDMBase<BookAuthorEDM>
 {
     public long FKBook { get; set; }

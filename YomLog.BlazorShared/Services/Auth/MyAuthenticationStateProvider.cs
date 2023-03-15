@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using Reactive.Bindings;
 using YomLog.BlazorShared.Services.Repository;
 using YomLog.BlazorShared.Models;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services.Auth;
 

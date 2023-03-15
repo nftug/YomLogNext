@@ -1,9 +1,11 @@
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Forms;
 using YomLog.BlazorShared.Models;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services.Api;
 
+[InjectAsScoped]
 public class PictureApiService
 {
     private readonly HttpClientWrapper _httpClientWrapper;

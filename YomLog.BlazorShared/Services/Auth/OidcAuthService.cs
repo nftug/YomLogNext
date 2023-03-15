@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using MudBlazor;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services.Popup;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services.Auth;
 

@@ -2,9 +2,11 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
 using YomLog.Domain.Books.DTOs;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.MobileApp.Services.Stores;
 
+[InjectAsScoped]
 public class BookStoreService : BindableBase
 {
     public BookStoreService()

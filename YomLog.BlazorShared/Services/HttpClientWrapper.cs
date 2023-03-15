@@ -7,9 +7,11 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.Shared.Exceptions;
 using Dynamic.Json;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services;
 
+[InjectAsScoped]
 public class HttpClientWrapper : BindableBase
 {
     private readonly HttpClient _httpClient;

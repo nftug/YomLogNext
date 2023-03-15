@@ -1,9 +1,11 @@
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services;
 
+[InjectAsScoped]
 public class ExceptionHubService : BindableBase
 {
     public ReactivePropertySlim<Exception?> Exception { get; }

@@ -1,8 +1,10 @@
 using YomLog.BlazorShared.Services;
 using YomLog.BlazorShared.Services.Popup;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.MobileApp.Services;
 
+[InjectAsTransient]
 public class EnvironmentHelper : IEnvironmentHelper
 {
     private readonly IPopupService _popupService;

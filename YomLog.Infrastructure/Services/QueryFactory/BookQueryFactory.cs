@@ -6,6 +6,7 @@ using YomLog.Shared.Extensions;
 
 namespace YomLog.Infrastructure.Services.QueryFactory;
 
+[InjectAsTransient]
 public class BookQueryFactory : QueryFactoryBase<Book, BookEDM>
 {
     public BookQueryFactory(DataContext context) : base(context)

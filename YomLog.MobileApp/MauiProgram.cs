@@ -71,7 +71,7 @@ public static class MauiProgram
         builder.Services.AddInfrastructure(FileSystem.AppDataDirectory);
         builder.Services.AddDomainServices();
         builder.Services.AddMediatR(typeof(AddBook).Assembly);
-        builder.Services.AddScoped<BookStoreService>();
+        // builder.Services.AddScoped<BookStoreService>();
 
         var app = builder.Build();
         app.Services.UseInfrastructure();

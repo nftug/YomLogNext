@@ -7,9 +7,13 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDomainServices(this IServiceCollection services)
     {
+        services.AddByAttribute();
+
+        /*
         var assemblies = new[] { System.Reflection.Assembly.GetExecutingAssembly() };
         services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "Service");
         services.AddAssemblyTypes(assemblies, ServiceLifetime.Transient, "Factory");
+        */
         return services;
     }
 }

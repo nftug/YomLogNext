@@ -2,9 +2,11 @@ using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
 using YomLog.Domain.Books.ValueObjects;
 using YomLog.Shared.Entities;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.Domain.Books.Services;
 
+[InjectAsTransient]
 public class BookService
 {
     private readonly IBookRepository _bookRepository;

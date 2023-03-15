@@ -1,8 +1,10 @@
 ﻿using Microsoft.JSInterop;
 using MudBlazor;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services;
 
+[InjectAsScoped]
 public class ScrollInfoService
 {
     public event EventHandler<double>? OnScroll;

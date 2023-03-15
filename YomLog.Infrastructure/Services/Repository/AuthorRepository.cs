@@ -3,9 +3,11 @@ using YomLog.Domain.Books.Interfaces;
 using YomLog.Domain.Books.ValueObjects;
 using YomLog.Infrastructure.EDMs;
 using YomLog.Infrastructure.Shared.Services;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.Infrastructure.Services.Repository;
 
+[InjectAsTransient]
 public class AuthorRepository : RepositoryBase<Author, AuthorEDM>, IAuthorRepository
 {
     public AuthorRepository(DataContext context, IQueryFactory<Author, AuthorEDM> queryFactory)

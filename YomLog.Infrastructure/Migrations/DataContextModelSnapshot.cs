@@ -74,7 +74,7 @@ namespace YomLog.Infrastructure.Migrations
 
                     b.HasIndex("FKBook");
 
-                    b.ToTable("BookAuthorEDM");
+                    b.ToTable("BookAuthor");
                 });
 
             modelBuilder.Entity("YomLog.Infrastructure.EDMs.BookEDM", b =>

@@ -1,9 +1,11 @@
 using MudBlazor;
 using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Services.Popup;
+using YomLog.Shared.Extensions;
 
 namespace YomLog.MobileApp.Services;
 
+[InjectAsScoped]
 public class MauiPopupService : IPopupService
 {
     private readonly IDialogService _dialogService;
