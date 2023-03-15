@@ -20,7 +20,7 @@
             MaxWidth = MaxWidth.Small,
             DisableBackdropClick = false
         };
-        var dialog = dialogService.Show<ImageDialog>("Image", parameters, options);
+        var dialog = dialogService.Show<ImageDialog>(string.Empty, parameters, options);
         return await dialog.Result;
     }
 }

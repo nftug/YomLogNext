@@ -1,10 +1,8 @@
 using MediatR;
 using YomLog.Domain.Books.Commands;
 using YomLog.Domain.Books.DTOs;
-using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
 using YomLog.Domain.Books.Services;
-using YomLog.Domain.Books.ValueObjects;
 using YomLog.Shared.Entities;
 using YomLog.Shared.Exceptions;
 
@@ -39,9 +37,7 @@ public class EditBook
         public async Task<BookDetailsDTO> Handle(Command request, CancellationToken cancellationToken)
         {
             var book = await _repository.FindAsync(request.Id) ?? throw new NotFoundException();
-
-            var authorNames = request.Item.Authors.Select(x => new AuthorName(x)).ToList();
-            var authors = await _bookService.GetOrCreateAuthors(authorNames, Command.OperatedBy);
+            var authors = await _bookService.GetOrCreateAuthors(request.Item.Authors, Command.OperatedBy);
 
             book.Edit(
                 request.Item.Title,
@@ -50,8 +46,8 @@ public class EditBook
                 Command.OperatedBy
             );
 
-            var result = await _repository.UpdateAsync(book);
-            return new(result);
+            await _repository.UpdateAsync(book);
+            return new(book);
         }
     }
 }

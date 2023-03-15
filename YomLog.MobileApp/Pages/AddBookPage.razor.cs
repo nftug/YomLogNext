@@ -74,9 +74,9 @@ public partial class AddBookPage : BindableComponentBase
             _results.AddRange(data.Results);
             _startIndex += data.Results.Count();
         }
-        catch (Exception e) when (e is IApiException exception)
+        catch (Exception e)
         {
-            System.Diagnostics.Debug.WriteLine(exception.Message!);
+            System.Diagnostics.Debug.WriteLine(e.Message);
         }
         finally
         {

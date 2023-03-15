@@ -17,7 +17,7 @@ namespace YomLog.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.3");
 
-            modelBuilder.Entity("YomLog.Infrastructure.DataModels.AuthorDataModel", b =>
+            modelBuilder.Entity("YomLog.Infrastructure.DAOs.AuthorDAO", b =>
                 {
                     b.Property<long>("PK")
                         .ValueGeneratedOnAdd()
@@ -56,7 +56,7 @@ namespace YomLog.Infrastructure.Migrations
                     b.ToTable("Author", (string)null);
                 });
 
-            modelBuilder.Entity("YomLog.Infrastructure.DataModels.BookAuthorDataModel", b =>
+            modelBuilder.Entity("YomLog.Infrastructure.DAOs.BookAuthorDAO", b =>
                 {
                     b.Property<long>("PK")
                         .ValueGeneratedOnAdd()
@@ -74,10 +74,10 @@ namespace YomLog.Infrastructure.Migrations
 
                     b.HasIndex("FKBook");
 
-                    b.ToTable("BookAuthorDataModel");
+                    b.ToTable("BookAuthorDAO");
                 });
 
-            modelBuilder.Entity("YomLog.Infrastructure.DataModels.BookDataModel", b =>
+            modelBuilder.Entity("YomLog.Infrastructure.DAOs.BookDAO", b =>
                 {
                     b.Property<long>("PK")
                         .ValueGeneratedOnAdd()
@@ -141,15 +141,15 @@ namespace YomLog.Infrastructure.Migrations
                     b.ToTable("Book", (string)null);
                 });
 
-            modelBuilder.Entity("YomLog.Infrastructure.DataModels.BookAuthorDataModel", b =>
+            modelBuilder.Entity("YomLog.Infrastructure.DAOs.BookAuthorDAO", b =>
                 {
-                    b.HasOne("YomLog.Infrastructure.DataModels.AuthorDataModel", "Author")
+                    b.HasOne("YomLog.Infrastructure.DAOs.AuthorDAO", "Author")
                         .WithMany()
                         .HasForeignKey("FKAuthor")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YomLog.Infrastructure.DataModels.BookDataModel", "Book")
+                    b.HasOne("YomLog.Infrastructure.DAOs.BookDAO", "Book")
                         .WithMany("BookAuthors")
                         .HasForeignKey("FKBook")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -160,7 +160,7 @@ namespace YomLog.Infrastructure.Migrations
                     b.Navigation("Book");
                 });
 
-            modelBuilder.Entity("YomLog.Infrastructure.DataModels.BookDataModel", b =>
+            modelBuilder.Entity("YomLog.Infrastructure.DAOs.BookDAO", b =>
                 {
                     b.Navigation("BookAuthors");
                 });

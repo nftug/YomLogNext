@@ -3,7 +3,7 @@
 @inject IPopupService PopupService
 
 <div class="d-flex justify-center mt-5">
-    <InputFile id="fileInput" OnChange="OnSelectImage" hidden accept="@ContentType" />
+    <InputFile id="@_fileInputId" OnChange="OnSelectImage" hidden accept="@ContentType" />
 
     @if (IsLoading.Value)
     {
@@ -20,7 +20,7 @@
     }
     else
     {
-        <label for="fileInput" class="cursor-pointer">
+        <label for="@_fileInputId" class="cursor-pointer">
             <MudPaper Width="200px" Height="200px" Elevation="0" Class="d-flex justify-center align-center">
                 <MudIcon Icon="@Icons.Material.Filled.AddAPhoto" Size="Size.Large" />
             </MudPaper>

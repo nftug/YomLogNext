@@ -1,5 +1,5 @@
+using Dynamic.Json;
 using Microsoft.AspNetCore.WebUtilities;
-using YomLog.BlazorShared.Services;
 using YomLog.Domain.Books.DTOs;
 using YomLog.Shared.Models;
 
@@ -7,11 +7,11 @@ namespace YomLog.MobileApp.Services.Api;
 
 public class GoogleBooksApiService
 {
-    private readonly HttpClientWrapper _httpClientWrapper;
+    private readonly HttpClient _httpClient;
 
-    public GoogleBooksApiService(HttpClientWrapper httpClientWrapper)
+    public GoogleBooksApiService(HttpClient httpClient)
     {
-        _httpClientWrapper = httpClientWrapper;
+        _httpClient = httpClient;
     }
 
     public async Task<Pagination<BookDetailsDTO>> GetBookList(string query, int startIndex, int limit)
@@ -30,7 +30,9 @@ public class GoogleBooksApiService
             }
         );
 
-        var data = await _httpClientWrapper.GetAsDJson(url);
+        var response = await _httpClient.GetAsync(url);
+        var rawContent = await response.Content.ReadAsStringAsync();
+        var data = DJson.Parse(rawContent);
 
         int totalItems = (int)data.TotalItems;
         if (data.Items == null)
@@ -46,9 +48,10 @@ public class GoogleBooksApiService
                 GoogleBooksUrl = (string?)x.VolumeInfo.CommandLink,
                 ThumbnailUrl = ((string?)(x.VolumeInfo.ImageLinks?.Thumbnail ?? x.VolumeInfo.ImageLinks?.SmallThumbnail))
                     ?.Replace("http://", "https://"),
-                TotalPage = new((int?)x.VolumeInfo.PageCount, null),
+                TotalPage = new((int?)x.VolumeInfo.PageCount, null, skipValidation: true),
                 Isbn = ((IEnumerable<dynamic>?)x.VolumeInfo.IndustryIdentifiers)?.FirstOrDefault()?.Identifier
-            });
+            })
+            .ToList();
 
         return new Pagination<BookDetailsDTO>(books, totalItems, startIndex, limit);
     }

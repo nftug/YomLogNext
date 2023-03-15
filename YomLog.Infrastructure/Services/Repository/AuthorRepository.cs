@@ -1,14 +1,14 @@
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
 using YomLog.Domain.Books.ValueObjects;
-using YomLog.Infrastructure.DataModels;
+using YomLog.Infrastructure.DAOs;
 using YomLog.Infrastructure.Shared.Services;
 
 namespace YomLog.Infrastructure.Services.Repository;
 
-public class AuthorRepository : RepositoryBase<Author, AuthorDataModel>, IAuthorRepository
+public class AuthorRepository : RepositoryBase<Author, AuthorDAO>, IAuthorRepository
 {
-    public AuthorRepository(DataContext context, IQueryFactory<Author, AuthorDataModel> queryFactory)
+    public AuthorRepository(DataContext context, IQueryFactory<Author, AuthorDAO> queryFactory)
         : base(context, queryFactory)
     {
     }

@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Enums;
-using YomLog.Infrastructure.Shared.DataModels;
+using YomLog.Infrastructure.Shared.DAOs;
 
-namespace YomLog.Infrastructure.DataModels;
+namespace YomLog.Infrastructure.DAOs;
 
-public class BookDataModel : DataModelBase<Book, BookDataModel>
+public class BookDAO : EntityDAOBase<Book, BookDAO>
 {
     public string GoogleBooksId { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
-    public ICollection<AuthorDataModel> Authors { get; set; } = null!;
+    public ICollection<AuthorDAO> Authors { get; set; } = null!;
     public string? Description { get; set; }
     public string? GoogleBooksUrl { get; set; }
     public string? ThumbnailUrl { get; set; }
@@ -18,7 +18,7 @@ public class BookDataModel : DataModelBase<Book, BookDataModel>
     public int? TotalPage { get; set; }
     public int? TotalKindleLocation { get; set; }
 
-    public ICollection<BookAuthorDataModel> BookAuthors { get; set; } = null!;
+    public ICollection<BookAuthorDAO> BookAuthors { get; set; } = null!;
 
     protected override Book PrepareDomainEntity()
         => new(
@@ -33,7 +33,7 @@ public class BookDataModel : DataModelBase<Book, BookDataModel>
             totalPage: new(TotalPage, TotalKindleLocation)
         );
 
-    internal override BookDataModel Transfer(Book origin)
+    internal override BookDAO Transfer(Book origin)
     {
         GoogleBooksId = origin.GoogleBooksId;
         Name = origin.Name;
@@ -50,7 +50,7 @@ public class BookDataModel : DataModelBase<Book, BookDataModel>
     internal override void ApplyNavigation(Book model)
     {
         BookAuthors = model.Authors
-            .Select(x => new BookAuthorDataModel { FKBook = PK, FKAuthor = x.PK })
+            .Select(x => new BookAuthorDAO { FKBook = PK, FKAuthor = x.PK })
             .ToList();
     }
 
@@ -58,10 +58,10 @@ public class BookDataModel : DataModelBase<Book, BookDataModel>
     {
         base.OnBuildEdm(modelBuilder);
 
-        modelBuilder.Entity<BookDataModel>()
+        modelBuilder.Entity<BookDAO>()
             .HasMany(x => x.Authors)
             .WithMany()
-            .UsingEntity<BookAuthorDataModel>(
+            .UsingEntity<BookAuthorDAO>(
                 r => r
                     .HasOne(r => r.Author)
                     .WithMany()

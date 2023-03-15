@@ -60,7 +60,7 @@ namespace YomLog.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookAuthorDataModel",
+                name: "BookAuthorDAO",
                 columns: table => new
                 {
                     PK = table.Column<long>(type: "INTEGER", nullable: false)
@@ -70,15 +70,15 @@ namespace YomLog.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookAuthorDataModel", x => x.PK);
+                    table.PrimaryKey("PK_BookAuthorDAO", x => x.PK);
                     table.ForeignKey(
-                        name: "FK_BookAuthorDataModel_Author_FKAuthor",
+                        name: "FK_BookAuthorDAO_Author_FKAuthor",
                         column: x => x.FKAuthor,
                         principalTable: "Author",
                         principalColumn: "PK",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BookAuthorDataModel_Book_FKBook",
+                        name: "FK_BookAuthorDAO_Book_FKBook",
                         column: x => x.FKBook,
                         principalTable: "Book",
                         principalColumn: "PK",
@@ -96,13 +96,13 @@ namespace YomLog.Infrastructure.Migrations
                 column: "Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookAuthorDataModel_FKAuthor",
-                table: "BookAuthorDataModel",
+                name: "IX_BookAuthorDAO_FKAuthor",
+                table: "BookAuthorDAO",
                 column: "FKAuthor");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookAuthorDataModel_FKBook",
-                table: "BookAuthorDataModel",
+                name: "IX_BookAuthorDAO_FKBook",
+                table: "BookAuthorDAO",
                 column: "FKBook");
         }
 
@@ -110,7 +110,7 @@ namespace YomLog.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BookAuthorDataModel");
+                name: "BookAuthorDAO");
 
             migrationBuilder.DropTable(
                 name: "Author");

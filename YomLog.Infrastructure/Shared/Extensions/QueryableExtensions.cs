@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using YomLog.Infrastructure.Shared.DataModels;
+using YomLog.Infrastructure.Shared.DAOs;
 using YomLog.Shared.Extensions;
 
 namespace YomLog.Infrastructure.Shared.Extensions;
@@ -35,7 +35,7 @@ internal static class QueryableExtensions
     }
 
     public static Expression<Func<T, T>> DbSetPredicate<T>(this DbContext context)
-        where T : class, IDataModel, new()
+        where T : class, IEntityDAO, new()
     {
         var parameter = Expression.Parameter(typeof(T), "x");
         var propBindings = context.Set<T>().EntityType.GetProperties()
@@ -48,7 +48,7 @@ internal static class QueryableExtensions
     }
 
     public static WithQuery<T, T> SetWithProperties<T>(this DbContext context)
-        where T : class, IDataModel, new()
+        where T : class, IEntityDAO, new()
     {
         return new(context.DbSetPredicate<T>(), context.Set<T>());
     }

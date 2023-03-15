@@ -1,11 +1,11 @@
-using YomLog.Infrastructure.Shared.DataModels;
+using YomLog.Infrastructure.Shared.DAOs;
 using YomLog.Shared.Entities;
 
 namespace YomLog.Infrastructure.Shared.Services;
 
-public abstract class QueryFactoryBase<TEntity, TDataModel> : IQueryFactory<TEntity, TDataModel>
+public abstract class QueryFactoryBase<TEntity, TEntityDAO> : IQueryFactory<TEntity, TEntityDAO>
     where TEntity : EntityBase<TEntity>
-    where TDataModel : DataModelBase<TEntity, TDataModel>, new()
+    where TEntityDAO : EntityDAOBase<TEntity, TEntityDAO>, new()
 {
     protected readonly DataContext _context;
 
@@ -14,14 +14,14 @@ public abstract class QueryFactoryBase<TEntity, TDataModel> : IQueryFactory<TEnt
         _context = context;
     }
 
-    public virtual IQueryable<TDataModel> Source => _context.Set<TDataModel>();
-    public virtual IQueryable<TDataModel> ListSource => Source;
+    public virtual IQueryable<TEntityDAO> Source => _context.Set<TEntityDAO>();
+    public virtual IQueryable<TEntityDAO> ListSource => Source;
 }
 
-public interface IQueryFactory<TEntity, TDataModel>
+public interface IQueryFactory<TEntity, TEntityDAO>
     where TEntity : EntityBase<TEntity>
-    where TDataModel : DataModelBase<TEntity, TDataModel>, new()
+    where TEntityDAO : EntityDAOBase<TEntity, TEntityDAO>, new()
 {
-    IQueryable<TDataModel> Source { get; }
-    IQueryable<TDataModel> ListSource { get; }
+    IQueryable<TEntityDAO> Source { get; }
+    IQueryable<TEntityDAO> ListSource { get; }
 }

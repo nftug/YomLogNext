@@ -77,6 +77,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.4" />
     <None Remove="Platforms\Android\Linker.xml" />
     <LinkDescription Include="Platforms\Android\Linker.xml" />
   </ItemGroup>

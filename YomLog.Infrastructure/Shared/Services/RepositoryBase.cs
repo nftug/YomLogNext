@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using YomLog.Infrastructure.Shared.DataModels;
+using YomLog.Infrastructure.Shared.DAOs;
 using YomLog.Shared.Entities;
 using YomLog.Shared.Exceptions;
 using YomLog.Shared.Interfaces;
@@ -8,36 +8,34 @@ using YomLog.Shared.ValueObjects;
 
 namespace YomLog.Infrastructure.Shared.Services;
 
-public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
+public abstract class RepositoryBase<TEntity, TEntityDAO> : IRepository<TEntity>
     where TEntity : EntityBase<TEntity>
-    where TDataModel : DataModelBase<TEntity, TDataModel>, new()
+    where TEntityDAO : EntityDAOBase<TEntity, TEntityDAO>, new()
 {
     protected readonly DataContext _context;
-    protected readonly IQueryFactory<TEntity, TDataModel> _queryFactory;
+    protected readonly IQueryFactory<TEntity, TEntityDAO> _queryFactory;
 
-    public RepositoryBase(DataContext context, IQueryFactory<TEntity, TDataModel> queryFactory)
+    public RepositoryBase(DataContext context, IQueryFactory<TEntity, TEntityDAO> queryFactory)
     {
         _context = context;
         _queryFactory = queryFactory;
     }
 
-    public virtual async Task<TEntity> CreateAsync(TEntity item)
+    public virtual async Task CreateAsync(TEntity item)
     {
-        var data = new TDataModel().Transfer(item);
+        var data = new TEntityDAO().Transfer(item);
         await _context.AddAsync(data);
 
         // Apply navigation after saving to database, because the operation requires PK.
         data.ApplyNavigation(item);
         await _context.SaveChangesAsync();
-
-        return (await FindByPredicateAsync(x => x.Id == data.Id))!;
     }
 
     public virtual async Task CreateRangeAsync(IEnumerable<TEntity> items)
     {
         foreach (var item in items)
         {
-            var data = new TDataModel().Transfer(item);
+            var data = new TEntityDAO().Transfer(item);
             await _context.AddAsync(data);
             data.ApplyNavigation(item);
         }
@@ -45,19 +43,17 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
         await _context.SaveChangesAsync();
     }
 
-    public virtual async Task<TEntity> UpdateAsync(TEntity item)
+    public virtual async Task UpdateAsync(TEntity item)
     {
-        var data = await _context.Set<TDataModel>().AsTracking()
+        var data = await _context.Set<TEntityDAO>().AsTracking()
             .FirstOrDefaultAsync(x => x.Id == item.Id)
             ?? throw new NotFoundException();
 
         await UpdateCoreAsync(data, item);
         await _context.SaveChangesAsync();
-
-        return (await FindByPredicateAsync(x => x.Id == data.Id))!;
     }
 
-    protected virtual async Task UpdateCoreAsync(TDataModel data, TEntity item)
+    protected virtual async Task UpdateCoreAsync(TEntityDAO data, TEntity item)
     {
         data.Transfer(item);
 
@@ -70,7 +66,7 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
     public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> items)
     {
         var ids = items.Select(x => x.Id);
-        var entities = await _context.Set<TDataModel>()
+        var entities = await _context.Set<TEntityDAO>()
             .AsTracking()
             .Where(x => ids.Contains(x.Id))
             .ToListAsync();
@@ -93,7 +89,7 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
         if (item == null) throw new NotFoundException();
         if (!item.CheckCanDelete(operatedBy)) throw new ForbiddenException();
 
-        var data = await _context.Set<TDataModel>()
+        var data = await _context.Set<TEntityDAO>()
             .AsTracking()
             .FirstAsync(x => x.Id == id);
 
@@ -111,13 +107,13 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
         => FindAllByPredicateAsync(x => ids.Contains(x.Id), operatedBy);
 
     public virtual Task<bool> AnyAsync(Guid id)
-        => _context.Set<TDataModel>().AnyAsync(x => x.Id == id);
+        => _context.Set<TEntityDAO>().AnyAsync(x => x.Id == id);
 
     public virtual Task<bool> AnyAsync(IEnumerable<Guid> ids)
-        => _context.Set<TDataModel>().AnyAsync(x => ids.Contains(x.Id));
+        => _context.Set<TEntityDAO>().AnyAsync(x => ids.Contains(x.Id));
 
     internal async Task<TEntity?> FindByPredicateAsync(
-        Expression<Func<TDataModel, bool>> predicate,
+        Expression<Func<TEntityDAO, bool>> predicate,
         User? operatedBy = null
     )
     {
@@ -135,7 +131,7 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
     }
 
     internal async Task<List<TEntity>> FindAllByPredicateAsync(
-        Expression<Func<TDataModel, bool>>? predicate = null,
+        Expression<Func<TEntityDAO, bool>>? predicate = null,
         User? operatedBy = null
     )
         => (await _queryFactory.Source
@@ -148,18 +144,18 @@ public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
     /// <summary>
     /// Clear many-to-many relationships with physical deleting. Use before updating an entity.
     /// </summary>
-    protected async Task ClearJoinTables(IDataModel data)
+    protected async Task ClearJoinTables(IEntityDAO data)
     {
         var joinTables = _context.Entry(data).Collections
             .Where(x =>
                 x.Metadata.PropertyInfo != null &&
-                typeof(IJoinTableDataModel).IsAssignableFrom(x.Metadata.PropertyInfo.PropertyType.GetGenericArguments()[0])
+                typeof(IJoinTableDAO).IsAssignableFrom(x.Metadata.PropertyInfo.PropertyType.GetGenericArguments()[0])
             );
 
         foreach (var collectionEntry in joinTables)
         {
             await collectionEntry.LoadAsync();
-            _context.RemoveRange((IEnumerable<IJoinTableDataModel>)collectionEntry.CurrentValue!);
+            _context.RemoveRange((IEnumerable<IJoinTableDAO>)collectionEntry.CurrentValue!);
         }
     }
 }

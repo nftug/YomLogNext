@@ -16,13 +16,14 @@ public class BookService
         _authorRepository = authorRepository;
     }
 
-    public async Task<IReadOnlyList<Author>> GetOrCreateAuthors(IEnumerable<AuthorName> authorNames, User createdBy)
+    public async Task<IReadOnlyList<Author>> GetOrCreateAuthors(IEnumerable<string> names, User createdBy)
     {
+        var authorNames = names.Select(x => new AuthorName(x)).ToList();
         var authors = await _authorRepository.FindAllByNameAsync(authorNames);
+
         var newAuthors = authorNames
             .Except(authors.Select(x => x.Name))
             .Select(x => Author.Create(x, createdBy));
-
         if (!newAuthors.Any()) return authors;
 
         await _authorRepository.CreateRangeAsync(newAuthors);

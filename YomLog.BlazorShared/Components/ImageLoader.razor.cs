@@ -27,6 +27,8 @@ public partial class ImageLoader : BindableComponentBase
     private Guid _pictureIdOrigin;
     private ReactivePropertySlim<bool> IsLoading { get; set; } = null!;
 
+    private readonly string _fileInputId = $"fileInput_{Guid.NewGuid()}";
+
     protected override void OnInitialized()
     {
         IsLoading = new ReactivePropertySlim<bool>().AddTo(Disposable);
@@ -37,17 +39,20 @@ public partial class ImageLoader : BindableComponentBase
             _imageSrc = PictureApiService.GetPicturePath(PictureId);
     }
 
-    private async Task OnSelectImage(InputFileChangeEventArgs e)
-        => await SetPicture(Guid.NewGuid(), e.File);
+    private Task OnSelectImage(InputFileChangeEventArgs e) => SetPicture(Guid.NewGuid(), e.File);
 
-    private async void OnDeleteImage()
-        => await SetPicture(default, null);
+    private Task OnDeleteImage() => SetPicture(default, null);
 
-    private async void OnResetImage()
-        => await SetPicture(_pictureIdOrigin, null);
+    private Task OnResetImage() => SetPicture(_pictureIdOrigin, null);
 
     private async Task SetPicture(Guid pictureId, IBrowserFile? file)
     {
+        if (file != null && file.ContentType != ContentType)
+        {
+            Snackbar.Add("File type is invalid.", Severity.Error);
+            return;
+        }
+
         PictureId = pictureId;
         await PictureIdChanged.InvokeAsync(PictureId);
         File = file;
@@ -61,7 +66,6 @@ public partial class ImageLoader : BindableComponentBase
 
         try
         {
-            if (File.ContentType != ContentType) return;
             IsLoading.Value = true;
             using var stream = File.OpenReadStream(MaxFileSize);
             var source = await stream.ConvertToBase64StringAsync();
@@ -69,7 +73,7 @@ public partial class ImageLoader : BindableComponentBase
         }
         catch (IOException)
         {
-            Snackbar.Add("この画像ファイルは設定できません。", Severity.Error);
+            Snackbar.Add("Cannot set the image.", Severity.Error);
         }
         finally
         {

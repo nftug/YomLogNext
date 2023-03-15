@@ -1,6 +1,6 @@
-namespace YomLog.Infrastructure.Shared.DataModels;
+namespace YomLog.Infrastructure.Shared.DAOs;
 
-public interface IDataModel
+public interface IEntityDAO
 {
     long PK { get; set; }
     Guid Id { get; set; }
@@ -12,7 +12,7 @@ public interface IDataModel
     string? UpdatedByName { get; set; }
 }
 
-public interface IJoinTableDataModel
+public interface IJoinTableDAO
 {
     long PK { get; set; }
 }
