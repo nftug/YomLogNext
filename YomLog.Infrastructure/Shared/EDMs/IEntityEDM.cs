@@ -1,6 +1,6 @@
-namespace YomLog.Infrastructure.Shared.DAOs;
+namespace YomLog.Infrastructure.Shared.EDMs;
 
-public interface IEntityDAO
+public interface IEntityEDM
 {
     long PK { get; set; }
     Guid Id { get; set; }
@@ -12,7 +12,7 @@ public interface IEntityDAO
     string? UpdatedByName { get; set; }
 }
 
-public interface IJoinTableDAO
+public interface IJoinTableEDM
 {
     long PK { get; set; }
 }

@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using YomLog.Shared.Entities;
 
-namespace YomLog.Infrastructure.Shared.DAOs;
+namespace YomLog.Infrastructure.Shared.EDMs;
 
-public abstract class EntityDAOBase<TEntity, TEntityDAO> : IEntityDAO
+public abstract class EntityEDMBase<TEntity, TEntityEDM> : IEntityEDM
     where TEntity : EntityBase<TEntity>
-    where TEntityDAO : EntityDAOBase<TEntity, TEntityDAO>, new()
+    where TEntityEDM : EntityEDMBase<TEntity, TEntityEDM>, new()
 {
     [Key] public long PK { get; set; }
 
@@ -18,7 +18,7 @@ public abstract class EntityDAOBase<TEntity, TEntityDAO> : IEntityDAO
     public Guid? UpdatedById { get; set; }
     public string? UpdatedByName { get; set; }
 
-    internal virtual TEntityDAO Transfer(TEntity origin)
+    internal virtual TEntityEDM Transfer(TEntity origin)
     {
         Id = origin.Reference.Id;
         CreatedOn = origin.DateTimeRecord.CreatedOn;
@@ -28,7 +28,7 @@ public abstract class EntityDAOBase<TEntity, TEntityDAO> : IEntityDAO
         UpdatedByName = origin.UserRecord.UpdatedBy?.Name;
         UpdatedById = origin.UserRecord.UpdatedBy?.Id;
 
-        return (TEntityDAO)this;
+        return (TEntityEDM)this;
     }
 
     internal virtual void ApplyNavigation(TEntity model) { }
@@ -46,15 +46,15 @@ public abstract class EntityDAOBase<TEntity, TEntityDAO> : IEntityDAO
         );
 
     public static void BuildEdm(ModelBuilder modelBuilder)
-        => new TEntityDAO().OnBuildEdm(modelBuilder);
+        => new TEntityEDM().OnBuildEdm(modelBuilder);
 
     protected static void SetupTableBase(ModelBuilder modelBuilder)
-        => modelBuilder.Entity<TEntityDAO>().ToTable(typeof(TEntity).Name);
+        => modelBuilder.Entity<TEntityEDM>().ToTable(typeof(TEntity).Name);
 
     protected static void SetupIndexBase(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<TEntityDAO>().HasIndex(x => x.Id).IsUnique();
-        modelBuilder.Entity<TEntityDAO>().HasIndex(x => x.Id);
+        // modelBuilder.Entity<TEntityEDM>().HasIndex(x => x.Id).IsUnique();
+        modelBuilder.Entity<TEntityEDM>().HasIndex(x => x.Id);
     }
 
     protected virtual void OnBuildEdm(ModelBuilder modelBuilder)
@@ -63,7 +63,7 @@ public abstract class EntityDAOBase<TEntity, TEntityDAO> : IEntityDAO
         SetupIndexBase(modelBuilder);
     }
 
-    public override bool Equals(object? obj) => Id == (obj as TEntityDAO)?.Id;
+    public override bool Equals(object? obj) => Id == (obj as TEntityEDM)?.Id;
 
     public override int GetHashCode() => Id.GetHashCode();
 }

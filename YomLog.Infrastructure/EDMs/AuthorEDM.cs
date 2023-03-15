@@ -1,15 +1,15 @@
 using YomLog.Domain.Books.Entities;
-using YomLog.Infrastructure.Shared.DAOs;
+using YomLog.Infrastructure.Shared.EDMs;
 
-namespace YomLog.Infrastructure.DAOs;
+namespace YomLog.Infrastructure.EDMs;
 
-public class AuthorDAO : EntityDAOBase<Author, AuthorDAO>
+public class AuthorEDM : EntityEDMBase<Author, AuthorEDM>
 {
     public string Name { get; set; } = string.Empty;
 
     protected override Author PrepareDomainEntity() => new(new(Name));
 
-    internal override AuthorDAO Transfer(Author origin)
+    internal override AuthorEDM Transfer(Author origin)
     {
         Name = origin.Name.Value;
         return base.Transfer(origin);

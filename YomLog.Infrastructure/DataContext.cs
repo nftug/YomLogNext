@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using YomLog.Infrastructure.DAOs;
+using YomLog.Infrastructure.EDMs;
 
 namespace YomLog.Infrastructure;
 
@@ -14,13 +14,13 @@ public class DataContext : DbContext
         DataSource = Path.Combine(appDataPath, "YomLog.db");
     }
 
-    public DbSet<BookDAO> Books { get; set; } = null!;
-    public DbSet<AuthorDAO> Authors { get; set; } = null!;
+    public DbSet<BookEDM> Books { get; set; } = null!;
+    public DbSet<AuthorEDM> Authors { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        BookDAO.BuildEdm(modelBuilder);
-        AuthorDAO.BuildEdm(modelBuilder);
+        BookEDM.BuildEdm(modelBuilder);
+        AuthorEDM.BuildEdm(modelBuilder);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

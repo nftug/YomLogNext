@@ -1,23 +1,23 @@
 using YomLog.Domain.Books.Entities;
-using YomLog.Infrastructure.DAOs;
+using YomLog.Infrastructure.EDMs;
 using YomLog.Infrastructure.Shared.Extensions;
 using YomLog.Infrastructure.Shared.Services;
 using YomLog.Shared.Extensions;
 
 namespace YomLog.Infrastructure.Services.QueryFactory;
 
-public class BookQueryFactory : QueryFactoryBase<Book, BookDAO>
+public class BookQueryFactory : QueryFactoryBase<Book, BookEDM>
 {
     public BookQueryFactory(DataContext context) : base(context)
     {
     }
 
-    public override IQueryable<BookDAO> Source
-        => _context.SetWithProperties<BookDAO>()
+    public override IQueryable<BookEDM> Source
+        => _context.SetWithProperties<BookEDM>()
             .SelectWith(x => new()
             {
                 Authors = x.Authors
-                    .Select(x => new AuthorDAO
+                    .Select(x => new AuthorEDM
                     {
                         PK = x.PK,
                         Id = x.Id,
@@ -29,6 +29,6 @@ public class BookQueryFactory : QueryFactoryBase<Book, BookDAO>
             .OrderByDescending(x => x.PK);
 
     // TODO: ステータスの更新日時で並び替える
-    public override IQueryable<BookDAO> ListSource
+    public override IQueryable<BookEDM> ListSource
         => base.Source.OrderByDescending(x => x.PK);
 }
