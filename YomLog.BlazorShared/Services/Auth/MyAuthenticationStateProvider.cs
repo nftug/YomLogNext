@@ -4,10 +4,11 @@ using System.Net.Http.Headers;
 using Reactive.Bindings;
 using YomLog.BlazorShared.Services.Repository;
 using YomLog.BlazorShared.Models;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.BlazorShared.Services.Auth;
 
+[InjectAsScoped]
 public class MyAuthenticationStateProvider : AuthenticationStateProvider
 {
     private readonly HttpClient _httpClient;

@@ -1,8 +1,10 @@
 using YomLog.Infrastructure.Shared.EDMs;
+using YomLog.Shared.Attributes;
 using YomLog.Shared.Entities;
 
 namespace YomLog.Infrastructure.Shared.Services;
 
+[InjectAsTransient]
 public abstract class QueryFactoryBase<TEntity, TEntityEDM> : IQueryFactory<TEntity, TEntityEDM>
     where TEntity : EntityBase<TEntity>
     where TEntityEDM : EntityEDMBase<TEntity, TEntityEDM>, new()

@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Forms;
 using YomLog.BlazorShared.Models;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.BlazorShared.Services.Api;
 

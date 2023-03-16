@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.WebUtilities;
 using YomLog.Shared.DTOs;
 using YomLog.Shared.Entities;
 using YomLog.Shared.Queries;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.BlazorShared.Services.Api;
 
+[InjectAsTransient]
 public abstract class ApiServiceBase<TEntity>
 {
     protected readonly HttpClientWrapper _httpClientWrapper;

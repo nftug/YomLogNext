@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using MudBlazor;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.BlazorShared.Services;
 

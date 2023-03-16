@@ -7,7 +7,7 @@ using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services.Repository;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.BlazorShared.Services;
 

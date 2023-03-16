@@ -2,7 +2,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
 using YomLog.Domain.Books.DTOs;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.MobileApp.Services.Stores;
 

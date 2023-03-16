@@ -4,72 +4,44 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.Shared.Extensions;
 
-public static class AssemblyLoaderExtensions
-{
-    public static IEnumerable<Assembly> GetByName(this IEnumerable<Assembly> asmList, string endsWith)
-        => asmList.Where(asm => asm.GetName().Name!.EndsWith(endsWith)).ToList();
-
-    public static IEnumerable<Assembly> CollectReferencedAssemblies(
-        this Assembly asm,
-        IEnumerable<string> targetAssemblyNames
-    )
-        => new HashSet<Assembly>(
-            asm.GetReferencedAssemblies()
-                .Where(a => targetAssemblyNames.Contains(a.Name))
-                .SelectMany(
-                    a => Assembly.Load(a).CollectReferencedAssemblies(targetAssemblyNames))
-                .Append(asm)
-        );
-}
-
 public static class ServiceCollectionAssemblyExtensions
 {
-    public static IServiceCollection AddByAttribute(this IServiceCollection services, IEnumerable<Assembly> assemblies)
+    public static IServiceCollection AddFromAssembly(this IServiceCollection services, Assembly assembly)
     {
-        var attributes = new (Type Type, ServiceLifetime Lifetime)[]
+        var types = assembly.GetExportedTypes().Where(t => !t.IsInterface && !t.IsAbstract);
+
+        foreach (var type in types)
         {
-            (typeof(InjectAsTransientAttribute), ServiceLifetime.Transient),
-            (typeof(InjectAsScopedAttribute), ServiceLifetime.Scoped),
-            (typeof(InjectAsSingletonAttribute), ServiceLifetime.Singleton)
-        };
-        var types = assemblies
-            .SelectMany((Assembly asm) => asm.GetExportedTypes())
-            .Where(t => !t.IsInterface && !t.IsAbstract);
+            // 属性からLifetimeを決定
+            ServiceLifetime? _lifetime =
+                type.IsDefined(typeof(InjectAsTransientAttribute))
+                ? ServiceLifetime.Transient
+                : type.IsDefined(typeof(InjectAsScopedAttribute))
+                ? ServiceLifetime.Scoped
+                : type.IsDefined(typeof(InjectAsSingletonAttribute))
+                ? ServiceLifetime.Singleton
+                : null;
+            if (_lifetime is not ServiceLifetime lifetime) continue;
 
-        var typeGroup =
-            attributes.GroupJoin(
-                types,
-                o => o.Type,
-                i => i.CustomAttributes
-                    .Select(x => x.AttributeType)
-                    .FirstOrDefault(at => at.Name.StartsWith("InjectAs")),
-                (o, i) => new { Types = i, o.Lifetime }
-            )
-            .SelectMany(x => x.Types, (x, t) => new { Type = t, x.Lifetime });
-
-        foreach (var item in typeGroup)
-        {
-            // 既に登録されている型を除外
-            if (services.Any(x => x.ServiceType == item.Type)) continue;
-
-            // 対象のクラスが実装している全てのインタフェースに対してこの型をサービス登録する
-            services.AddAsImplementedInterfaces(item.Type, item.Lifetime);
+            // 対象のクラスが実装している全てのインターフェース及び基底クラスに対してこの型をサービス登録する
+            services.AddAsImplementedTypes(type, lifetime);
 
             // 自分自身の型に対してもサービス登録する
-            services.Add(new ServiceDescriptor(item.Type, item.Type, item.Lifetime));
-            DebugOutput(item.Type, item.Type, item.Lifetime);
+            services.Add(new ServiceDescriptor(type, type, lifetime));
+            DebugOutput(type, type, lifetime);
         }
 
         return services;
     }
 
-    public static IServiceCollection AddByAttribute(this IServiceCollection services)
-        => AddByAttribute(services, new[] { Assembly.GetCallingAssembly() });
+    public static IServiceCollection AddFromCurrentAssembly(this IServiceCollection services)
+        => AddFromAssembly(services, Assembly.GetCallingAssembly());
 
-    private static void AddAsImplementedInterfaces(this IServiceCollection services, Type type, ServiceLifetime lifetime)
+    private static void AddAsImplementedTypes(this IServiceCollection services, Type type, ServiceLifetime lifetime)
     {
         var interfaces = type.GetInterfaces()
             .Where(x => x != typeof(IDisposable) && x != typeof(INotifyPropertyChanged));
@@ -79,23 +51,14 @@ public static class ServiceCollectionAssemblyExtensions
             services.Add(new ServiceDescriptor(t, type, lifetime));
             DebugOutput(type, t, lifetime);
         }
+
+        if (type.BaseType is Type baseType && baseType != typeof(object))
+        {
+            services.Add(new ServiceDescriptor(type.BaseType, type, lifetime));
+            DebugOutput(type, type.BaseType, lifetime);
+        }
     }
 
     private static void DebugOutput(Type iType, Type type, ServiceLifetime lifetime)
         => Debug.WriteLine($"Add{lifetime}<{iType.Name}, {type.Name}>");
-}
-
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class InjectAsTransientAttribute : Attribute
-{
-}
-
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class InjectAsScopedAttribute : Attribute
-{
-}
-
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class InjectAsSingletonAttribute : Attribute
-{
 }

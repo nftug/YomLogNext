@@ -1,7 +1,7 @@
 using MudBlazor;
 using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Services.Popup;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.MobileApp.Services;
 

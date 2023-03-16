@@ -3,10 +3,8 @@ using Blazored.SessionStorage;
 using IdentityModel.OidcClient;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services.Auth;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using System.Reflection;
 using YomLog.Shared.Extensions;
 using MudBlazor;
 
@@ -23,7 +21,6 @@ public static class ServiceCollectionExtensions
                 ? new HttpClient(config.HttpMessageHandler) : new HttpClient();
             httpClient.BaseAddress = config.AppSettings.ApiBaseAddress;
             httpClient.Timeout = TimeSpan.FromSeconds(130);
-
             return httpClient;
         });
 
@@ -34,13 +31,11 @@ public static class ServiceCollectionExtensions
             mudConfig.SnackbarConfiguration.NewestOnTop = true;
             mudConfig.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             mudConfig.SnackbarConfiguration.ShowTransitionDuration = 200;
-
             config.MudServicesConfiguration(mudConfig);
         });
 
         // Add auth services
         services.AddAuthorizationCore();
-        services.AddScoped<AuthenticationStateProvider, MyAuthenticationStateProvider>();
 
         if (config.OidcClientOptions != null)
         {
@@ -48,21 +43,13 @@ public static class ServiceCollectionExtensions
             services.AddScoped<IAuthService, OidcAuthService>();
         }
 
-        // Features
-        // Blazor特有の機能 (JSRuntime, NavigationManagerなど) を含むサービスは、Scoped or TransientでDIすること
-        // (Singletonだと起動不可)
         services.AddTransient(sp => config.AppSettings);
 
         services.AddBlazoredLocalStorage();
         services.AddBlazoredSessionStorage();
 
         // Add services automatically
-        var assemblyNames =
-            new List<Assembly> { Assembly.GetCallingAssembly(), Assembly.GetExecutingAssembly() }
-                .Select(x => x.GetName().Name!);
-        var assemblies = Assembly.GetCallingAssembly().CollectReferencedAssemblies(assemblyNames);
-
-        services.AddByAttribute(assemblies);
+        services.AddFromCurrentAssembly();
 
         return services;
     }

@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using YomLog.Infrastructure.Shared.EDMs;
+using YomLog.Shared.Attributes;
 using YomLog.Shared.Entities;
 using YomLog.Shared.Exceptions;
 using YomLog.Shared.Interfaces;
@@ -8,6 +9,7 @@ using YomLog.Shared.ValueObjects;
 
 namespace YomLog.Infrastructure.Shared.Services;
 
+[InjectAsTransient]
 public abstract class RepositoryBase<TEntity, TEntityEDM> : IRepository<TEntity>
     where TEntity : EntityBase<TEntity>
     where TEntityEDM : EntityEDMBase<TEntity, TEntityEDM>, new()

@@ -1,6 +1,7 @@
 using Dynamic.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using YomLog.Domain.Books.DTOs;
+using YomLog.Shared.Attributes;
 using YomLog.Shared.Extensions;
 using YomLog.Shared.Models;
 

@@ -1,7 +1,7 @@
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Models;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.BlazorShared.Services;
 

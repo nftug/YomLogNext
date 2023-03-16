@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
     {
         SQLitePCL.Batteries_V2.Init();
         services.AddScoped(_ => new DataContext(appDataPath));
-        services.AddByAttribute();
+        services.AddFromCurrentAssembly();
         return services;
     }
 

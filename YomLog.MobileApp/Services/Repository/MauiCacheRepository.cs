@@ -1,6 +1,6 @@
 using System.Text.Json;
 using YomLog.BlazorShared.Services.Repository;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.MobileApp.Services.Repository;
 

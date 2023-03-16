@@ -1,5 +1,5 @@
 using Blazored.LocalStorage;
-using YomLog.Shared.Extensions;
+using YomLog.Shared.Attributes;
 
 namespace YomLog.BlazorShared.Services.Repository;
 
