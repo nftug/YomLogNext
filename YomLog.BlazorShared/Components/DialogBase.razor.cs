@@ -1,3 +1,4 @@
+using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
@@ -26,7 +27,10 @@ public partial class DialogBase : BindableComponentBase
 
     protected override void OnInitialized()
     {
-        LayoutService.IsProcessing.Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.IsProcessing
+            .ObserveOn(SynchronizationContext.Current!)
+            .Subscribe(_ => Rerender())
+            .AddTo(Disposable);
     }
 
     public Task Ok<T>(T result) => OnCloseDialog(result);

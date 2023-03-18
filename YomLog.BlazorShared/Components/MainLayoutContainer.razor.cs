@@ -25,10 +25,29 @@ public partial class MainLayoutContainer : BindableComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        LayoutService.UserPreferences.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
-        LayoutService.IsDarkMode.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
-        LayoutService.Page.Where(v => v != null).Subscribe(_ => Rerender()).AddTo(Disposable);
-        LayoutService.IsProcessing.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.UserPreferences
+            .ObserveOn(SynchronizationContext.Current!)
+            .Skip(1)
+            .Subscribe(_ => Rerender())
+            .AddTo(Disposable);
+
+        LayoutService.IsDarkMode
+            .ObserveOn(SynchronizationContext.Current!)
+            .Skip(1)
+            .Subscribe(_ => Rerender())
+            .AddTo(Disposable);
+
+        LayoutService.Page
+            .ObserveOn(SynchronizationContext.Current!)
+            .Where(v => v != null)
+            .Subscribe(_ => Rerender())
+            .AddTo(Disposable);
+
+        LayoutService.IsProcessing
+            .ObserveOn(SynchronizationContext.Current!)
+            .Skip(1)
+            .Subscribe(_ => Rerender())
+            .AddTo(Disposable);
 
         await ScrollInfoService.RegisterService();
         await ApplyUserPreferences();

@@ -13,7 +13,7 @@ public class Book : EntityWithNameBase<Book>
     public Uri? GoogleBooksUrl { get; private set; }
     public Uri? ThumbnailUrl { get; private set; }
     public string? Isbn { get; private set; }
-    public BookType BookType { get; private set; }
+    public BookType BookType { get; }
     public BookPage TotalPage { get; private set; } = null!;
 
     public Book(

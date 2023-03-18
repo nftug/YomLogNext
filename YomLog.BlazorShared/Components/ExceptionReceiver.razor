@@ -8,12 +8,13 @@
     {
         ExceptionHub.Exception
             .Where(v => v != null)
+            .ObserveOn(SynchronizationContext.Current!)
             .Subscribe(v =>
             {
                 ExceptionHub.Exception.Value = null;
-                InvokeAsync(() => PopupService.ShowPopup("Error", v!.Message));
+                // InvokeAsync(() => PopupService.ShowPopup("Error", v!.Message));
                 // NOTE: Exception from another thread cannot catch with error boundary.
-                // InvokeAsync(() => throw v!);
+                InvokeAsync(() => throw v!);
             })
             .AddTo(Disposable);
     }

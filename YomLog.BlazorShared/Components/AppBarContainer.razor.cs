@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using YomLog.BlazorShared.Models;
 using Reactive.Bindings.Extensions;
 using Microsoft.AspNetCore.Components.Routing;
+using System.Reactive.Concurrency;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -21,8 +22,17 @@ public partial class AppBarContainer : BindableComponentBase
 
     protected override void OnInitialized()
     {
-        LayoutService.Page.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
-        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.Page.
+            Skip(1)
+            .ObserveOn(SynchronizationContext.Current!)
+            .Subscribe(_ => Rerender())
+            .AddTo(Disposable);
+        HttpClientWrapper.IsOffline
+            .Skip(1)
+            .ObserveOn(SynchronizationContext.Current!)
+            .Subscribe(_ => Rerender())
+            .AddTo(Disposable);
+
         LayoutService.AppBarRerenderRequested += Rerender;
         NavigationManager.LocationChanged += OnLocationChanged;
     }

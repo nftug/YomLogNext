@@ -23,6 +23,7 @@ public class ExceptionHubService : BindableBase
         }
         catch (Exception e)
         {
+            System.Diagnostics.Debug.WriteLine(Exception.Value?.Message);
             Exception.Value = e;
         }
     }

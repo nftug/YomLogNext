@@ -17,6 +17,7 @@ public class LayoutService : BindableBase
     private readonly string Key = nameof(UserPreferences);
 
     private readonly IPreferenceRepositoryService _preference;
+    private readonly ExceptionHubService _exceptionHub;
 
     public ReactivePropertySlim<UserPreferences> UserPreferences { get; }
     public ReactivePropertySlim<bool> DrawerOpen { get; }
@@ -27,9 +28,10 @@ public class LayoutService : BindableBase
     public event Action? AppBarRerenderRequested;
     public void RequestAppBarRerender() => AppBarRerenderRequested?.Invoke();
 
-    public LayoutService(IPreferenceRepositoryService preference)
+    public LayoutService(IPreferenceRepositoryService preference, ExceptionHubService exceptionHubService)
     {
         _preference = preference;
+        _exceptionHub = exceptionHubService;
 
         DrawerOpen = new ReactivePropertySlim<bool>().AddTo(Disposable);
         Page = new ReactivePropertySlim<PageContainer?>().AddTo(Disposable);
