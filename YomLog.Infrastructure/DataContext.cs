@@ -5,8 +5,6 @@ namespace YomLog.Infrastructure;
 
 public class DataContext : DbContext
 {
-    private string DataSource { get; set; } = string.Empty;
-
     public DataContext() { }
 
     public DataContext(string appDataPath)
@@ -16,12 +14,9 @@ public class DataContext : DbContext
 
     public DbSet<BookEDM> Books { get; set; } = null!;
     public DbSet<AuthorEDM> Authors { get; set; } = null!;
+    public DbSet<ProgressEDM> Progress { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        BookEDM.BuildEdm(modelBuilder);
-        AuthorEDM.BuildEdm(modelBuilder);
-    }
+    private string DataSource { get; set; } = string.Empty;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -30,5 +25,12 @@ public class DataContext : DbContext
             opt => opt.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
         );
         options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        BookEDM.BuildEdm(modelBuilder);
+        AuthorEDM.BuildEdm(modelBuilder);
+        ProgressEDM.BuildEdm(modelBuilder);
     }
 }

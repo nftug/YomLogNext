@@ -15,6 +15,7 @@ public class Book : EntityWithNameBase<Book>
     public string? Isbn { get; private set; }
     public BookType BookType { get; }
     public BookPage TotalPage { get; private set; } = null!;
+    public IReadOnlyList<Progress> Progress { get; }
 
     public Book(
         string googleBooksId,
@@ -25,7 +26,8 @@ public class Book : EntityWithNameBase<Book>
         Uri? thumbnailUrl,
         string? isbn,
         BookType bookType,
-        BookPage totalPage
+        BookPage totalPage,
+        IReadOnlyList<Progress> progress
     ) : base(name)
     {
         GoogleBooksId = googleBooksId;
@@ -36,6 +38,7 @@ public class Book : EntityWithNameBase<Book>
         Isbn = isbn;
         BookType = bookType;
         TotalPage = totalPage;
+        Progress = progress;
     }
 
     public static Book Create(BookCommandDTO command, IReadOnlyList<Author> authors, User createdBy)
@@ -48,7 +51,8 @@ public class Book : EntityWithNameBase<Book>
             command.Thumbnail != null ? new(command.Thumbnail) : null,
             command.Isbn,
             command.BookType,
-            new(command.TotalPage, command.TotalKindleLocation)
+            new(command.TotalPage, command.TotalKindleLocation),
+            new List<Progress>()
         )
         .CreateModel(createdBy);
 

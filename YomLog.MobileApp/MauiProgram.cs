@@ -72,6 +72,7 @@ public static class MauiProgram
         builder.Services.AddFromCurrentAssembly();
 
         var app = builder.Build();
+
         app.Services.UseInfrastructure();
 
         return app;

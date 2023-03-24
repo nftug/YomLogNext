@@ -44,7 +44,7 @@ namespace YomLog.Infrastructure.Migrations
                     ThumbnailUrl = table.Column<string>(type: "TEXT", nullable: true),
                     Isbn = table.Column<string>(type: "TEXT", nullable: true),
                     BookType = table.Column<int>(type: "INTEGER", nullable: false),
-                    TotalPage = table.Column<int>(type: "INTEGER", nullable: true),
+                    TotalPage = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalKindleLocation = table.Column<int>(type: "INTEGER", nullable: true),
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -85,6 +85,35 @@ namespace YomLog.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Progress",
+                columns: table => new
+                {
+                    PK = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FKBook = table.Column<long>(type: "INTEGER", nullable: false),
+                    Page = table.Column<int>(type: "INTEGER", nullable: false),
+                    KindleLocation = table.Column<int>(type: "INTEGER", nullable: true),
+                    State = table.Column<int>(type: "INTEGER", nullable: false),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CreatedById = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedByName = table.Column<string>(type: "TEXT", nullable: false),
+                    UpdatedById = table.Column<Guid>(type: "TEXT", nullable: true),
+                    UpdatedByName = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Progress", x => x.PK);
+                    table.ForeignKey(
+                        name: "FK_Progress_Book_FKBook",
+                        column: x => x.FKBook,
+                        principalTable: "Book",
+                        principalColumn: "PK",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Author_Id",
                 table: "Author",
@@ -104,6 +133,16 @@ namespace YomLog.Infrastructure.Migrations
                 name: "IX_BookAuthor_FKBook",
                 table: "BookAuthor",
                 column: "FKBook");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Progress_FKBook",
+                table: "Progress",
+                column: "FKBook");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Progress_Id",
+                table: "Progress",
+                column: "Id");
         }
 
         /// <inheritdoc />
@@ -111,6 +150,9 @@ namespace YomLog.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "BookAuthor");
+
+            migrationBuilder.DropTable(
+                name: "Progress");
 
             migrationBuilder.DropTable(
                 name: "Author");

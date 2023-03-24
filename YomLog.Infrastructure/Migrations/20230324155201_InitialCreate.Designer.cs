@@ -11,7 +11,7 @@ using YomLog.Infrastructure;
 namespace YomLog.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230315175319_InitialCreate")]
+    [Migration("20230324155201_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -125,7 +125,7 @@ namespace YomLog.Infrastructure.Migrations
                     b.Property<int?>("TotalKindleLocation")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("TotalPage")
+                    b.Property<int>("TotalPage")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid?>("UpdatedById")
@@ -142,6 +142,55 @@ namespace YomLog.Infrastructure.Migrations
                     b.HasIndex("Id");
 
                     b.ToTable("Book", (string)null);
+                });
+
+            modelBuilder.Entity("YomLog.Infrastructure.EDMs.ProgressEDM", b =>
+                {
+                    b.Property<long>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("CreatedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedByName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("FKBook")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("KindleLocation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Page")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("State")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UpdatedByName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("FKBook");
+
+                    b.HasIndex("Id");
+
+                    b.ToTable("Progress", (string)null);
                 });
 
             modelBuilder.Entity("YomLog.Infrastructure.EDMs.BookAuthorEDM", b =>
@@ -163,9 +212,22 @@ namespace YomLog.Infrastructure.Migrations
                     b.Navigation("Book");
                 });
 
+            modelBuilder.Entity("YomLog.Infrastructure.EDMs.ProgressEDM", b =>
+                {
+                    b.HasOne("YomLog.Infrastructure.EDMs.BookEDM", "Book")
+                        .WithMany("Progress")
+                        .HasForeignKey("FKBook")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("YomLog.Infrastructure.EDMs.BookEDM", b =>
                 {
                     b.Navigation("BookAuthors");
+
+                    b.Navigation("Progress");
                 });
 #pragma warning restore 612, 618
         }

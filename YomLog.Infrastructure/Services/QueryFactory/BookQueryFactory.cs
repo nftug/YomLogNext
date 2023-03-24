@@ -23,12 +23,26 @@ public class BookQueryFactory : QueryFactoryBase<Book, BookEDM>
                         Id = x.Id,
                         Name = x.Name
                     })
+                    .ToList(),
+                Progress = x.Progress
+                    .Select(p => new ProgressEDM
+                    {
+                        Id = p.Id,
+                        FKBook = p.FKBook,
+                        Page = p.Page,
+                        KindleLocation = p.KindleLocation,
+                        State = p.State,
+                        CreatedOn = p.CreatedOn,
+                        UpdatedOn = p.UpdatedOn
+                    })
                     .ToList()
             })
             .ToQueryable()
             .OrderByDescending(x => x.PK);
 
-    // TODO: ステータスの更新日時で並び替える
     public override IQueryable<BookEDM> ListSource
-        => base.Source.OrderByDescending(x => x.PK);
+        => base.Source
+            .OrderByDescending(x => x.PK)
+            .ThenBy(x => x.Progress.FirstOrDefault()!.CreatedOn == null)
+            .ThenByDescending(x => x.Progress.FirstOrDefault()!.CreatedOn);
 }

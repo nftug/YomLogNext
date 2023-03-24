@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace YomLog.Shared.Helpers;
 
@@ -38,5 +39,30 @@ public class MemberInitBindingsVisitor : ExpressionVisitor
     {
         Visit(node);
         return MemberBindings;
+    }
+}
+
+public class BindingReplaceVisitor : ExpressionVisitor
+{
+    private readonly MemberInfo _member;
+    private readonly Expression _parentExpression;
+
+    public BindingReplaceVisitor(MemberInfo member, Expression parentExpression)
+    {
+        _member = member;
+        _parentExpression = parentExpression;
+    }
+
+    protected override Expression VisitMember(MemberExpression node)
+    {
+        if (node.Member.DeclaringType != _member.DeclaringType)
+        {
+            var parent =
+                node.Expression is MemberExpression memberExpression
+                ? Expression.MakeMemberAccess(memberExpression.Expression, memberExpression.Member)
+                : Expression.MakeMemberAccess(_parentExpression, _member);
+            node = Expression.MakeMemberAccess(parent, node.Member);
+        }
+        return base.VisitMember(node);
     }
 }
