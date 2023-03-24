@@ -15,7 +15,7 @@ public class BookEDM : EntityEDMBase<Book, BookEDM>
     public string? ThumbnailUrl { get; set; }
     public string? Isbn { get; set; }
     public BookType BookType { get; set; }
-    public int? TotalPage { get; set; }
+    public int TotalPage { get; set; }
     public int? TotalKindleLocation { get; set; }
 
     public ICollection<BookAuthorEDM> BookAuthors { get; set; } = null!;

@@ -18,6 +18,8 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
     public BookType BookType { get; set; }
     public BookPage TotalPage { get; set; } = null!;
 
+    public BookDetailsDTO() { }
+
     public BookDetailsDTO(Book model) : base(model)
     {
         Title = model.Name;

@@ -51,7 +51,7 @@ public class GoogleBooksApiService
                 GoogleBooksUrl = (string?)x.VolumeInfo.CommandLink,
                 ThumbnailUrl = ((string?)(x.VolumeInfo.ImageLinks?.Thumbnail ?? x.VolumeInfo.ImageLinks?.SmallThumbnail))
                     ?.Replace("http://", "https://"),
-                TotalPage = new((int?)x.VolumeInfo.PageCount, null, skipValidation: true),
+                TotalPage = new(((int?)x.VolumeInfo.PageCount) ?? 0, null, skipValidation: true),
                 Isbn = ((IEnumerable<dynamic>?)x.VolumeInfo.IndustryIdentifiers)?.FirstOrDefault()?.Identifier
             })
             .ToList();

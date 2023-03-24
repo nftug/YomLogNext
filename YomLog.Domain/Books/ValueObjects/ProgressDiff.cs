@@ -14,7 +14,7 @@ public class ProgressDiff : ValueObject<ProgressDiff>
     public ProgressDiff(Progress prev, Progress current, BookPage totalPage)
     {
         Value = current.BookPage - prev.BookPage;
-        Percentage = Value.Page / totalPage.Page;
+        Percentage = (double)Value.Page / totalPage.Page;
     }
 
     protected override bool EqualsCore(ProgressDiff other)
