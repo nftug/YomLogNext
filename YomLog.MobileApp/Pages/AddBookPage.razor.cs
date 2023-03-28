@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using YomLog.BlazorShared.Components;
+using YomLog.BlazorShared.Extensions;
 using YomLog.BlazorShared.Models;
 using YomLog.Domain.Books.DTOs;
 using YomLog.MobileApp.Services.Api;
@@ -26,7 +27,7 @@ public partial class AddBookPage : BindableComponentBase
     protected override void OnInitialized()
     {
         IsLoading = new ReactivePropertySlim<bool>().AddTo(Disposable);
-        IsLoading.ObserveOn(SynchronizationContext.Current!).Skip(1).Subscribe(_ => Rerender());
+        IsLoading.ObserveOnMainThread().Skip(1).Subscribe(_ => Rerender());
     }
 
     private async Task SearchAsync()

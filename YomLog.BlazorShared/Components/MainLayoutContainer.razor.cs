@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using YomLog.BlazorShared.Models;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings;
+using YomLog.BlazorShared.Extensions;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -26,25 +27,25 @@ public partial class MainLayoutContainer : BindableComponentBase
     protected override async Task OnInitializedAsync()
     {
         LayoutService.UserPreferences
-            .ObserveOn(SynchronizationContext.Current!)
+            .ObserveOnMainThread()
             .Skip(1)
             .Subscribe(_ => Rerender())
             .AddTo(Disposable);
 
         LayoutService.IsDarkMode
-            .ObserveOn(SynchronizationContext.Current!)
+            .ObserveOnMainThread()
             .Skip(1)
             .Subscribe(_ => Rerender())
             .AddTo(Disposable);
 
         LayoutService.Page
-            .ObserveOn(SynchronizationContext.Current!)
+            .ObserveOnMainThread()
             .Where(v => v != null)
             .Subscribe(_ => Rerender())
             .AddTo(Disposable);
 
         LayoutService.IsProcessing
-            .ObserveOn(SynchronizationContext.Current!)
+            .ObserveOnMainThread()
             .Skip(1)
             .Subscribe(_ => Rerender())
             .AddTo(Disposable);

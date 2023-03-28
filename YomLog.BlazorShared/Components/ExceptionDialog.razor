@@ -1,0 +1,32 @@
+﻿<DialogBase CloseButton="true" ProcessingOverlay="false" DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 70vh; overflow-y: scroll">
+            <ExceptionAlert Exception="Exception" />
+        </MudContainer>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="context.Cancel">
+            閉じる
+        </MudButton>
+    </DialogActions>
+</DialogBase>
+
+@code {
+    [Parameter] public Exception Exception { get; set; } = null!;
+
+    public static async Task<DialogResult> ShowDialog(
+        IDialogService dialogService,
+        Exception exception,
+        ErrorBoundary? errorBoundary = null
+    )
+    {
+        var parameters = new DialogParameters { [nameof(Exception)] = exception };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Large };
+        var dialog = dialogService.Show<ExceptionDialog>("エラーが発生しました", parameters, options);
+        var result = await dialog.Result;
+
+        errorBoundary?.Recover();
+        return result;
+    }
+}

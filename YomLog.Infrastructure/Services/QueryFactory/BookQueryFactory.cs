@@ -38,11 +38,13 @@ public class BookQueryFactory : QueryFactoryBase<Book, BookEDM>
                     .ToList()
             })
             .ToQueryable()
-            .OrderByDescending(x => x.PK);
+            .OrderBy(x => x.PK);
 
     public override IQueryable<BookEDM> ListSource
         => base.Source
             .OrderByDescending(x => x.PK)
-            .ThenBy(x => x.Progress.FirstOrDefault()!.CreatedOn == null)
-            .ThenByDescending(x => x.Progress.FirstOrDefault()!.CreatedOn);
+#pragma warning disable CS8073
+            .ThenBy(x => x.Progress.First().CreatedOn == null)
+            .ThenByDescending(x => x.Progress.First().CreatedOn);
+#pragma warning restore CS8073
 }

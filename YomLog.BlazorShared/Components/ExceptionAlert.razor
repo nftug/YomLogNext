@@ -1,8 +1,9 @@
 @using YomLog.Shared.Exceptions
+@inject LayoutService LayoutService
 
-<MudContainer Class="mt-8 mb-8">
-    <MudAlert Class="mb-5" Severity="Severity" ShowCloseIcon="true"
-              CloseIconClicked="() => ErrorBoundary?.Recover()"
+<MudContainer Class="@Class">
+    <MudAlert Class="mb-5" Severity="Severity" ShowCloseIcon="ErrorBoundary != null"
+              CloseIconClicked="ClickedCloseButton"
               Variant="Variant.Filled">
         <MudText Typo="Typo.body2">
             @if (Exception is IApiException e)
@@ -24,7 +25,10 @@
             }
         </MudText>
 
-        <MudText Typo="Typo.body2">閉じるボタンを押して再試行できます。</MudText>
+        @if (ErrorBoundary != null)
+        {
+            <MudText Typo="Typo.body2">閉じるボタンを押して再試行できます。</MudText>
+        }
     </MudAlert>
 
     @if (ShowDetails)
@@ -33,24 +37,35 @@
             <MudExpansionPanel Text="エラー内容">
                 @ErrorSummary
             </MudExpansionPanel>
+
+            @if (Exception is IApiException e && e.Response != null)
+            {
+                <MudExpansionPanel Text="レスポンス内容">
+                    <MudTextField T="string" Variant="Variant.Outlined" Text="@e.Response"
+                                  Lines="10" ReadOnly="true" Style="font-size: var(--mud-typography-body2-size); user-select: text;" />
+                </MudExpansionPanel>
+            }
+
             <MudExpansionPanel Text="エラーの詳細">
                 <MudTextField T="string" Variant="Variant.Outlined" Text="@ErrorDetails"
-                              Lines="10" ReadOnly="true" Style="font-size: var(--mud-typography-body2-size);" />
+                              Lines="10" ReadOnly="true" Style="font-size: var(--mud-typography-body2-size); user-select: text;" />
             </MudExpansionPanel>
         </MudExpansionPanels>
     }
 </MudContainer>
 
 @code {
+    [Parameter] public string? Class { get; set; }
     [Parameter] public ErrorBoundary? ErrorBoundary { get; set; }
     [Parameter] public Exception Exception { get; set; } = null!;
-    [Parameter] public bool ShowDetails { get; set; } = false;
+    [Parameter] public bool ShowDetails { get; set; } = true;
     [Parameter] public Severity Severity { get; set; } = Severity.Error;
+    [Parameter] public EventCallback OnClickCloseButton { get; set; }
 
     private string ErrorSummary
-        => Exception is IApiException e
-            ? e.Response ?? e.Message ?? Exception.Message
-            : Exception.Message;
+    => Exception is IApiException e
+        ? e.Response ?? e.Message ?? Exception.Message
+        : Exception.Message;
 
     private string ErrorDetails
         => "Summary:\n"
@@ -61,4 +76,15 @@
             + $"{Exception.Source}\n\n"
             + "Target site\n"
             + Exception.TargetSite;
+
+    protected override void OnInitialized()
+    {
+        LayoutService.IsProcessing.Value = false;
+    }
+
+    private async Task ClickedCloseButton()
+    {
+        await OnClickCloseButton.InvokeAsync();
+        ErrorBoundary?.Recover();
+    }
 }

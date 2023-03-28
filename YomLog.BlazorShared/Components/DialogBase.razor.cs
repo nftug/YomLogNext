@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 using Reactive.Bindings.Extensions;
+using YomLog.BlazorShared.Extensions;
 using YomLog.BlazorShared.Models;
 
 namespace YomLog.BlazorShared.Components;
@@ -28,7 +29,7 @@ public partial class DialogBase : BindableComponentBase
     protected override void OnInitialized()
     {
         LayoutService.IsProcessing
-            .ObserveOn(SynchronizationContext.Current!)
+            .ObserveOnMainThread()
             .Subscribe(_ => Rerender())
             .AddTo(Disposable);
     }

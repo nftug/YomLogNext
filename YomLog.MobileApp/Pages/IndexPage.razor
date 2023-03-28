@@ -22,7 +22,7 @@
     {
         Store.BookList
             .ToCollectionChanged()
-            .ObserveOn(SynchronizationContext.Current!)
+            .ObserveOnMainThread()
             .Where(x => x.Action != NotifyCollectionChangedAction.Reset)
             .Subscribe(_ => InvokeAsync(StateHasChanged));
     }

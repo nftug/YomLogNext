@@ -34,7 +34,7 @@ else
     protected override void OnInitialized()
     {
         LayoutService.Page
-            .ObserveOn(SynchronizationContext.Current!)
+            .ObserveOnMainThread()
             .Skip(1)
             .Subscribe(_ => Rerender())
             .AddTo(Disposable);

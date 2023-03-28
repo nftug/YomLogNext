@@ -1,20 +1,25 @@
 @using YomLog.BlazorShared.Services.Popup
+@using YomLog.Shared.Exceptions
 @inherits BindableComponentBase
 @inject ExceptionHubService ExceptionHub
-@inject IPopupService PopupService
+@inject IDialogService DialogService
 
 @code {
     protected override void OnInitialized()
     {
         ExceptionHub.Exception
+            .ObserveOnMainThread()
             .Where(v => v != null)
-            .ObserveOn(SynchronizationContext.Current!)
-            .Subscribe(v =>
+            .Subscribe(async v =>
             {
                 ExceptionHub.Exception.Value = null;
-                // InvokeAsync(() => PopupService.ShowPopup("Error", v!.Message));
+
+                // If switched to offline mode, do nothing.
+                if (v is IApiException ex && ex.StatusCode is null) return;
+
+                await ExceptionDialog.ShowDialog(DialogService, v!);
                 // NOTE: Exception from another thread cannot catch with error boundary.
-                InvokeAsync(() => throw v!);
+                // InvokeAsync(() => throw v!);
             })
             .AddTo(Disposable);
     }

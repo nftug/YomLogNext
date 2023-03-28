@@ -16,6 +16,8 @@ public class Book : EntityWithNameBase<Book>
     public BookType BookType { get; }
     public BookPage TotalPage { get; private set; } = null!;
     public IReadOnlyList<Progress> Progress { get; }
+    public IReadOnlyList<ProgressDiff> ProgressDiffList
+        => ProgressDiff.GetProgressDiffList(Progress, new(this)).ToList();
 
     public Book(
         string googleBooksId,

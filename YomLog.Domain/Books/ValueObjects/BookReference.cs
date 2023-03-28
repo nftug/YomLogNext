@@ -11,4 +11,9 @@ public class BookReference : EntityReference<Book>
     {
         TotalPage = totalPage;
     }
+
+    public BookReference(Book origin) : base(origin)
+    {
+        TotalPage = origin.TotalPage;
+    }
 }
