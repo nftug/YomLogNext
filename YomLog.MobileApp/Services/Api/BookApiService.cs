@@ -24,6 +24,8 @@ public class BookApiService
         _snackbar = snackbar;
         _popupService = popupService;
         _store = store;
+
+        _ = GetAllBooksAsync();
     }
 
     public async Task<BookDetailsDTO?> AddAsync(BookCommandDTO item)

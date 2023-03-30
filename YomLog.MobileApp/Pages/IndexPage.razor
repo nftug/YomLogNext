@@ -26,9 +26,4 @@
             .Where(x => x.Action != NotifyCollectionChangedAction.Reset)
             .Subscribe(_ => InvokeAsync(StateHasChanged));
     }
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (!Store.BookList.Any()) await ApiService.GetAllBooksAsync();
-    }
 }

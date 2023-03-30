@@ -1,4 +1,6 @@
-<DialogBase DisableSidePadding="true" CloseButton="true" Title="本の追加">
+<DialogBase DisableSidePadding="true"
+            CloseButton="true"
+            Title=@(Item.IsNewItem ? "本の追加" : "本の編集")>
     <DialogContent>
         <MudContainer Style="height: 80vh; overflow-y: scroll">
             <MudSimpleTable Style="overflow-x: auto;">
