@@ -15,9 +15,19 @@ public partial class AddBookDialog : ComponentBase
     [Parameter] public BookDetailsDTO Item { get; set; } = null!;
     [Parameter] public EventCallback<string> SearchByAuthor { get; set; }
 
-    private async Task AddBookAsync(DialogBase context)
+    private BookCommandDTO Command { get; set; } = null!;
+
+    protected override void OnInitialized()
     {
-        var result = await ApiService.AddAsync((BookCommandDTO)Item.ToCommandDTO());
+        Command = (BookCommandDTO)Item.ToCommandDTO();
+    }
+
+    private async Task AddOrEditBookAsync(DialogBase context)
+    {
+        var result =
+            Item.IsNewItem
+            ? await ApiService.AddAsync(Command)
+            : await ApiService.EditAsync(Item.Id, Command);
         if (result != null) await context.Ok(result);
     }
 

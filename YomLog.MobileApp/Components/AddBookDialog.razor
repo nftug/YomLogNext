@@ -23,7 +23,9 @@
                     </tr>
                     <tr>
                         <td style="width: 30%; font-weight: bold;">ページ数</td>
-                        <td>@Item.TotalPage.Page</td>
+                        <td>
+                            <MudNumericField @bind-Value="Command.TotalPage" Variant="Variant.Text" Min="0" />
+                        </td>
                     </tr>
                     <tr>
                         <td style="width: 30%; font-weight: bold;">ISBN</td>
@@ -46,8 +48,8 @@
         <MudButton Variant="Variant.Filled"
                    Color="Color.Success"
                    StartIcon="@Icons.Material.Filled.AddCircle"
-                   OnClick="() => AddBookAsync(context)">
-            追加
+                   OnClick="() => AddOrEditBookAsync(context)">
+            @(Item.IsNewItem ? "追加" : "保存")
         </MudButton>
     </DialogActions>
 </DialogBase>

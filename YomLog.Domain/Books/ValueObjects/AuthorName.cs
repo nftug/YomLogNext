@@ -1,20 +1,15 @@
 using System.Text.RegularExpressions;
-using YomLog.Shared.ValueObjects;
 
 namespace YomLog.Domain.Books.ValueObjects;
 
-public partial class AuthorName : ValueObject<AuthorName>
+public record AuthorName
 {
-    public string Value { get; }
+    public string Value { get; init; } = string.Empty;
 
     public AuthorName(string name)
     {
         string jpPattern = @"[\p{IsHiragana}\p{IsKatakana}\p{IsCJKUnifiedIdeographs}]+";
-        name = name.Replace("\u3000", " ");
-        name = new Regex($@"({jpPattern}) ({jpPattern})").Replace(name, "$1$2");
-        Value = name;
+        Value = name.Replace("\u3000", " ");
+        Value = new Regex($@"({jpPattern}) ({jpPattern})").Replace(name, "$1$2");
     }
-
-    protected override bool EqualsCore(AuthorName other) => Value == other.Value;
-    public override int GetHashCode() => Value.GetHashCode();
 }

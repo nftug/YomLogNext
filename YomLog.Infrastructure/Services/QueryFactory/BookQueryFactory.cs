@@ -24,7 +24,7 @@ public class BookQueryFactory : QueryFactoryBase<Book, BookEDM>
                         Name = x.Name
                     })
                     .ToList(),
-                Progress = x.Progress
+                CurrentProgress = x.Progress
                     .Select(p => new ProgressEDM
                     {
                         Id = p.Id,
@@ -35,7 +35,7 @@ public class BookQueryFactory : QueryFactoryBase<Book, BookEDM>
                         CreatedOn = p.CreatedOn,
                         UpdatedOn = p.UpdatedOn
                     })
-                    .ToList()
+                    .FirstOrDefault()
             })
             .ToQueryable()
             .OrderBy(x => x.PK);

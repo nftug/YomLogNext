@@ -11,9 +11,9 @@ public class ProgressDetailsDTO : EntityDetailsDTOBase<Progress, ProgressDetails
     public Guid BookId { get; set; }
     public BookPage BookPage { get; set; }
     public ProgressState State { get; set; }
-    public ProgressDiff Diff { get; set; }
+    public ProgressDiff? Diff { get; set; }
 
-    public ProgressDetailsDTO(Progress currentProgress, ProgressDiff progressDiff)
+    public ProgressDetailsDTO(Progress currentProgress, ProgressDiff? progressDiff)
     {
         BookId = currentProgress.Book.Id;
         BookPage = currentProgress.BookPage;

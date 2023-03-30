@@ -9,6 +9,8 @@ public abstract class EntityDTOBase<TEntity, TEntityDTO> : ValueObject<TEntityDT
 {
     public Guid Id { get; init; }
 
+    public bool IsNewItem => Id == default;
+
     protected EntityDTOBase() { }
 
     protected EntityDTOBase(EntityBase<TEntity> model)

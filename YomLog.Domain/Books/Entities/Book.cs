@@ -15,9 +15,7 @@ public class Book : EntityWithNameBase<Book>
     public string? Isbn { get; private set; }
     public BookType BookType { get; }
     public BookPage TotalPage { get; private set; } = null!;
-    public IReadOnlyList<Progress> Progress { get; }
-    public IReadOnlyList<ProgressDiff> ProgressDiffList
-        => ProgressDiff.GetProgressDiffList(Progress, new(this)).ToList();
+    public Progress? CurrentProgress { get; }
 
     public Book(
         string googleBooksId,
@@ -29,7 +27,7 @@ public class Book : EntityWithNameBase<Book>
         string? isbn,
         BookType bookType,
         BookPage totalPage,
-        IReadOnlyList<Progress> progress
+        Progress? currentProgress
     ) : base(name)
     {
         GoogleBooksId = googleBooksId;
@@ -40,7 +38,7 @@ public class Book : EntityWithNameBase<Book>
         Isbn = isbn;
         BookType = bookType;
         TotalPage = totalPage;
-        Progress = progress;
+        CurrentProgress = currentProgress;
     }
 
     public static Book Create(BookCommandDTO command, IReadOnlyList<Author> authors, User createdBy)
@@ -54,7 +52,7 @@ public class Book : EntityWithNameBase<Book>
             command.Isbn,
             command.BookType,
             new(command.TotalPage, command.TotalKindleLocation),
-            new List<Progress>()
+            null
         )
         .CreateModel(createdBy);
 

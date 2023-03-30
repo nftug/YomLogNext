@@ -1,24 +1,14 @@
-using System.Text.Json.Serialization;
 using YomLog.Domain.Books.Entities;
-using YomLog.Shared.ValueObjects;
 
 namespace YomLog.Domain.Books.ValueObjects;
 
-public class ProgressDiff : ValueObject<ProgressDiff>
+public record ProgressDiff(BookPage Value, double Percentage)
 {
-    public BookPage Value { get; init; } = null!;
-    public double Percentage { get; init; }
-
-    [JsonConstructor] public ProgressDiff() { }
-
     public ProgressDiff(Progress prev, Progress current, BookPage totalPage)
+        : this(current.BookPage - prev.BookPage, 0)
     {
-        Value = current.BookPage - prev.BookPage;
         Percentage = (double)Value.Page / totalPage.Page;
     }
-
-    protected override bool EqualsCore(ProgressDiff other)
-        => Value == other.Value && Percentage == other.Percentage;
 
     public static IEnumerable<ProgressDiff> GetProgressDiffList(
         IReadOnlyList<Progress> source,

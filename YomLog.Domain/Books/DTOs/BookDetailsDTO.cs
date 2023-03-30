@@ -17,6 +17,7 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
     public string? Isbn { get; set; }
     public BookType BookType { get; set; }
     public BookPage TotalPage { get; set; } = null!;
+    public ProgressDetailsDTO? CurrentProgress { get; set; }
 
     public BookDetailsDTO() { }
 
@@ -31,6 +32,7 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
         Isbn = model.Isbn;
         BookType = model.BookType;
         TotalPage = model.TotalPage;
+        CurrentProgress = model.CurrentProgress != null ? new(model.CurrentProgress!, null) : null;
     }
 
     public override ICommandDTO<Book> ToCommandDTO()

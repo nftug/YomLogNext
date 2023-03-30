@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Enums;
@@ -18,22 +19,13 @@ public class BookEDM : EntityEDMBase<Book, BookEDM>
     public BookType BookType { get; set; }
     public int TotalPage { get; set; }
     public int? TotalKindleLocation { get; set; }
-    public ICollection<ProgressEDM> Progress { get; set; } = null!;
 
+    public ICollection<ProgressEDM> Progress { get; set; } = null!;
+    [NotMapped] public ProgressEDM? CurrentProgress { get; set; }
     public ICollection<BookAuthorEDM> BookAuthors { get; set; } = null!;
 
     protected override Book PrepareDomainEntity()
-    {
-        Progress = Progress.AsQueryable()
-            .SelectWith<ProgressEDM, ProgressEDM, BookEDM>(x => x.Book, x => new()
-            {
-                Id = Id,
-                TotalPage = TotalPage,
-                TotalKindleLocation = TotalKindleLocation
-            })
-            .ToList();
-
-        return new(
+        => new(
             googleBooksId: GoogleBooksId,
             name: Name,
             authors: Authors.Select(x => x.ToDomain()).ToList(),
@@ -43,9 +35,8 @@ public class BookEDM : EntityEDMBase<Book, BookEDM>
             isbn: Isbn,
             bookType: BookType,
             totalPage: new(TotalPage, TotalKindleLocation),
-            progress: Progress.Select(x => x.ToDomain()).ToList()
+            currentProgress: CurrentProgress?.ToDomain()
         );
-    }
 
     internal override BookEDM Transfer(Book origin)
     {

@@ -1,24 +1,13 @@
-using System.Text.Json.Serialization;
 using YomLog.Shared.Exceptions;
-using YomLog.Shared.ValueObjects;
 
 namespace YomLog.Domain.Books.ValueObjects;
 
-public class BookPage : ValueObject<BookPage>
+public record BookPage(int Page, int? KindleLocation, double Percentage)
 {
-    public int Page { get; init; }
-    public int? KindleLocation { get; init; }
-    public double Percentage { get; init; }
-
-    [JsonConstructor] public BookPage() { }
-
     // 全ページ
     public BookPage(int page, int? kindleLocation, bool skipValidation = false)
+        : this(page > 0 ? page : 0, kindleLocation > 0 ? kindleLocation : 0, 1.0)
     {
-        Page = page > 0 ? page : 0;
-        KindleLocation = kindleLocation > 0 ? kindleLocation : 0;
-        Percentage = 1.0;
-
         if (skipValidation) return;
 
         if (page == default && kindleLocation is null)
@@ -30,14 +19,12 @@ public class BookPage : ValueObject<BookPage>
     }
 
     // ページ数のみ指定
-    public BookPage(int page, BookPage totalBookPage)
+    public BookPage(int page, BookPage totalBookPage) : this(page, null, (double)page / totalBookPage.Page)
     {
-        Page = page;
-        Percentage = (double)page / totalBookPage.Page;
     }
 
     // 位置Noを指定
-    public BookPage(int? kindleLocation, BookPage totalBookPage)
+    public BookPage(int? kindleLocation, BookPage totalBookPage) : this(0, null!)
     {
         if (kindleLocation is not int location) throw new InvalidOperationException();
 
@@ -45,9 +32,6 @@ public class BookPage : ValueObject<BookPage>
         Page = location / (int)totalBookPage.KindleLocation! * totalBookPage.Page;
         Percentage = (double)location / (int)totalBookPage.KindleLocation;
     }
-
-    protected override bool EqualsCore(BookPage other)
-        => Page == other.Page && KindleLocation == other.KindleLocation;
 
     public static BookPage operator +(BookPage left, BookPage right)
         => new(left.Page + right.Page, left.KindleLocation + right.KindleLocation);

@@ -20,11 +20,18 @@ public class BookStoreService : BindableBase
 
     public void Insert(BookDetailsDTO item) => _books.InsertOnScheduler(0, item);
 
+    public void Remove(BookDetailsDTO item) => _books.RemoveOnScheduler(item);
+
+    public void Edit(BookDetailsDTO item)
+    {
+        var currentItem = _books.FirstOrDefault(x => x == item);
+        if (currentItem is null) return;
+        _books.SetOnScheduler(_books.IndexOf(currentItem), item);
+    }
+
     public void Set(List<BookDetailsDTO> items)
     {
         if (_books.Any()) _books.ClearOnScheduler();
         _books.AddRangeOnScheduler(items);
     }
-
-    public void Remove(BookDetailsDTO item) => _books.RemoveOnScheduler(item);
 }

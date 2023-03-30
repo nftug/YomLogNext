@@ -42,6 +42,22 @@ public class BookApiService
         }
     }
 
+    public async Task<BookDetailsDTO?> EditAsync(Guid id, BookCommandDTO item)
+    {
+        try
+        {
+            var book = await _mediator.Send(new EditBook.Command(item, id));
+            _store.Edit(book);
+            _snackbar.Add("本を保存しました。", Severity.Info);
+            return book;
+        }
+        catch (EntityValidationException e)
+        {
+            _snackbar.Add(e.Errors.First().Value.First(), Severity.Error);
+            return null;
+        }
+    }
+
     public async Task DeleteAsync(BookDetailsDTO item)
     {
         bool confirm = await _popupService.ShowConfirm("確認", "この本を削除しますか？");

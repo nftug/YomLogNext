@@ -19,10 +19,10 @@
 
         <MudCardActions>
             <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickAddDetails">
-                追加する
+                @(Item.IsNewItem ? "追加する" : "編集する")
             </MudButton>
 
-            @if (Item.Id != default)
+            @if (!Item.IsNewItem)
             {
                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDelete">
                     削除する
