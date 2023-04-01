@@ -14,6 +14,8 @@ public partial class MainLayoutContainer : BindableComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private ScrollInfoService ScrollInfoService { get; set; } = null!;
+    [Inject] private AppSettings AppSettings { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
     [Parameter] public bool? IsDarkModeDefault { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
@@ -52,6 +54,9 @@ public partial class MainLayoutContainer : BindableComponentBase
 
         await ScrollInfoService.RegisterService();
         await ApplyUserPreferences();
+
+        // トップページでダイアログを開いたとき、戻るボタンで画面を閉じないためのワークアラウンド
+        if (AppSettings.IsNativeApp) NavigationManager.NavigateTo("/");
     }
 
     protected override void OnParametersSet()
