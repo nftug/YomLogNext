@@ -412,3 +412,6 @@ ASALocalRun/
 
 # appsettings.json
 appsettings.json
+
+# .NET Meteor auto generated files
+.meteor/

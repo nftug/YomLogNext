@@ -40,21 +40,21 @@ public class ScrollInfoService
 
     public double? ScrollY
     {
-        get => _scrollYPerPage.TryGetValue(_pageInfoService.CurrentRoute, out double value) ? value : null;
+        get => _scrollYPerPage.TryGetValue(_pageInfoService.PathAndQuery.Value, out double value) ? value : null;
         private set
         {
             if (value == null) return;
-            _scrollYPerPage[_pageInfoService.CurrentRoute] = (double)value;
+            _scrollYPerPage[_pageInfoService.PathAndQuery.Value] = (double)value;
         }
     }
 
     public bool IsLoading
     {
-        get => _isLoading.ContainsKey(_pageInfoService.CurrentRoute)
-                && _isLoading[_pageInfoService.CurrentRoute];
+        get => _isLoading.ContainsKey(_pageInfoService.PathAndQuery.Value)
+                && _isLoading[_pageInfoService.PathAndQuery.Value];
         private set
         {
-            _isLoading[_pageInfoService.CurrentRoute] = value;
+            _isLoading[_pageInfoService.PathAndQuery.Value] = value;
         }
     }
 

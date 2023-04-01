@@ -1,19 +1,11 @@
 'use strict'
 
 // Back to close (on top page)
-window.onGoBackOnTopPage = () => {
-  window.pageContainer?.invokeMethodAsync('GoBackOnTopPage')
-}
-
-window.onRenderTopPage = (pageContainer) => {
-  history.pushState(null, null, location.href)
-  window.pageContainer = pageContainer
-  window.addEventListener('popstate', window.onGoBackOnTopPage)
-}
-
-window.onLeaveTopPage = () => {
-  window.pageContainer = null
-  window.removeEventListener('popstate', window.onGoBackOnTopPage)
+window.registerPageInfoService = (pageInfoService) => {
+  window.pageContainer = pageInfoService
+  window.addEventListener('popstate', () =>
+    window.pageContainer?.invokeMethodAsync('OnPopState')
+  )
 }
 
 // Scroll

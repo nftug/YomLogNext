@@ -2,7 +2,6 @@ using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using YomLog.BlazorShared.Components;
 using YomLog.BlazorShared.Extensions;
 using YomLog.BlazorShared.Models;
 using YomLog.Domain.Books.DTOs;
@@ -47,10 +46,7 @@ public partial class AddBookPage : BindableComponentBase
     private void OnNavigateForSearch(string query)
     {
         var uri = NavigationManager.GetUriWithQueryParameter(nameof(Query), query);
-        NavigationManager.NavigateTo(uri, new NavigationOptions
-        {
-            HistoryEntryState = DialogBase.ShouldForceNavigate
-        });
+        NavigationManager.NavigateTo(uri);
     }
 
     private async Task GetBooksAsync()

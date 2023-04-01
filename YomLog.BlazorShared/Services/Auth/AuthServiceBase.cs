@@ -67,7 +67,23 @@ public abstract class AuthServiceBase : BindableBase, IAuthService
 
     public abstract Task ProcessLoginCallbackAsync(string data);
 
-    public abstract Task LogoutAsync(bool forceLogout = false);
+    public virtual async Task LogoutAsync(bool forceLogout = false)
+    {
+        if (!forceLogout)
+        {
+            bool answer = await _popupService.ShowConfirm
+                ("ログアウト", "現在のセッションからログアウトしますか？", okText: "ログアウト");
+            if (!answer) return;
+        }
+
+        await OnAfterLogoutAsync();
+
+        await _authStateProvider.MarkUserAsLoggedOut();
+        IsTokenValid.Value = false;
+
+        _navigationManager.NavigateTo("");
+        _snackbar.Add("ログアウトしました。", Severity.Info);
+    }
 
     public abstract Task RefreshTokenAsync();
 
@@ -82,21 +98,7 @@ public abstract class AuthServiceBase : BindableBase, IAuthService
         _snackbar.Add("ログインしました。", Severity.Info);
     }
 
-    protected virtual async Task LogoutCoreAsync(bool forceLogout)
-    {
-        if (!forceLogout)
-        {
-            bool answer = await _popupService.ShowConfirm
-                ("ログアウト", "現在のセッションからログアウトしますか？", okText: "ログアウト");
-            if (!answer) return;
-        }
-
-        await _authStateProvider.MarkUserAsLoggedOut();
-        IsTokenValid.Value = false;
-
-        _navigationManager.NavigateTo("");
-        _snackbar.Add("ログアウトしました。", Severity.Info);
-    }
+    protected virtual Task OnAfterLogoutAsync() => Task.CompletedTask;
 
     public Task<AuthenticationState> GetAuthenticationStateAsync() => _authStateProvider.GetAuthenticationStateAsync();
 

@@ -13,6 +13,6 @@ public abstract class LoginCallbackPageBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await AuthService.ProcessLoginCallbackAsync(PageInfoService.CurrentQuery!);
+        await AuthService.ProcessLoginCallbackAsync(PageInfoService.Query.Value);
     }
 }

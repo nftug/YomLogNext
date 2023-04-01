@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using MudBlazor;
 using YomLog.BlazorShared.Models;
 using YomLog.BlazorShared.Services.Popup;
-using YomLog.Shared.Extensions;
 
 namespace YomLog.BlazorShared.Services.Auth;
 
@@ -79,10 +78,8 @@ public class OidcAuthService : AuthServiceBase
         await LoginCoreAsync(tokenModel, redirectTo);
     }
 
-    public override async Task LogoutAsync(bool forceLogout = false)
+    protected override async Task OnAfterLogoutAsync()
     {
-        await LogoutCoreAsync(forceLogout);
-
         // For Auth0, you must change logout endpoint URL.
         // https://auth0.com/docs/api/authentication#logout
 

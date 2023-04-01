@@ -2,7 +2,10 @@
 
 <PageTitle>@Title - @AppSettings.AppName</PageTitle>
 
-<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+@if (TopPage && AppSettings.IsNativeApp)
+{
+    <NavigationLock OnBeforeInternalNavigation="OnBeforeNavigationOnTopPage" />
+}
 
 <div class="@OuterContainerClass">
     <MudContainer Class="@(CenteredContainer ? "inner-centered-container" : null)" MaxWidth="@ContainerMaxWidth">

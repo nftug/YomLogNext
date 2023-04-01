@@ -34,6 +34,12 @@ public partial class DialogBase : BindableComponentBase
             .AddTo(Disposable);
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!RenderDialog) return;
+        PopupService.ShowingDialog.Value = true;
+    }
+
     public Task Ok<T>(T result) => OnCloseDialog(result);
 
     public Task Cancel() => OnCloseDialog(null);
@@ -46,9 +52,7 @@ public partial class DialogBase : BindableComponentBase
 
     private async Task OnBeforeInternalNavigation(LocationChangingContext context)
     {
-        if (context.HistoryEntryState != ShouldForceNavigate && !context.IsNavigationIntercepted)
-            context.PreventNavigation();
-
+        if (PageInfoService.PopStateInvoked.Value) context.PreventNavigation();
         await CloseDialog();
     }
 
@@ -69,6 +73,8 @@ public partial class DialogBase : BindableComponentBase
 
             MudDialog?.Cancel();
         }
+
+        PopupService.ShowingDialog.Value = false;
     }
 }
 

@@ -5,8 +5,8 @@ using MudBlazor;
 using Reactive.Bindings.Extensions;
 using System.Reactive.Linq;
 using YomLog.BlazorShared.Enums;
-using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Routing;
+using YomLog.BlazorShared.Services.Popup;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -14,9 +14,10 @@ public partial class PageContainer : BindableComponentBase
 {
     [Inject] private LayoutService LayoutService { get; set; } = null!;
     [Inject] private HttpClientWrapper HttpClientWrapper { get; set; } = null!;
-    [Inject] private IEnvironmentHelper EnvironmentHelper { get; set; } = null!;
     [Inject] private AppSettings AppSettings { get; set; } = null!;
-    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+    [Inject] private PageInfoService PageInfoService { get; set; } = null!;
+    [Inject] private IEnvironmentHelper EnvironmentHelper { get; set; } = null!;
+    [Inject] private IPopupService PopupService { get; set; } = null!;
 
     [Parameter] public string? Title { get; set; }
     [Parameter] public AppBarLeftButton LeftButton { get; set; } = AppBarLeftButton.Drawer;
@@ -33,9 +34,6 @@ public partial class PageContainer : BindableComponentBase
 
     private MaxWidth ContainerMaxWidth => MaxWidth ?? AppSettings.DefaultMaxWidth;
 
-    private bool IsTopPage => AppSettings.IsNativeApp && TopPage;
-    private bool _historyBackOnTopPage;
-
     public string MainContentClass
         => FooterContent != null ? "mud-main-content-with-footer" : string.Empty;
 
@@ -50,33 +48,10 @@ public partial class PageContainer : BindableComponentBase
         HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
     }
 
-    protected override async void OnAfterRender(bool firstRender)
+    private async Task OnBeforeNavigationOnTopPage(LocationChangingContext context)
     {
-        if (!firstRender) return;
-        if (IsTopPage)
-            await JSRuntime.InvokeVoidAsync("onRenderTopPage", DotNetObjectReference.Create(this));
-    }
-
-    protected override async void Dispose(bool disposing)
-    {
-        if (!disposing) return;
-        if (IsTopPage)
-            await JSRuntime.InvokeVoidAsync("onLeaveTopPage");
-    }
-
-    [JSInvokable("GoBackOnTopPage")]
-    public async Task OnGoBackOnTopPage()
-    {
-        _historyBackOnTopPage = true;
+        if (!PageInfoService.PopStateInvoked.Value || PopupService.ShowingDialog.Value) return;
+        context.PreventNavigation();
         await EnvironmentHelper.QuitApp();
-    }
-
-    private void OnBeforeInternalNavigation(LocationChangingContext context)
-    {
-        if (_historyBackOnTopPage)
-        {
-            context.PreventNavigation();
-            _historyBackOnTopPage = false;
-        }
     }
 }
