@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
             mudConfig.SnackbarConfiguration.NewestOnTop = true;
             mudConfig.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             mudConfig.SnackbarConfiguration.ShowTransitionDuration = 200;
-            config.MudServicesConfiguration(mudConfig);
+            config.MudServicesConfiguration?.Invoke(mudConfig);
         });
 
         // Add auth services
@@ -55,10 +55,9 @@ public static class ServiceCollectionExtensions
     }
 }
 
-public class AppConfiguration
-{
-    public AppSettings AppSettings { get; set; } = new();
-    public Action<MudServicesConfiguration> MudServicesConfiguration { get; set; } = _ => { };
-    public OidcClientOptions? OidcClientOptions { get; set; }
-    public HttpMessageHandler? HttpMessageHandler { get; set; }
-}
+public record AppConfiguration(
+    AppSettings AppSettings,
+    Action<MudServicesConfiguration>? MudServicesConfiguration,
+    OidcClientOptions? OidcClientOptions,
+    HttpMessageHandler? HttpMessageHandler
+);

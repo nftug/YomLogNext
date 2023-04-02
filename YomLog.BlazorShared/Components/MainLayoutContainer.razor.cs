@@ -69,4 +69,16 @@ public partial class MainLayoutContainer : BindableComponentBase
         var defaultDarkMode = IsDarkModeDefault ?? await _mudThemeProvider!.GetSystemPreference();
         await LayoutService.ApplyUserPreferences(defaultDarkMode);
     }
+
+    public void OnSwipe(SwipeDirection direction)
+    {
+        if (direction == SwipeDirection.LeftToRight && !LayoutService.DrawerOpen.Value)
+        {
+            LayoutService.DrawerOpen.Value = true;
+        }
+        else if (direction == SwipeDirection.RightToLeft && LayoutService.DrawerOpen.Value)
+        {
+            LayoutService.DrawerOpen.Value = false;
+        }
+    }
 }

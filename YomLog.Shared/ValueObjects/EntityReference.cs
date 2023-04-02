@@ -24,6 +24,7 @@ public class EntityReference<T> : ValueObject<EntityReference<T>>, IEntityRefere
     [JsonConstructor] public EntityReference() { }
 
     protected override bool EqualsCore(EntityReference<T> other) => Id == other.Id;
+    protected override int GetHashCodeCore() => Id.GetHashCode();
     public override string ToString() => Id.ToString();
 }
 

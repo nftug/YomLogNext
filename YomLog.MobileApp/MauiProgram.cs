@@ -38,16 +38,15 @@ public static class MauiProgram
         string oidcClientId = config.GetRequiredSection("Oidc").GetValue<string>("ClientId")!;
         string oidcAuthority = config.GetRequiredSection("Oidc").GetValue<string>("Authority")!;
 
-        builder.Services.AddAppServices(new()
-        {
-            MudServicesConfiguration = config =>
+        builder.Services.AddAppServices(new(
+            MudServicesConfiguration: config =>
             {
                 config.SnackbarConfiguration.ShowCloseIcon = false;
                 config.SnackbarConfiguration.VisibleStateDuration = 3000;
                 config.SnackbarConfiguration.HideTransitionDuration = 200;
                 config.SnackbarConfiguration.ShowTransitionDuration = 200;
             },
-            OidcClientOptions = new()
+            OidcClientOptions: new()
             {
                 Authority = oidcAuthority,
                 ClientId = oidcClientId,
@@ -56,15 +55,14 @@ public static class MauiProgram
                 PostLogoutRedirectUri = "yomlog://callback",
                 Browser = new WebAuthenticatorBrowser()
             },
-            AppSettings = new()
-            {
-                IsNativeApp = true,
-                DefaultMaxWidth = MaxWidth.Small,
-                AppName = AppInfo.Name,
-                ApiBaseAddress = new Uri(apiBaseUri)
-            },
-            HttpMessageHandler = GetInsecureHttpHandler()
-        });
+            AppSettings: new(
+                IsNativeApp: true,
+                DefaultMaxWidth: MaxWidth.Small,
+                AppName: AppInfo.Name,
+                ApiBaseAddress: new(apiBaseUri)
+            ),
+            HttpMessageHandler: GetInsecureHttpHandler()
+        ));
 
         builder.Services.AddInfrastructure(FileSystem.AppDataDirectory);
         builder.Services.AddFromAssembly(typeof(Domain.Books.Entities.Book).Assembly);

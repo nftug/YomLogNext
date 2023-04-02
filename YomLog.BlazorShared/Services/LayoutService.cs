@@ -40,23 +40,20 @@ public class LayoutService : BindableBase
 
     public async Task ApplyUserPreferences(bool isDarkModeDefaultTheme)
     {
-        UserPreferences.Value = new() { DarkTheme = isDarkModeDefaultTheme };
+        UserPreferences.Value = new(DarkTheme: isDarkModeDefaultTheme);
         IsDarkMode.Value = isDarkModeDefaultTheme;
 
-        var userPreferences = await _preference.GetAsync<UserPreferences>(Key) ?? new();
-        if (userPreferences.DarkTheme != null)
-        {
-            IsDarkMode.Value = (bool)userPreferences.DarkTheme;
-            userPreferences.DarkTheme = IsDarkMode.Value;
-        }
+        UserPreferences.Value =
+            await _preference.GetAsync<UserPreferences>(Key) ?? new(DarkTheme: isDarkModeDefaultTheme);
 
-        UserPreferences.Value = userPreferences;
+        if (UserPreferences.Value.DarkTheme is bool darkTheme)
+            IsDarkMode.Value = darkTheme;
     }
 
     public async Task ToggleDarkMode()
     {
         IsDarkMode.Value = !IsDarkMode.Value;
-        UserPreferences.Value.DarkTheme = IsDarkMode.Value;
+        UserPreferences.Value = UserPreferences.Value with { DarkTheme = IsDarkMode.Value };
         await _preference.SaveAsync(Key, UserPreferences.Value);
     }
 }

@@ -63,6 +63,5 @@ public abstract class EntityBase<T> : ValueObject<T>
     public virtual bool CheckCanDelete(User user) => CheckCanEdit(user);
 
     protected override bool EqualsCore(T other) => Id == other.Id;
-
-    public override int GetHashCode() => Id.GetHashCode();
+    protected override int GetHashCodeCore() => Id.GetHashCode();
 }

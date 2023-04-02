@@ -17,46 +17,48 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    @AppBarSection
+    <MudSwipeArea OnSwipe="@OnSwipe" Style="width: 100%; height:100vh;">
+        @AppBarSection
 
-    @if (DrawerSection != null)
-    {
-        @DrawerSection
-    }
+        @if (DrawerSection != null)
+        {
+            @DrawerSection
+        }
 
-    <MudMainContent Class="@LayoutService.Page.Value?.MainContentClass">
-        <ErrorBoundary @ref="_errorBoundary">
-            <ChildContent>
-                <ExceptionReceiver />
+        <MudMainContent Class="@LayoutService.Page.Value?.MainContentClass">
+            <ErrorBoundary @ref="_errorBoundary">
+                <ChildContent>
+                    <ExceptionReceiver />
 
-                <MudOverlay Visible="LayoutService.IsProcessing.Value" DarkBackground="true">
-                    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Large" />
-                </MudOverlay>
+                    <MudOverlay Visible="LayoutService.IsProcessing.Value" DarkBackground="true">
+                        <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Large" />
+                    </MudOverlay>
 
-                @ChildContent
-            </ChildContent>
-            <ErrorContent>
-                @if (context is NotFoundException)
-                {
-                    @if (NotFoundSection != null)
+                    @ChildContent
+                </ChildContent>
+                <ErrorContent>
+                    @if (context is NotFoundException)
                     {
-                        @NotFoundSection
+                        @if (NotFoundSection != null)
+                        {
+                            @NotFoundSection
+                        }
+                        else
+                        {
+                            <NotFoundPage />
+                        }
                     }
                     else
                     {
-                        <NotFoundPage />
+                        _ = ExceptionDialog.ShowDialog(DialogService, context, _errorBoundary);
                     }
-                }
-                else
-                {
-                    _ = ExceptionDialog.ShowDialog(DialogService, context, _errorBoundary);
-                }
-            </ErrorContent>
-        </ErrorBoundary>
-    </MudMainContent>
+                </ErrorContent>
+            </ErrorBoundary>
+        </MudMainContent>
 
-    @if (LayoutService.Page.Value?.FooterContent != null)
-    {
-        @LayoutService.Page.Value.FooterContent
-    }
+        @if (LayoutService.Page.Value?.FooterContent != null)
+        {
+            @LayoutService.Page.Value.FooterContent
+        }
+    </MudSwipeArea>
 </MudLayout>

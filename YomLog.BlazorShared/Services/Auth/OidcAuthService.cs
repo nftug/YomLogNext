@@ -66,14 +66,14 @@ public class OidcAuthService : AuthServiceBase
         }
 
         var claims = loginResult.User.Claims;
-        var tokenModel = new TokenModel
-        {
-            UserName = claims.First(x => x.Type == "name").Value,
-            UserId = claims.First(x => x.Type == "sub").Value,
-            AccessToken = loginResult.AccessToken,
-            RefreshToken = loginResult.RefreshToken,
-            AccessTokenExpiration = loginResult.AccessTokenExpiration
-        };
+        var tokenModel = new TokenModel(
+            UserName: claims.First(x => x.Type == "name").Value,
+            UserId: claims.First(x => x.Type == "sub").Value,
+            Role: claims.First(x => x.Type == "role").Value,
+            AccessToken: loginResult.AccessToken,
+            RefreshToken: loginResult.RefreshToken,
+            AccessTokenExpiration: loginResult.AccessTokenExpiration
+        );
 
         await LoginCoreAsync(tokenModel, redirectTo);
     }
@@ -124,9 +124,12 @@ public class OidcAuthService : AuthServiceBase
             await RefreshTokenAsync();
         }
 
-        tokenModel.AccessToken = result.AccessToken;
-        tokenModel.RefreshToken = result.RefreshToken;
-        tokenModel.AccessTokenExpiration = result.AccessTokenExpiration;
+        tokenModel = tokenModel with
+        {
+            AccessToken = result.AccessToken,
+            RefreshToken = result.RefreshToken,
+            AccessTokenExpiration = result.AccessTokenExpiration
+        };
 
         IsTokenValid.Value = true;
 

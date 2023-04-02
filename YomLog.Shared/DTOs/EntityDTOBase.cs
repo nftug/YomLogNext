@@ -19,8 +19,7 @@ public abstract class EntityDTOBase<TEntity, TEntityDTO> : ValueObject<TEntityDT
     }
 
     protected override bool EqualsCore(TEntityDTO other) => Id == other.Id;
-
-    public override int GetHashCode() => Id.GetHashCode();
+    protected override int GetHashCodeCore() => Id.GetHashCode();
 
     public abstract override string ToString();
 }
