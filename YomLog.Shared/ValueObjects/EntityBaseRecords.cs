@@ -2,7 +2,7 @@ using YomLog.Shared.Entities;
 
 namespace YomLog.Shared.ValueObjects;
 
-public class UserRecord : ValueObject<UserRecord>
+public record UserRecord
 {
     public EntityReferenceWithName<User> CreatedBy { get; }
     public EntityReferenceWithName<User>? UpdatedBy { get; private set; }
@@ -22,12 +22,9 @@ public class UserRecord : ValueObject<UserRecord>
     {
         UpdatedBy = updatedBy;
     }
-
-    protected override bool EqualsCore(UserRecord other)
-        => CreatedBy == other.CreatedBy && UpdatedBy == other.UpdatedBy;
 }
 
-public class DateTimeRecord : ValueObject<DateTimeRecord>
+public record DateTimeRecord
 {
     public DateTime CreatedOn { get; }
     public DateTime? UpdatedOn { get; private set; }
@@ -47,7 +44,4 @@ public class DateTimeRecord : ValueObject<DateTimeRecord>
     {
         UpdatedOn = updatedOn;
     }
-
-    protected override bool EqualsCore(DateTimeRecord other)
-        => CreatedOn == other.CreatedOn && UpdatedOn == other.UpdatedOn;
 }

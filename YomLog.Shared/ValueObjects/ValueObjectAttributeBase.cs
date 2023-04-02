@@ -4,7 +4,6 @@ using YomLog.Shared.Exceptions;
 namespace YomLog.Shared.ValueObjects;
 
 public abstract class ValueObjectAttributeBase<T, TValue> : ValidationAttribute
-    where T : ValueObject<T>
 {
     public bool IsPatch { get; init; } = false;
 

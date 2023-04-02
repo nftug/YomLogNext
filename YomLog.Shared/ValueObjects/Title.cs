@@ -2,7 +2,7 @@ using YomLog.Shared.Exceptions;
 
 namespace YomLog.Shared.ValueObjects;
 
-public class Title : ValueObject<Title>
+public record Title
 {
     public readonly int MaxTitleLength = 200;
 
@@ -18,8 +18,6 @@ public class Title : ValueObject<Title>
 
         Value = value;
     }
-
-    protected override bool EqualsCore(Title other) => Value == other.Value;
 }
 
 public class TitleAttribute : ValueObjectAttributeBase<Title, string?>
