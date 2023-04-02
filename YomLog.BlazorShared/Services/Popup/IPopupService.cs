@@ -22,6 +22,4 @@ public interface IPopupService
     Task<bool> ShowNativeConfirm
         (string title, string message, string okText = "OK", string cancelText = "キャンセル");
     Task<string> ShowNativePrompt(string title, string message, string okText = "OK", string cancelText = "キャンセル");
-
-    ReactivePropertySlim<bool> ShowingDialog { get; }
 }

@@ -12,13 +12,10 @@ public class BlazorPopupService : IPopupService
     private readonly IDialogService _dialogService;
     private readonly IJSRuntime _jsRuntime;
 
-    public ReactivePropertySlim<bool> ShowingDialog { get; }
-
     public BlazorPopupService(IDialogService dialogService, IJSRuntime jsRuntime)
     {
         _dialogService = dialogService;
         _jsRuntime = jsRuntime;
-        ShowingDialog = new ReactivePropertySlim<bool>();
     }
 
     public async Task<bool> ShowConfirm(string title, string message, string okText = "OK", string cancelText = "キャンセル")

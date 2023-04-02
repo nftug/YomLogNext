@@ -6,7 +6,6 @@ using Reactive.Bindings.Extensions;
 using System.Reactive.Linq;
 using YomLog.BlazorShared.Enums;
 using Microsoft.AspNetCore.Components.Routing;
-using YomLog.BlazorShared.Services.Popup;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -17,7 +16,6 @@ public partial class PageContainer : BindableComponentBase
     [Inject] private AppSettings AppSettings { get; set; } = null!;
     [Inject] private PageInfoService PageInfoService { get; set; } = null!;
     [Inject] private IEnvironmentHelper EnvironmentHelper { get; set; } = null!;
-    [Inject] private IPopupService PopupService { get; set; } = null!;
 
     [Parameter] public string? Title { get; set; }
     [Parameter] public AppBarLeftButton LeftButton { get; set; } = AppBarLeftButton.Drawer;
@@ -50,7 +48,7 @@ public partial class PageContainer : BindableComponentBase
 
     private async Task OnBeforeNavigationOnTopPage(LocationChangingContext context)
     {
-        if (!PageInfoService.PopStateInvoked.Value || PopupService.ShowingDialog.Value) return;
+        if (!PageInfoService.PopStateInvoked.Value || LayoutService.ShowingDialog.Value) return;
         context.PreventNavigation();
         await EnvironmentHelper.QuitApp();
     }

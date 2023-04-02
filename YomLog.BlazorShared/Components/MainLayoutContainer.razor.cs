@@ -7,6 +7,7 @@ using YomLog.BlazorShared.Models;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings;
 using YomLog.BlazorShared.Extensions;
+using YomLog.BlazorShared.Services.Popup;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -16,6 +17,7 @@ public partial class MainLayoutContainer : BindableComponentBase
     [Inject] private ScrollInfoService ScrollInfoService { get; set; } = null!;
     [Inject] private AppSettings AppSettings { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IPopupService PopupService { get; set; } = null!;
 
     [Parameter] public bool? IsDarkModeDefault { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
@@ -68,17 +70,5 @@ public partial class MainLayoutContainer : BindableComponentBase
     {
         var defaultDarkMode = IsDarkModeDefault ?? await _mudThemeProvider!.GetSystemPreference();
         await LayoutService.ApplyUserPreferences(defaultDarkMode);
-    }
-
-    public void OnSwipe(SwipeDirection direction)
-    {
-        if (direction == SwipeDirection.LeftToRight && !LayoutService.DrawerOpen.Value)
-        {
-            LayoutService.DrawerOpen.Value = true;
-        }
-        else if (direction == SwipeDirection.RightToLeft && LayoutService.DrawerOpen.Value)
-        {
-            LayoutService.DrawerOpen.Value = false;
-        }
     }
 }

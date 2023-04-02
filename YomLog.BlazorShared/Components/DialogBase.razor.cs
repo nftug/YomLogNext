@@ -37,7 +37,7 @@ public partial class DialogBase : BindableComponentBase
     protected override void OnAfterRender(bool firstRender)
     {
         if (!RenderDialog) return;
-        PopupService.ShowingDialog.Value = true;
+        LayoutService.ShowingDialog.Value = true;
     }
 
     public Task Ok<T>(T result) => OnCloseDialog(result);
@@ -74,7 +74,7 @@ public partial class DialogBase : BindableComponentBase
             MudDialog?.Cancel();
         }
 
-        PopupService.ShowingDialog.Value = false;
+        LayoutService.ShowingDialog.Value = false;
     }
 }
 
