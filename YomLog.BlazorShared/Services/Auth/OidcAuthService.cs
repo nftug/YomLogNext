@@ -69,7 +69,7 @@ public class OidcAuthService : AuthServiceBase
         var tokenModel = new TokenModel(
             UserName: claims.First(x => x.Type == "name").Value,
             UserId: claims.First(x => x.Type == "sub").Value,
-            Role: claims.First(x => x.Type == "role").Value,
+            Role: claims.FirstOrDefault(x => x.Type == "role")?.Value ?? string.Empty,
             AccessToken: loginResult.AccessToken,
             RefreshToken: loginResult.RefreshToken,
             AccessTokenExpiration: loginResult.AccessTokenExpiration

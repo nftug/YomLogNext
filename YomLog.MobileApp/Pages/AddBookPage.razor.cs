@@ -26,7 +26,7 @@ public partial class AddBookPage : BindableComponentBase
     protected override void OnInitialized()
     {
         IsLoading = new ReactivePropertySlim<bool>().AddTo(Disposable);
-        IsLoading.ObserveOnMainThread().Skip(1).Subscribe(_ => Rerender());
+        IsLoading.Skip(1).Subscribe(_ => Rerender());
     }
 
     private async Task SearchAsync()

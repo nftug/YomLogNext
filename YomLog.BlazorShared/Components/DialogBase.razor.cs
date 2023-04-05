@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 using Reactive.Bindings.Extensions;
-using YomLog.BlazorShared.Extensions;
 using YomLog.BlazorShared.Models;
 
 namespace YomLog.BlazorShared.Components;
@@ -21,6 +20,7 @@ public partial class DialogBase : BindableComponentBase
     [Parameter] public bool CloseButton { get; set; }
     [Parameter] public bool RenderDialog { get; set; } = true;
     [Parameter] public EventCallback<DialogCloseContext> OnBeforeClose { get; set; }
+    [Parameter] public bool ProcessingOverlay { get; set; } = true;
 
     private object? Result { get; set; }
     public MudDialog? Dialog { get; set; }
@@ -28,10 +28,7 @@ public partial class DialogBase : BindableComponentBase
 
     protected override void OnInitialized()
     {
-        LayoutService.IsProcessing
-            .ObserveOnMainThread()
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
+        LayoutService.IsProcessing.Subscribe(_ => Rerender()).AddTo(Disposable);
     }
 
     protected override void OnAfterRender(bool firstRender)

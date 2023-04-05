@@ -30,7 +30,7 @@
     </TitleContent>
 
     <DialogContent>
-        <MudOverlay Visible="LayoutService.IsProcessing.Value" DarkBackground="true">
+        <MudOverlay Visible="LayoutService.IsProcessing.Value && ProcessingOverlay" DarkBackground="true">
             <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Large" />
         </MudOverlay>
 

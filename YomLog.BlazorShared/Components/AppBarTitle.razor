@@ -33,10 +33,6 @@ else
 
     protected override void OnInitialized()
     {
-        LayoutService.Page
-            .ObserveOnMainThread()
-            .Skip(1)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
+        LayoutService.Page.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
     }
 }

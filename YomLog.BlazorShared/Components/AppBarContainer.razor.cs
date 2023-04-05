@@ -21,16 +21,8 @@ public partial class AppBarContainer : BindableComponentBase
 
     protected override void OnInitialized()
     {
-        LayoutService.Page.
-            Skip(1)
-            .ObserveOnMainThread()
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
-        HttpClientWrapper.IsOffline
-            .Skip(1)
-            .ObserveOnMainThread()
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
+        LayoutService.Page.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        HttpClientWrapper.IsOffline.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
 
         LayoutService.AppBarRerenderRequested += Rerender;
         NavigationManager.LocationChanged += OnLocationChanged;

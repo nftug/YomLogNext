@@ -17,6 +17,7 @@
                 if (v is IApiException ex && ex.StatusCode is null) return;
 
                 await ExceptionDialog.ShowDialog(DialogService, v!);
+
                 // NOTE: Exception from another thread cannot catch with error boundary.
                 // InvokeAsync(() => throw v!);
             })

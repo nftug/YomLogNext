@@ -7,7 +7,6 @@ using YomLog.BlazorShared.Models;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings;
 using YomLog.BlazorShared.Extensions;
-using YomLog.BlazorShared.Services.Popup;
 
 namespace YomLog.BlazorShared.Components;
 
@@ -17,7 +16,6 @@ public partial class MainLayoutContainer : BindableComponentBase
     [Inject] private ScrollInfoService ScrollInfoService { get; set; } = null!;
     [Inject] private AppSettings AppSettings { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
-    [Inject] private IPopupService PopupService { get; set; } = null!;
 
     [Parameter] public bool? IsDarkModeDefault { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
@@ -30,29 +28,10 @@ public partial class MainLayoutContainer : BindableComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        LayoutService.UserPreferences
-            .ObserveOnMainThread()
-            .Skip(1)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
-
-        LayoutService.IsDarkMode
-            .ObserveOnMainThread()
-            .Skip(1)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
-
-        LayoutService.Page
-            .ObserveOnMainThread()
-            .Where(v => v != null)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
-
-        LayoutService.IsProcessing
-            .ObserveOnMainThread()
-            .Skip(1)
-            .Subscribe(_ => Rerender())
-            .AddTo(Disposable);
+        LayoutService.UserPreferences.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.IsDarkMode.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.Page.Where(v => v != null).Subscribe(_ => Rerender()).AddTo(Disposable);
+        LayoutService.IsProcessing.Skip(1).Subscribe(_ => Rerender()).AddTo(Disposable);
 
         await ScrollInfoService.RegisterService();
         await ApplyUserPreferences();
