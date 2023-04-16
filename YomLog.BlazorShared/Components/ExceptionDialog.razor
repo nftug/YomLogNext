@@ -22,7 +22,7 @@
     )
     {
         var parameters = new DialogParameters { [nameof(Exception)] = exception };
-        var options = new DialogOptions { MaxWidth = MaxWidth.Large };
+        var options = new DialogOptions { FullScreen = true };
         var dialog = dialogService.Show<ExceptionDialog>("エラーが発生しました", parameters, options);
         var result = await dialog.Result;
 

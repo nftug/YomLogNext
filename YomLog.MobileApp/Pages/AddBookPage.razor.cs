@@ -2,7 +2,6 @@ using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using YomLog.BlazorShared.Extensions;
 using YomLog.BlazorShared.Models;
 using YomLog.Domain.Books.DTOs;
 using YomLog.MobileApp.Services.Api;
@@ -16,10 +15,9 @@ public partial class AddBookPage : BindableComponentBase
 
     [Parameter, SupplyParameterFromQuery] public string? Query { get; set; }
 
-    private int _totalItems;
     private List<BookDetailsDTO> _results = new();
     private int _startIndex;
-    private bool ReachedLast => _totalItems <= _startIndex;
+    private bool _reachedLast;
     private ReactivePropertySlim<bool> IsLoading { get; set; } = null!;
     private readonly int Limit = 12;
 
@@ -31,44 +29,31 @@ public partial class AddBookPage : BindableComponentBase
 
     private async Task SearchAsync()
     {
-        _totalItems = 0;
         _startIndex = 0;
         _results = new();
-
         await GetBooksAsync();
     }
 
-    private void SearchByAuthor(string author)
-    {
-        OnNavigateForSearch($@"inauthor:""{author}""");
-    }
+    private void SearchByAuthor(string author) => OnNavigateForSearch($@"inauthor:""{author}""");
 
     private void OnNavigateForSearch(string query)
-    {
-        var uri = NavigationManager.GetUriWithQueryParameter(nameof(Query), query);
-        NavigationManager.NavigateTo(uri);
-    }
+        => NavigationManager.NavigateTo(
+                NavigationManager.GetUriWithQueryParameter(nameof(Query), query)
+            );
 
     private async Task GetBooksAsync()
     {
         if (string.IsNullOrEmpty(Query) || IsLoading.Value) return;
+        if (_reachedLast) return;
 
         try
         {
             IsLoading.Value = true;
 
-            if (_totalItems == 0)
-            {
-                var paginated = await ApiService.GetBookList(Query, 0, 1);
-                _totalItems = paginated.TotalItems;
-                await Task.Delay(500);
-            }
-
-            int numItems = Math.Min(Limit, _totalItems - _startIndex);
-
-            var data = await ApiService.GetBookList(Query, _startIndex, numItems);
+            var data = await ApiService.GetBookList(Query, _startIndex, Limit);
             _results.AddRange(data.Results);
             _startIndex += data.Results.Count();
+            _reachedLast = !data.Results.Any();
         }
         catch (Exception e)
         {

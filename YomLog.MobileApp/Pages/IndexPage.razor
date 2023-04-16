@@ -6,7 +6,7 @@
 @inject BookApiService ApiService
 @inject BookStoreService Store
 
-<PageContainer TopPage="true">
+<PageContainer TopPage="true" MaxWidth="MaxWidth.Large">
     <MudGrid Spacing="2">
         @foreach (var item in Store.BookList)
         {
@@ -24,6 +24,6 @@
             .ToCollectionChanged()
             .ObserveOnMainThread()
             .Where(x => x.Action != NotifyCollectionChangedAction.Reset)
-            .Subscribe(_ => InvokeAsync(StateHasChanged));
+            .Subscribe(_ => StateHasChanged());
     }
 }

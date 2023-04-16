@@ -36,8 +36,6 @@ public class ScrollInfoService
     }
 
     private readonly Dictionary<string, double> _scrollYPerPage = new();
-    private readonly Dictionary<string, bool> _isLoading = new();
-
     public double? ScrollY
     {
         get => _scrollYPerPage.TryGetValue(_pageInfoService.PathAndQuery.Value, out double value) ? value : null;
@@ -48,20 +46,8 @@ public class ScrollInfoService
         }
     }
 
-    public bool IsLoading
-    {
-        get => _isLoading.ContainsKey(_pageInfoService.PathAndQuery.Value)
-                && _isLoading[_pageInfoService.PathAndQuery.Value];
-        private set
-        {
-            _isLoading[_pageInfoService.PathAndQuery.Value] = value;
-        }
-    }
-
     public async Task ScrollToTopAsync()
-    {
-        await _scrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior.Smooth);
-    }
+        => await _scrollManager.ScrollToTopAsync(_scrollListener.Selector, ScrollBehavior.Smooth);
 
     public async void ResetScroll()
     {
@@ -79,15 +65,12 @@ public class ScrollInfoService
     private bool _beingResumed;
 
     [JSInvokable("OnPopState")]
-    public async void RestoreScroll()
+    public async Task RestoreScroll()
     {
         if (ScrollY == null || _beingResumed) return;
 
         _beingResumed = true;
-        await Task.Delay(200);
-
-        while (IsLoading) await Task.Delay(25);
-
+        // await Task.Delay(200);
         await _jsRuntime.InvokeVoidAsync("setScrollY", ScrollY);
         _beingResumed = false;
     }

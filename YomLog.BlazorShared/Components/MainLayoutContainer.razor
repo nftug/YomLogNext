@@ -1,8 +1,8 @@
-﻿@using System.Net
-@using YomLog.Shared.Exceptions
+﻿@using YomLog.Shared.Exceptions
 
 @inherits BindableComponentBase
 @inject IDialogService DialogService
+@inject ExceptionHubService ExceptionHub
 
 <MudThemeProvider @ref="@_mudThemeProvider"
                   Theme="new MudTheme()"
@@ -28,8 +28,6 @@
         <MudMainContent Class="@LayoutService.Page.Value?.MainContentClass">
             <ErrorBoundary @ref="_errorBoundary">
                 <ChildContent>
-                    <ExceptionReceiver />
-
                     <MudOverlay Visible="LayoutService.IsProcessing.Value" DarkBackground="true">
                         <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Large" />
                     </MudOverlay>
@@ -50,7 +48,7 @@
                     }
                     else
                     {
-                        _ = ExceptionDialog.ShowDialog(DialogService, context, _errorBoundary);
+                        ExceptionHub.Exception.Value = context;
                     }
                 </ErrorContent>
             </ErrorBoundary>

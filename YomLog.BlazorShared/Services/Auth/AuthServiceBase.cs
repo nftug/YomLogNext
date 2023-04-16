@@ -44,8 +44,7 @@ public abstract class AuthServiceBase : BindableBase, IAuthService
             .ToReadOnlyReactivePropertySlim()
             .AddTo(Disposable);
         IsAuthenticated = Observable
-            .Merge(IsIdentityAuthenticated, IsTokenValid)
-            .Select(x => IsIdentityAuthenticated.Value && IsTokenValid.Value)
+            .CombineLatest(IsIdentityAuthenticated, IsTokenValid, (x, y) => x && y)
             .ToReadOnlyReactivePropertySlim()
             .AddTo(Disposable);
 

@@ -12,9 +12,9 @@ public record BookPage(int Page, int? KindleLocation, double Percentage)
 
         if (page == default && kindleLocation is null)
             throw new EntityValidationException("ページ数か位置Noのいずれかを指定してください。");
-        if (page == default && kindleLocation is null)
+        if (page <= 0 && kindleLocation is null)
             throw new EntityValidationException("ページ数は0より大きな数字を指定してください。");
-        if (kindleLocation == 0 && page == default)
+        if (kindleLocation <= 0 && page == default)
             throw new EntityValidationException("位置Noは0より大きな数字を指定してください。");
     }
 

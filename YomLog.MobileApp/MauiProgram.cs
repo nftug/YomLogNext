@@ -57,7 +57,6 @@ public static class MauiProgram
             },
             AppSettings: new(
                 IsNativeApp: true,
-                DefaultMaxWidth: MaxWidth.Small,
                 AppName: AppInfo.Name,
                 ApiBaseAddress: new(apiBaseUri)
             ),

@@ -1,7 +1,7 @@
 @page "/add-book"
 @inherits BindableComponentBase
 
-<PageContainer Title="本の追加" MaxWidth="MaxWidth.Large">
+<PageContainer Title="本の追加" MaxWidth="MaxWidth.Large" LeftButton="AppBarLeftButton.Back">
     <TitleContent>
         <AppBarSearchField Query="@Query" NavigateAction="OnNavigateForSearch" SearchAction="SearchAsync" AutoFocus="true">
             <AppBarTitle />
@@ -30,7 +30,7 @@
                     </MudItem>
                 }
 
-                @if (!ReachedLast || IsLoading.Value)
+                @if (!_reachedLast || IsLoading.Value)
                 {
                     <MudItem xs="12" lg="6">
                         <BookItem />
