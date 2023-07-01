@@ -55,7 +55,7 @@
         await SearchByAuthor.InvokeAsync(author);
     }
 
-    private Task OnClickAddDetails() => AddBookDialog.ShowDialog(DialogService, Item, SearchByAuthor);
+    private Task OnClickAddDetails() => BookEditDialog.ShowDialog(DialogService, Item, SearchByAuthor);
 
     private Task OnClickDelete() => BookApiService.DeleteAsync(Item);
 }

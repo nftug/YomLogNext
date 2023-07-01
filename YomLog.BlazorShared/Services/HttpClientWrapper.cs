@@ -21,7 +21,7 @@ public class HttpClientWrapper : BindableBase
     private int _retryCount;
     private readonly int RetryLimit = 3;
 
-    private ReactivePropertySlim<bool> _isOffline;
+    private readonly ReactivePropertySlim<bool> _isOffline;
     public ReadOnlyReactivePropertySlim<bool> IsOffline { get; }
 
     public HttpClientWrapper(HttpClient httpClient, IPopupService popupService, IAuthService authService)

@@ -24,8 +24,8 @@ public class ProgressEDM : EntityEDMBase<Progress, ProgressEDM>
     internal override ProgressEDM Transfer(Progress origin)
     {
         FKBook = origin.Book.PK;
-        Page = origin.BookPage.Page;
-        KindleLocation = origin.BookPage.KindleLocation;
+        Page = origin.BookPage.Page.Value;
+        KindleLocation = origin.BookPage.KindleLocation?.Value;
         State = origin.State;
         return base.Transfer(origin);
     }

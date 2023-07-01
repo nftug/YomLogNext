@@ -39,13 +39,7 @@ public class EditBook
             var book = await _repository.FindAsync(request.Id) ?? throw new NotFoundException();
             var authors = await _bookService.GetOrCreateAuthors(request.Item.Authors, Command.OperatedBy);
 
-            book.Edit(
-                request.Item.Title,
-                authors,
-                new(request.Item.TotalPage, request.Item.TotalKindleLocation),
-                Command.OperatedBy
-            );
-
+            book.Edit(request.Item, authors, Command.OperatedBy);
             await _repository.UpdateAsync(book);
             return new(book);
         }

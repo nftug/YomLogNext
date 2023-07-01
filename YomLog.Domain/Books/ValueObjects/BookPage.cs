@@ -2,40 +2,65 @@ using YomLog.Shared.Exceptions;
 
 namespace YomLog.Domain.Books.ValueObjects;
 
-public record BookPage(int Page, int? KindleLocation, double Percentage)
+public record BookPage
 {
-    // 全ページ
-    public BookPage(int page, int? kindleLocation, bool skipValidation = false)
-        : this(page > 0 ? page : 0, kindleLocation > 0 ? kindleLocation : 0, 1.0)
-    {
-        if (skipValidation) return;
+    public Page Page { get; }
+    public KindleLocation? KindleLocation { get; }
+    public BookPage? Total { get; }
 
-        if (page == default && kindleLocation is null)
-            throw new EntityValidationException("ページ数か位置Noのいずれかを指定してください。");
-        if (page <= 0 && kindleLocation is null)
+    public double Percentage => Total is null ? 0 : Page.Value / Total.Page.Value;
+
+    // 全ページ
+    public BookPage(int page, int? kindleLocation)
+    {
+        if (page == default)
+            throw new EntityValidationException("ページ数を指定してください。");
+        if (page <= 0)
             throw new EntityValidationException("ページ数は0より大きな数字を指定してください。");
-        if (kindleLocation <= 0 && page == default)
+        if (kindleLocation <= 0)
             throw new EntityValidationException("位置Noは0より大きな数字を指定してください。");
+
+        Page = new(page);
+        KindleLocation = KindleLocation.Create(kindleLocation);
     }
 
     // ページ数のみ指定
-    public BookPage(int page, BookPage totalBookPage) : this(page, null, (double)page / totalBookPage.Page)
+    public BookPage(Page page, BookPage total) : this(page.Value, null)
     {
+        Total = total;
     }
 
     // 位置Noを指定
-    public BookPage(int? kindleLocation, BookPage totalBookPage) : this(0, null!)
+    public BookPage(KindleLocation kindleLocation, BookPage total)
     {
-        if (kindleLocation is not int location) throw new InvalidOperationException();
+        if (total.KindleLocation is null) throw new InvalidOperationException();
 
-        KindleLocation = location;
-        Page = location / (int)totalBookPage.KindleLocation! * totalBookPage.Page;
-        Percentage = (double)location / (int)totalBookPage.KindleLocation;
+        KindleLocation = kindleLocation;
+        Page = new(kindleLocation.Value / total.KindleLocation.Value);
+        Total = total;
     }
 
     public static BookPage operator +(BookPage left, BookPage right)
-        => new(left.Page + right.Page, left.KindleLocation + right.KindleLocation);
+    {
+        var page = new Page(left.Page.Value + right.Page.Value);
+        return left.KindleLocation is not null && right.KindleLocation is not null
+            ? new(page.Value, left.KindleLocation.Value + right.KindleLocation.Value)
+            : new(page.Value, null);
+    }
 
     public static BookPage operator -(BookPage left, BookPage right)
-        => new(left.Page - right.Page, left.KindleLocation - right.KindleLocation);
+    {
+        var page = new Page(left.Page.Value - right.Page.Value);
+        return left.KindleLocation is not null && right.KindleLocation is not null
+            ? new(page.Value, left.KindleLocation.Value - right.KindleLocation.Value)
+            : new(page.Value, null);
+    }
+}
+
+public record Page(int Value);
+
+public record KindleLocation(int Value)
+{
+    public static KindleLocation? Create(int? value)
+        => value is int v ? new(v) : null;
 }

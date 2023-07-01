@@ -7,7 +7,7 @@ using YomLog.MobileApp.Services.Api;
 
 namespace YomLog.MobileApp.Components;
 
-public partial class AddBookDialog : ComponentBase
+public partial class BookEditDialog : ComponentBase
 {
     [Inject] private BookApiService ApiService { get; set; } = null!;
 
@@ -43,7 +43,7 @@ public partial class AddBookDialog : ComponentBase
             ["SearchByAuthor"] = searchByAuthorCallback
         };
         var options = new DialogOptions { FullScreen = true };
-        var dialog = dialogService.Show<AddBookDialog>("AddBook", parameters, options);
+        var dialog = dialogService.Show<BookEditDialog>("AddBook", parameters, options);
         return await dialog.Result;
     }
 }

@@ -7,7 +7,7 @@ public record ProgressDiff(BookPage Value, double Percentage)
     public ProgressDiff(Progress prev, Progress current, BookPage totalPage)
         : this(current.BookPage - prev.BookPage, 0)
     {
-        Percentage = (double)Value.Page / totalPage.Page;
+        Percentage = (double)Value.Page.Value / totalPage.Page.Value;
     }
 
     public static IEnumerable<ProgressDiff> GetProgressDiffList(

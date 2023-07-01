@@ -47,8 +47,8 @@ public class BookEDM : EntityEDMBase<Book, BookEDM>
         ThumbnailUrl = origin.ThumbnailUrl?.AbsoluteUri;
         Isbn = origin.Isbn;
         BookType = origin.BookType;
-        TotalPage = origin.TotalPage.Page;
-        TotalKindleLocation = origin.TotalPage.KindleLocation;
+        TotalPage = origin.TotalPage.Page.Value;
+        TotalKindleLocation = origin.TotalPage.KindleLocation?.Value;
         return base.Transfer(origin);
     }
 

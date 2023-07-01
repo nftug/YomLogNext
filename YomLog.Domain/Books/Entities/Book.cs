@@ -56,16 +56,11 @@ public class Book : EntityWithNameBase<Book>
         )
         .CreateModel(createdBy);
 
-    public void Edit(
-        string name,
-        IReadOnlyList<Author> authors,
-        BookPage totalPage,
-        User updatedBy
-    )
+    public void Edit(BookCommandDTO command, IReadOnlyList<Author> authors, User updatedBy)
     {
-        Name = name;
+        Name = command.Title;
         Authors = authors;
-        TotalPage = totalPage;
+        TotalPage = new(command.TotalPage, command.TotalKindleLocation);
         UpdateModel(updatedBy);
     }
 }

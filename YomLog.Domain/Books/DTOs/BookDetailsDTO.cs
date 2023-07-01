@@ -1,7 +1,6 @@
 using YomLog.Domain.Books.Commands;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Enums;
-using YomLog.Domain.Books.ValueObjects;
 using YomLog.Shared.DTOs;
 
 namespace YomLog.Domain.Books.DTOs;
@@ -16,7 +15,7 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
     public string? ThumbnailUrl { get; set; }
     public string? Isbn { get; set; }
     public BookType BookType { get; set; }
-    public BookPage TotalPage { get; set; } = null!;
+    public BookPageDTO Total { get; set; } = null!;
     public ProgressDetailsDTO? CurrentProgress { get; set; }
 
     public BookDetailsDTO() { }
@@ -31,8 +30,8 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
         ThumbnailUrl = model.ThumbnailUrl?.ToString();
         Isbn = model.Isbn;
         BookType = model.BookType;
-        TotalPage = model.TotalPage;
-        CurrentProgress = model.CurrentProgress != null ? new(model.CurrentProgress, null) : null;
+        Total = new(model.TotalPage);
+        CurrentProgress = ProgressDetailsDTO.Create(model.CurrentProgress, null);
     }
 
     public override ICommandDTO<Book> ToCommandDTO()
@@ -46,8 +45,8 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
             Thumbnail = ThumbnailUrl,
             Isbn = Isbn,
             BookType = BookType,
-            TotalPage = TotalPage.Page,
-            TotalKindleLocation = TotalPage.KindleLocation,
+            TotalPage = Total.Page,
+            TotalKindleLocation = Total.KindleLocation,
         };
 
     public override string ToString() => Title;

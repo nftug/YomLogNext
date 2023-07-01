@@ -9,16 +9,16 @@ namespace YomLog.Domain.Books.DTOs;
 public class ProgressDetailsDTO : EntityDetailsDTOBase<Progress, ProgressDetailsDTO>
 {
     public Guid BookId { get; set; }
-    public BookPage BookPage { get; set; }
+    public BookPageDTO Position { get; set; }
     public ProgressState State { get; set; }
-    public ProgressDiff? Diff { get; set; }
+    public ProgressDiffDTO? Diff { get; set; }
 
     public ProgressDetailsDTO(Progress currentProgress, ProgressDiff? progressDiff)
     {
         BookId = currentProgress.Book.Id;
-        BookPage = currentProgress.BookPage;
+        Position = new(currentProgress.BookPage);
         State = currentProgress.State;
-        Diff = progressDiff;
+        Diff = ProgressDiffDTO.Create(progressDiff);
     }
 
     public override ICommandDTO<Progress> ToCommandDTO()
@@ -26,9 +26,12 @@ public class ProgressDetailsDTO : EntityDetailsDTOBase<Progress, ProgressDetails
         {
             BookId = BookId,
             State = State,
-            Page = BookPage.Page,
-            KindleLocation = BookPage.KindleLocation
+            Page = Position.Page,
+            KindleLocation = Position.KindleLocation,
         };
 
     public override string ToString() => Id.ToString();
+
+    public static ProgressDetailsDTO? Create(Progress? currentProgress, ProgressDiff? progressDiff)
+        => currentProgress is not null ? new(currentProgress, progressDiff) : null;
 }

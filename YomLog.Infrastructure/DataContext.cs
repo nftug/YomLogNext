@@ -5,23 +5,19 @@ namespace YomLog.Infrastructure;
 
 public class DataContext : DbContext
 {
-    public DataContext() { }
-
     public DataContext(string appDataPath)
-    {
-        DataSource = Path.Combine(appDataPath, "YomLog.db");
-    }
+        => _dataSource = Path.Combine(appDataPath, "YomLog.db");
 
     public DbSet<BookEDM> Books { get; set; } = null!;
     public DbSet<AuthorEDM> Authors { get; set; } = null!;
     public DbSet<ProgressEDM> Progress { get; set; } = null!;
 
-    private string DataSource { get; set; } = string.Empty;
+    private readonly string _dataSource = default!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         options.UseSqlite(
-            $"Data Source={DataSource}",
+            $"Data Source={_dataSource}",
             opt => opt.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
         );
         options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);

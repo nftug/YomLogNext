@@ -26,7 +26,13 @@
                     <tr>
                         <td style="width: 30%; font-weight: bold;">ページ数</td>
                         <td>
-                            <MudNumericField @bind-Value="Command.TotalPage" Variant="Variant.Text" Min="0" />
+                            <MudNumericField @bind-Value="Command.TotalPage" Variant="Variant.Text" Min="0" Clearable />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30%; font-weight: bold;">Kindle位置No</td>
+                        <td>
+                            <MudNumericField @bind-Value="Command.TotalKindleLocation" Variant="Variant.Text" Min="0" Clearable />
                         </td>
                     </tr>
                     <tr>
