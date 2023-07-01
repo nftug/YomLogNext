@@ -16,8 +16,7 @@ public class Book : EntityWithNameBase<Book>
     public BookPage TotalPage { get; private set; } = null!;
     public Progress? CurrentProgress { get; }
 
-    public BookType BookType
-        => TotalPage.KindleLocation is not null ? BookType.Kindle : BookType.Normal;
+    public BookType BookType => TotalPage.BookType;
 
     public Book(
         string googleBooksId,

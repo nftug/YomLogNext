@@ -1,3 +1,4 @@
+using YomLog.Domain.Books.Enums;
 using YomLog.Shared.Exceptions;
 
 namespace YomLog.Domain.Books.ValueObjects;
@@ -8,6 +9,7 @@ public record BookPage
     public KindleLocation? KindleLocation { get; }
     public BookPage? Total { get; }
 
+    public BookType BookType => KindleLocation is not null ? BookType.Kindle : BookType.Normal;
     public double Percentage => Total is null ? 0 : Page.Value / Total.Page.Value;
 
     // 全ページ
