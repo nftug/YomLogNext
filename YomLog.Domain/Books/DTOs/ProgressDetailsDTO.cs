@@ -11,14 +11,14 @@ public class ProgressDetailsDTO : EntityDetailsDTOBase<Progress, ProgressDetails
     public Guid BookId { get; set; }
     public BookPageDTO Position { get; set; }
     public ProgressState State { get; set; }
-    public ProgressDiffDTO? Diff { get; set; }
+    public BookPageDTO? Diff { get; set; }
 
     public ProgressDetailsDTO(Progress currentProgress, ProgressDiff? progressDiff)
     {
         BookId = currentProgress.Book.Id;
         Position = new(currentProgress.BookPage);
         State = currentProgress.State;
-        Diff = ProgressDiffDTO.Create(progressDiff);
+        Diff = progressDiff?.Value != null ? new(progressDiff.Value) : null;
     }
 
     public override ICommandDTO<Progress> ToCommandDTO()

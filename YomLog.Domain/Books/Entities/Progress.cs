@@ -16,8 +16,8 @@ public class Progress : EntityBase<Progress>
     {
         Book = book;
         BookPage = kindleLocation is int kl
-            ? new BookPage(new KindleLocation(kl), book.TotalPage)
-            : new BookPage(new Page(page), book.TotalPage);
+            ? BookPage.CreateWithKindleLocation(kl, book.TotalPage)
+            : BookPage.CreateWithPage(page, book.TotalPage);
         State = state;
     }
 
@@ -26,7 +26,7 @@ public class Progress : EntityBase<Progress>
         Book = book;
         BookPage = page;
         State = state;
-        ValidateBookPage();
+        ValidateBookType();
     }
 
     public static Progress Create(BookReference book, BookPage page, ProgressState state, User createdBy)
@@ -36,13 +36,13 @@ public class Progress : EntityBase<Progress>
     {
         BookPage = page;
         State = state;
-        ValidateBookPage();
+        ValidateBookType();
         UpdateModel(updatedBy);
     }
 
-    private void ValidateBookPage()
+    private void ValidateBookType()
     {
         if (BookPage.BookType != Book.BookType)
-            throw new EntityValidationException(nameof(BookType), "invalid status (different book type)");
+            throw new EntityValidationException(nameof(BookType), "invalid progress status (different book type)");
     }
 }

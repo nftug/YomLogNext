@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Enums;
-using YomLog.Domain.Books.ValueObjects;
 using YomLog.Infrastructure.Shared.EDMs;
 
 namespace YomLog.Infrastructure.EDMs;
@@ -17,7 +16,7 @@ public class ProgressEDM : EntityEDMBase<Progress, ProgressEDM>
 
     protected override Progress PrepareDomainEntity()
         => new(
-            book: new BookReference(FKBook, Book.Id, new(Book.TotalPage, Book.TotalKindleLocation)),
+            book: new(FKBook, Book.Id, new(Book.TotalPage, Book.TotalKindleLocation, true)),
             page: Page,
             kindleLocation: KindleLocation,
             state: State
@@ -26,8 +25,8 @@ public class ProgressEDM : EntityEDMBase<Progress, ProgressEDM>
     internal override ProgressEDM Transfer(Progress origin)
     {
         FKBook = origin.Book.PK;
-        Page = origin.BookPage.Page.Value;
-        KindleLocation = origin.BookPage.KindleLocation?.Value;
+        Page = origin.BookPage.Page;
+        KindleLocation = origin.BookPage.KindleLocation;
         State = origin.State;
         return base.Transfer(origin);
     }

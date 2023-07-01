@@ -3,15 +3,13 @@ using YomLog.Shared.Exceptions;
 
 namespace YomLog.Domain.Books.ValueObjects;
 
-public record ProgressDiff(BookPage Value, double Percentage, Guid ProgressId)
+public record ProgressDiff(BookPage Value, Guid ProgressId)
 {
     public ProgressDiff(Progress prev, Progress current)
-        : this(current.BookPage - prev.BookPage, 0, current.Id)
+        : this(current.BookPage - prev.BookPage, current.Id)
     {
         if (prev.Book.Id != current.Book.Id)
             throw new EntityValidationException(nameof(ProgressDiff), "cannot compare different book's progress");
-
-        Percentage = (double)Value.Page.Value / current.Book.TotalPage.Page.Value;
     }
 
     public static IEnumerable<ProgressDiff> GetProgressDiffList(IReadOnlyList<Progress> source)
