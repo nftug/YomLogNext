@@ -21,5 +21,5 @@ public class ProgressQueryFactory : QueryFactoryBase<Progress, ProgressEDM>
                 TotalKindleLocation = x.TotalKindleLocation
             })
             .ToQueryable()
-            .OrderBy(x => x.PK);
+            .OrderBy(x => x.CreatedOn);
 }

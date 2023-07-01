@@ -28,6 +28,12 @@ public class BookApiService
         _ = GetAllBooksAsync();
     }
 
+    public async Task GetAllBooksAsync()
+    {
+        var items = await _mediator.Send(new GetBookList.Query());
+        _store.Set(items);
+    }
+
     public async Task<BookDetailsDTO?> AddAsync(BookCommandDTO item)
     {
         try
@@ -68,11 +74,5 @@ public class BookApiService
         await _mediator.Send(new DeleteBook.Command(item.Id));
         _store.Remove(item);
         _snackbar.Add("本を削除しました。", Severity.Info);
-    }
-
-    public async Task GetAllBooksAsync()
-    {
-        var items = await _mediator.Send(new GetBookList.Query());
-        _store.Set(items);
     }
 }

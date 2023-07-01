@@ -1,47 +1,48 @@
 using MediatR;
 using YomLog.Domain.Books.Commands;
 using YomLog.Domain.Books.DTOs;
-using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Interfaces;
 using YomLog.Shared.Entities;
 using YomLog.Shared.Exceptions;
 
 namespace YomLog.UseCase.Books;
 
-public class AddProgress
+public class EditProgress
 {
     public class Command : IRequest<ProgressDetailsDTO>
     {
+        public Guid Id { get; }
         public ProgressCommandDTO Item { get; }
         public static User OperatedBy => User.GetDummyUser();
-        public Command(ProgressCommandDTO item) => Item = item;
+
+        public Command(ProgressCommandDTO item, Guid id)
+        {
+            Item = item;
+            Id = id;
+        }
     }
 
     public class Handler : IRequestHandler<Command, ProgressDetailsDTO>
     {
-        private readonly IBookRepository _bookRepository;
         private readonly IProgressRepository _repository;
 
-        public Handler(IBookRepository bookRepository, IProgressRepository repository)
+        public Handler(IProgressRepository repository)
         {
-            _bookRepository = bookRepository;
             _repository = repository;
         }
 
         public async Task<ProgressDetailsDTO> Handle(Command request, CancellationToken cancellationToken)
         {
-            var book =
-                await _bookRepository.FindAsync(request.Item.BookId)
+            var prog =
+                await _repository.FindAsync(request.Id)
                 ?? throw new EntityValidationException(nameof(ProgressCommandDTO.BookId), "not found book");
 
-            var prog = Progress.Create(
-                book: new(book),
+            prog.Edit(
                 page: new(request.Item.Page, request.Item.KindleLocation),
                 state: request.Item.State,
-                createdBy: Command.OperatedBy
+                updatedBy: Command.OperatedBy
             );
-            await _repository.CreateAsync(prog);
-
+            await _repository.UpdateAsync(prog);
             return new(prog, null);
         }
     }

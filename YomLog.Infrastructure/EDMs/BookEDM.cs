@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using YomLog.Domain.Books.Entities;
-using YomLog.Domain.Books.Enums;
 using YomLog.Infrastructure.Shared.EDMs;
 using YomLog.Shared.Extensions;
 
