@@ -43,7 +43,6 @@ namespace YomLog.Infrastructure.Migrations
                     GoogleBooksUrl = table.Column<string>(type: "TEXT", nullable: true),
                     ThumbnailUrl = table.Column<string>(type: "TEXT", nullable: true),
                     Isbn = table.Column<string>(type: "TEXT", nullable: true),
-                    BookType = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalPage = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalKindleLocation = table.Column<int>(type: "INTEGER", nullable: true),
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),

@@ -11,7 +11,7 @@ using YomLog.Infrastructure;
 namespace YomLog.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230324155201_InitialCreate")]
+    [Migration("20230701153826_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -84,9 +84,6 @@ namespace YomLog.Infrastructure.Migrations
                 {
                     b.Property<long>("PK")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("BookType")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("CreatedById")

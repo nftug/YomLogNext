@@ -1,5 +1,4 @@
 using YomLog.Domain.Books.Entities;
-using YomLog.Domain.Books.Enums;
 using YomLog.Shared.DTOs;
 
 namespace YomLog.Domain.Books.Commands;
@@ -13,7 +12,6 @@ public class BookCommandDTO : ICommandDTO<Book>
     public string? Url { get; set; }
     public string? Thumbnail { get; set; }
     public string? Isbn { get; set; }
-    public BookType BookType { get; set; }
     public int TotalPage { get; set; }
     public int? TotalKindleLocation { get; set; }
 }

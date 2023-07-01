@@ -16,7 +16,6 @@ public class BookEDM : EntityEDMBase<Book, BookEDM>
     public string? GoogleBooksUrl { get; set; }
     public string? ThumbnailUrl { get; set; }
     public string? Isbn { get; set; }
-    public BookType BookType { get; set; }
     public int TotalPage { get; set; }
     public int? TotalKindleLocation { get; set; }
 
@@ -33,7 +32,6 @@ public class BookEDM : EntityEDMBase<Book, BookEDM>
             googleBooksUrl: GoogleBooksUrl != null ? new(GoogleBooksUrl) : null,
             thumbnailUrl: ThumbnailUrl != null ? new(ThumbnailUrl) : null,
             isbn: Isbn,
-            bookType: BookType,
             totalPage: new(TotalPage, TotalKindleLocation),
             currentProgress: CurrentProgress?.ToDomain()
         );
@@ -46,7 +44,6 @@ public class BookEDM : EntityEDMBase<Book, BookEDM>
         GoogleBooksUrl = origin.GoogleBooksUrl?.AbsoluteUri;
         ThumbnailUrl = origin.ThumbnailUrl?.AbsoluteUri;
         Isbn = origin.Isbn;
-        BookType = origin.BookType;
         TotalPage = origin.TotalPage.Page.Value;
         TotalKindleLocation = origin.TotalPage.KindleLocation?.Value;
         return base.Transfer(origin);

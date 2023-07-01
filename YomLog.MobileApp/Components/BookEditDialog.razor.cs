@@ -28,7 +28,7 @@ public partial class BookEditDialog : ComponentBase
             Item.IsNewItem
             ? await ApiService.AddAsync(Command)
             : await ApiService.EditAsync(Item.Id, Command);
-        if (result != null) await context.Ok(result);
+        if (result != null) await context.Ok(true);
     }
 
     public static async Task<DialogResult> ShowDialog(

@@ -5,6 +5,9 @@ namespace YomLog.Infrastructure;
 
 public class DataContext : DbContext
 {
+    // Need for generating migration codes
+    public DataContext() { }
+
     public DataContext(string appDataPath)
         => _dataSource = Path.Combine(appDataPath, "YomLog.db");
 

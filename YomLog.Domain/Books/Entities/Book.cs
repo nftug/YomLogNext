@@ -13,9 +13,11 @@ public class Book : EntityWithNameBase<Book>
     public Uri? GoogleBooksUrl { get; private set; }
     public Uri? ThumbnailUrl { get; private set; }
     public string? Isbn { get; private set; }
-    public BookType BookType { get; }
     public BookPage TotalPage { get; private set; } = null!;
     public Progress? CurrentProgress { get; }
+
+    public BookType BookType
+        => TotalPage.KindleLocation is not null ? BookType.Kindle : BookType.Normal;
 
     public Book(
         string googleBooksId,
@@ -25,7 +27,6 @@ public class Book : EntityWithNameBase<Book>
         Uri? googleBooksUrl,
         Uri? thumbnailUrl,
         string? isbn,
-        BookType bookType,
         BookPage totalPage,
         Progress? currentProgress
     ) : base(name)
@@ -36,7 +37,6 @@ public class Book : EntityWithNameBase<Book>
         GoogleBooksUrl = googleBooksUrl;
         ThumbnailUrl = thumbnailUrl;
         Isbn = isbn;
-        BookType = bookType;
         TotalPage = totalPage;
         CurrentProgress = currentProgress;
     }
@@ -50,7 +50,6 @@ public class Book : EntityWithNameBase<Book>
             command.Url != null ? new(command.Url) : null,
             command.Thumbnail != null ? new(command.Thumbnail) : null,
             command.Isbn,
-            command.BookType,
             new(command.TotalPage, command.TotalKindleLocation),
             null
         )

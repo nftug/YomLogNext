@@ -9,6 +9,6 @@ public class ProgressCommandDTO : ICommandDTO<Progress>
 {
     [Required] public Guid BookId { get; set; }
     [Required] public ProgressState State { get; set; }
-    public int? Page { get; set; }
+    public int Page { get; set; }
     public int? KindleLocation { get; set; }
 }

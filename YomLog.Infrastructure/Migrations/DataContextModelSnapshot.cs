@@ -83,9 +83,6 @@ namespace YomLog.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BookType")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("CreatedById")
                         .HasColumnType("TEXT");
 

@@ -44,7 +44,6 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
             Url = GoogleBooksUrl,
             Thumbnail = ThumbnailUrl,
             Isbn = Isbn,
-            BookType = BookType,
             TotalPage = Total.Page,
             TotalKindleLocation = Total.KindleLocation,
         };
