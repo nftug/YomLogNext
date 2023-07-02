@@ -19,7 +19,8 @@ public class ProgressEDM : EntityEDMBase<Progress, ProgressEDM>
             book: new(FKBook, Book.Id, new(Book.TotalPage, Book.TotalKindleLocation, true)),
             page: Page,
             kindleLocation: KindleLocation,
-            state: State
+            state: State,
+            skipValidation: true
         );
 
     internal override ProgressEDM Transfer(Progress origin)

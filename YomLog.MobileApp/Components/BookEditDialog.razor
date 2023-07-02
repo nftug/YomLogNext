@@ -1,3 +1,5 @@
+@using YomLog.Domain.Books.Enums
+
 <DialogBase DisableSidePadding="true"
             CloseButton="true"
             Title=@(Item.IsNewItem ? "本の追加" : "本の編集")>
@@ -26,13 +28,19 @@
                     <tr>
                         <td style="width: 30%; font-weight: bold;">ページ数</td>
                         <td>
-                            <MudNumericField @bind-Value="Command.TotalPage" Variant="Variant.Text" Min="0" Clearable />
+                            <MudNumericField @bind-Value="Command.TotalPage"
+                                             Variant="Variant.Text"
+                                             Min="0" Clearable
+                                             Disabled="!Item.IsNewItem && Item.BookType != BookType.Normal" />
                         </td>
                     </tr>
                     <tr>
                         <td style="width: 30%; font-weight: bold;">Kindle位置No</td>
                         <td>
-                            <MudNumericField @bind-Value="Command.TotalKindleLocation" Variant="Variant.Text" Min="0" Clearable />
+                            <MudNumericField @bind-Value="Command.TotalKindleLocation"
+                                             Variant="Variant.Text"
+                                             Min="0" Clearable
+                                             Disabled="!Item.IsNewItem && Item.BookType != BookType.Kindle" />
                         </td>
                     </tr>
                     <tr>

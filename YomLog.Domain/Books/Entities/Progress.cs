@@ -11,32 +11,30 @@ public class Progress : EntityBase<Progress>
     public BookPage BookPage { get; private set; } = null!;
     public ProgressState State { get; private set; }
 
-    // From DataModel
-    public Progress(BookReference book, int page, int? kindleLocation, ProgressState state)
+    public Progress(
+        BookReference book,
+        int page,
+        int? kindleLocation,
+        ProgressState state,
+        bool skipValidation = false
+    )
     {
         Book = book;
         BookPage = kindleLocation is int kl
-            ? BookPage.CreateWithKindleLocation(kl, book.TotalPage)
-            : BookPage.CreateWithPage(page, book.TotalPage);
+            ? BookPage.CreateWithKindleLocation(kl, book.TotalPage, skipValidation)
+            : BookPage.CreateWithPage(page, book.TotalPage, skipValidation);
         State = state;
+
+        if (!skipValidation) ValidateBookType();
     }
 
-    private Progress(BookReference book, BookPage page, ProgressState state)
-    {
-        Book = book;
-        BookPage = page;
-        State = state;
-        ValidateBookType();
-    }
+    public static Progress Create(BookReference book, int page, int? kindleLocation, ProgressState state, User createdBy)
+        => new Progress(book, page, kindleLocation, state).CreateModel(createdBy);
 
-    public static Progress Create(BookReference book, BookPage page, ProgressState state, User createdBy)
-        => new Progress(book, page, state).CreateModel(createdBy);
-
-    public void Edit(BookPage page, ProgressState state, User updatedBy)
+    public void Edit(int page, int? kindleLocation, ProgressState state, User updatedBy)
     {
-        BookPage = page;
+        BookPage = new Progress(Book, page, kindleLocation, state).BookPage;
         State = state;
-        ValidateBookType();
         UpdateModel(updatedBy);
     }
 

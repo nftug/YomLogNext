@@ -36,7 +36,8 @@ public class AddProgress
 
             var prog = Progress.Create(
                 book: new(book),
-                page: new(request.Item.Page, request.Item.KindleLocation),
+                page: request.Item.Page,
+                kindleLocation: request.Item.KindleLocation,
                 state: request.Item.State,
                 createdBy: Command.OperatedBy
             );

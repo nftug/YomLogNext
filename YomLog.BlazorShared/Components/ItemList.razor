@@ -1,6 +1,6 @@
 @typeparam T
 
-<MudText Typo="Typo">
+<MudText Typo="Typo" Class="@Class">
     @if (Items is null)
     {
         <span>@NoItemsText</span>
@@ -30,4 +30,5 @@
     [Parameter] public Typo Typo { get; set; } = Typo.body2;
     [Parameter] public EventCallback<T> OnClickItem { get; set; }
     [Parameter] public string NoItemsText { get; set; } = "アイテムがありません";
+    [Parameter] public string? Class { get; set; }
 }

@@ -38,7 +38,8 @@ public class EditProgress
                 ?? throw new EntityValidationException(nameof(ProgressCommandDTO.BookId), "not found book");
 
             prog.Edit(
-                page: new(request.Item.Page, request.Item.KindleLocation),
+                page: request.Item.Page,
+                kindleLocation: request.Item.KindleLocation,
                 state: request.Item.State,
                 updatedBy: Command.OperatedBy
             );

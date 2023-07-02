@@ -17,6 +17,8 @@ public record BookPage
     {
         if (!skipValidation)
         {
+            System.Diagnostics.Debug.WriteLine($"page: {page}, kindleLocation: {kindleLocation}");
+
             if (page == default)
                 throw new EntityValidationException("ページ数を指定してください。");
             if (page <= 0)
@@ -29,37 +31,28 @@ public record BookPage
         KindleLocation = kindleLocation;
     }
 
-    /// <summary>
-    /// Create instance with page (for data retrieved from repository)
-    /// </summary>
-    /// <param name="page"></param>
-    /// <param name="total"></param>
-    /// <returns></returns>
-    public static BookPage CreateWithPage(int page, BookPage total)
-        => new(page, null, true) { Total = total };
+    public static BookPage CreateWithPage(int page, BookPage total, bool skipValidation = false)
+        => new(page, null, skipValidation) { Total = total };
 
-    /// <summary>
-    /// Create instance with kindle location (for data retrieved from repository)
-    /// </summary>
-    /// <param name="page"></param>
-    /// <param name="total"></param>
-    /// <returns></returns>
-    public static BookPage CreateWithKindleLocation(int kl, BookPage total)
-        => new(kl / total.KindleLocation!.Value, kl, true) { Total = total };
+    public static BookPage CreateWithKindleLocation(int kl, BookPage total, bool skipValidation = false)
+    {
+        int page = (int)(kl / (double)(total.KindleLocation ?? 1) * total.Page);
+        return new(page, kl, skipValidation) { Total = total };
+    }
 
     public static BookPage operator +(BookPage left, BookPage right)
     {
         var page = left.Page + right.Page;
         return left.KindleLocation + right.KindleLocation is int kl
-            ? CreateWithKindleLocation(kl, left.Total!)
-            : CreateWithPage(page, left.Total!);
+            ? CreateWithKindleLocation(kl, left.Total!, true)
+            : CreateWithPage(page, left.Total!, true);
     }
 
     public static BookPage operator -(BookPage left, BookPage right)
     {
         var page = left.Page - right.Page;
         return left.KindleLocation - right.KindleLocation is int kl
-            ? CreateWithKindleLocation(kl, left.Total!)
-            : CreateWithPage(page, left.Total!);
+            ? CreateWithKindleLocation(kl, left.Total!, true)
+            : CreateWithPage(page, left.Total!, true);
     }
 }

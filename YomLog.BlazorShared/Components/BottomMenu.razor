@@ -1,0 +1,60 @@
+@using MudBlazor.Interfaces
+@implements IActivatable
+@inject PageInfoService PageInfoService
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+@if (ActivatorContent != null)
+{
+    <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
+        <div class="@ActivatorClass">
+            @ActivatorContent
+        </div>
+    </CascadingValue>
+}
+else
+{
+    <MudIconButton Icon="@Icons.Material.Filled.MoreHoriz" OnClick="() => SetDrawerOpened(true)" Disabled="Disabled" />
+}
+
+<MudDrawer @bind-Open="_isDrawerOpened" Anchor="Anchor.Bottom" Width="100%" Elevation="1" Variant="@DrawerVariant.Temporary">
+    <MudList Clickable="true">
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    </MudList>
+</MudDrawer>
+
+@code {
+    [Parameter] public RenderFragment? ActivatorContent { get; set; }
+    [Parameter] public required RenderFragment ChildContent { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+
+    private bool _isDrawerOpened;
+
+    private string? ActivatorClass => Disabled ? "mud-disabled" : null;
+
+    public void SetDrawerOpened(bool opened)
+    {
+        if (Disabled) return;
+        _isDrawerOpened = opened;
+        StateHasChanged();
+    }
+
+    public void Activate(object activator, MouseEventArgs args)
+        => SetDrawerOpened(true);
+
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        if (!_isDrawerOpened) return;
+
+        SetDrawerOpened(false);
+
+        if (PageInfoService.PopStateInvoked.Value)
+        {
+            // Wait for drawer's state changing
+            await Task.Delay(100);
+            context.PreventNavigation();
+        }
+    }
+}

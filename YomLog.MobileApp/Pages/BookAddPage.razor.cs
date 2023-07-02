@@ -8,7 +8,7 @@ using YomLog.MobileApp.Services.Api;
 
 namespace YomLog.MobileApp.Pages;
 
-public partial class AddBookPage : BindableComponentBase
+public partial class BookAddPage : BindableComponentBase
 {
     [Inject] private GoogleBooksApiService ApiService { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;

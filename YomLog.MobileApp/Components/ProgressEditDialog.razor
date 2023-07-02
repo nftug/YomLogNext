@@ -1,0 +1,29 @@
+﻿<DialogBase CloseButton Title=@(Item.IsNewItem ? "進捗記録の追加" : "進捗記録の編集")>
+    <DialogContent>
+        @if (Book.BookType == Domain.Books.Enums.BookType.Normal)
+        {
+            <MudNumericField @bind-Value="Command.Page"
+                             Label="ページ"
+                             Variant="Variant.Text"
+                             Min="0" Max="Book.Total.Page" />
+        }
+        else
+        {
+            <MudNumericField @bind-Value="Command.KindleLocation"
+                             Label="Kindle 位置No"
+                             Variant="Variant.Text"
+                             Min="0" Max="Book.Total.KindleLocation" />
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="context.Cancel">キャンセル</MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Success"
+                   StartIcon="@Icons.Material.Filled.AddCircle"
+                   OnClick="() => AddOrEditProgressAsync(context)">
+            @(Item.IsNewItem ? "追加" : "保存")
+        </MudButton>
+    </DialogActions>
+</DialogBase>

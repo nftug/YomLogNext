@@ -58,7 +58,10 @@ public class Book : EntityWithNameBase<Book>
     {
         Name = command.Title;
         Authors = authors;
-        TotalPage = new(command.TotalPage, command.TotalKindleLocation);
+        TotalPage =
+            BookType == BookType.Normal
+            ? new(command.TotalPage, null)
+            : new(TotalPage.Page, command.TotalKindleLocation);
         UpdateModel(updatedBy);
     }
 }

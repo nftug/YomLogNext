@@ -7,7 +7,6 @@ public abstract class EntityDetailsDTOBase<TEntity, TEntityDTO> : EntityDTOBase<
     where TEntity : EntityBase<TEntity>
     where TEntityDTO : EntityDetailsDTOBase<TEntity, TEntityDTO>
 {
-    public long PK { get; init; }
     public DateTime CreatedOn { get; init; }
     public DateTime? UpdatedOn { get; init; }
     public EntityReferenceWithName<User> CreatedBy { get; init; } = null!;
@@ -17,7 +16,6 @@ public abstract class EntityDetailsDTOBase<TEntity, TEntityDTO> : EntityDTOBase<
 
     protected EntityDetailsDTOBase(EntityBase<TEntity> model) : base(model)
     {
-        PK = model.PK;
         CreatedOn = model.DateTimeRecord.CreatedOn;
         UpdatedOn = model.DateTimeRecord.UpdatedOn;
         CreatedBy = model.UserRecord.CreatedBy;

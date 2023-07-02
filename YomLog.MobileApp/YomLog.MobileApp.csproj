@@ -83,12 +83,6 @@
     <LinkDescription Include="Platforms\Android\Linker.xml" /> -->
   </ItemGroup>
 
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
-    <None Remove="Platforms\MacCatalyst\Linker.xml" />
-    <LinkDescription Include="Platforms\MacCatalyst\Linker.xml" />
-  </ItemGroup>
-
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
     <CodeSignEntitlements>Platforms/MacCatalyst/Entitlements.Debug.plist</CodeSignEntitlements>
   </PropertyGroup>

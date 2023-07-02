@@ -18,14 +18,17 @@
         </MudCardContent>
 
         <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickAddDetails">
-                @(Item.IsNewItem ? "追加する" : "編集する")
-            </MudButton>
+            @if (Item.IsNewItem)
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickAdd">
+                    追加する
+                </MudButton>
+            }
 
             @if (!Item.IsNewItem)
             {
-                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OnClickDelete">
-                    削除する
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href=@($"/books/{Item.Id}")>
+                    詳細を見る
                 </MudButton>
             }
         </MudCardActions>
@@ -55,7 +58,5 @@
         await SearchByAuthor.InvokeAsync(author);
     }
 
-    private Task OnClickAddDetails() => BookEditDialog.ShowDialog(DialogService, Item, SearchByAuthor);
-
-    private Task OnClickDelete() => BookApiService.DeleteAsync(Item);
+    private Task OnClickAdd() => BookEditDialog.ShowDialog(DialogService, Item, SearchByAuthor);
 }

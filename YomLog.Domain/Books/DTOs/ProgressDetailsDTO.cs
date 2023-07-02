@@ -9,9 +9,11 @@ namespace YomLog.Domain.Books.DTOs;
 public class ProgressDetailsDTO : EntityDetailsDTOBase<Progress, ProgressDetailsDTO>
 {
     public Guid BookId { get; set; }
-    public BookPageDTO Position { get; set; }
+    public BookPageDTO Position { get; set; } = new(0, null, 0);
     public ProgressState State { get; set; }
     public BookPageDTO? Diff { get; set; }
+
+    public ProgressDetailsDTO() { }
 
     public ProgressDetailsDTO(Progress currentProgress, ProgressDiff? progressDiff)
     {

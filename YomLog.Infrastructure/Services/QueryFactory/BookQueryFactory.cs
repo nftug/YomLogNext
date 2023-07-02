@@ -29,12 +29,19 @@ public class BookQueryFactory : QueryFactoryBase<Book, BookEDM>
                     {
                         Id = p.Id,
                         FKBook = p.FKBook,
+                        Book = new()
+                        {
+                            Id = p.Book.Id,
+                            TotalPage = p.Book.TotalPage,
+                            TotalKindleLocation = p.Book.TotalKindleLocation
+                        },
                         Page = p.Page,
                         KindleLocation = p.KindleLocation,
                         State = p.State,
                         CreatedOn = p.CreatedOn,
                         UpdatedOn = p.UpdatedOn
                     })
+                    .OrderByDescending(x => x.CreatedOn)
                     .FirstOrDefault()
             })
             .ToQueryable()

@@ -1,6 +1,5 @@
 using MediatR;
 using MudBlazor;
-using YomLog.BlazorShared.Services.Popup;
 using YomLog.Domain.Books.Commands;
 using YomLog.Domain.Books.DTOs;
 using YomLog.Shared.Attributes;
@@ -14,13 +13,13 @@ public class ProgressApiService
 {
     protected readonly ISender _mediator;
     protected readonly ISnackbar _snackbar;
-    protected readonly IPopupService _popupService;
+    protected readonly BookApiService _bookApiService;
 
-    public ProgressApiService(ISender mediator, ISnackbar snackbar, IPopupService popupService)
+    public ProgressApiService(ISender mediator, ISnackbar snackbar, BookApiService bookApiService)
     {
         _mediator = mediator;
         _snackbar = snackbar;
-        _popupService = popupService;
+        _bookApiService = bookApiService;
     }
 
     public Task<List<ProgressDetailsDTO>> FetchByBookAsync(Guid bookId)
@@ -31,6 +30,7 @@ public class ProgressApiService
         try
         {
             var prog = await _mediator.Send(new AddProgress.Command(item));
+            await _bookApiService.GetAsync(prog.BookId);
             _snackbar.Add("進捗状況を更新しました。", Severity.Info);
             return prog;
         }
@@ -46,6 +46,7 @@ public class ProgressApiService
         try
         {
             var prog = await _mediator.Send(new EditProgress.Command(item, id));
+            await _bookApiService.GetAsync(prog.BookId);
             _snackbar.Add("進捗状況を更新しました。", Severity.Info);
             return prog;
         }
@@ -58,10 +59,8 @@ public class ProgressApiService
 
     public async Task DeleteAsync(ProgressDetailsDTO item)
     {
-        bool confirm = await _popupService.ShowConfirm("確認", "この進捗記録を削除しますか？");
-        if (!confirm) return;
-
         await _mediator.Send(new DeleteProgress.Command(item.Id));
+        await _bookApiService.GetAsync(item.BookId);
         _snackbar.Add("進捗記録を削除しました。", Severity.Info);
     }
 }
