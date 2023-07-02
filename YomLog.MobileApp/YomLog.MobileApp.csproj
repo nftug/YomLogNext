@@ -56,7 +56,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageReference Include="ReactiveProperty" Version="9.1.2" />
-    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="2.1.5" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
     <PackageReference Include="Sve.Blazor.InfiniteScroll" Version="1.0.0-alpha" />
   </ItemGroup>
 
@@ -72,19 +72,16 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
     <None Remove="Platforms\iOS\Linker.xml" />
     <LinkDescription Include="Platforms\iOS\Linker.xml" />
   </ItemGroup>
 
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.5" />
-    <!-- <None Remove="Platforms\Android\Linker.xml" />
-    <LinkDescription Include="Platforms\Android\Linker.xml" /> -->
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+      <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.5" PrivateAssets="None" GeneratePathProperty="true" />
   </ItemGroup>
 
   <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-    <CodeSignEntitlements>Platforms/MacCatalyst/Entitlements.Debug.plist</CodeSignEntitlements>
+    <CodeSignEntitlements>Platforms/MacCatalyst/Entitlements.plist</CodeSignEntitlements>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">

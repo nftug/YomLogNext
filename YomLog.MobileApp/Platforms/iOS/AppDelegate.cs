@@ -1,5 +1,4 @@
 ﻿using Foundation;
-using SQLitePCL;
 
 namespace YomLog.MobileApp.Platforms.iOS;
 
@@ -8,7 +7,7 @@ public class AppDelegate : MauiUIApplicationDelegate
 {
     protected override MauiApp CreateMauiApp()
     {
-        raw.SetProvider(new SQLite3Provider_sqlite3());
+        SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
         return MauiProgram.CreateMauiApp();
     }
 }
