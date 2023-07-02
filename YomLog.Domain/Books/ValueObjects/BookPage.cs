@@ -36,6 +36,9 @@ public record BookPage
 
     public static BookPage CreateWithKindleLocation(int kl, BookPage total, bool skipValidation = false)
     {
+        if (!skipValidation && total.BookType != BookType.Kindle)
+            throw new EntityValidationException("book type is not kindle.");
+
         int page = (int)(kl / (double)(total.KindleLocation ?? 1) * total.Page);
         return new(page, kl, skipValidation) { Total = total };
     }

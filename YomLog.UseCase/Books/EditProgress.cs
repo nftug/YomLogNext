@@ -35,7 +35,7 @@ public class EditProgress
         {
             var prog =
                 await _repository.FindAsync(request.Id)
-                ?? throw new EntityValidationException(nameof(ProgressCommandDTO.BookId), "not found book");
+                ?? throw new EntityValidationException("progress not found");
 
             prog.Edit(
                 page: request.Item.Page,
