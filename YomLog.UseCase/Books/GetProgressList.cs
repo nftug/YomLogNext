@@ -36,11 +36,10 @@ public class GetProgressList
             var diffs = ProgressDiff.GetProgressDiffList(progs);
 
             return progs
-                .Join(
-                    diffs,
-                    p => p.Id,
-                    d => d.ProgressId,
-                    (p, d) => new ProgressDetailsDTO(p, d)
+                .GroupJoin(diffs, p => p.Id, d => d.ProgressId, (p, d) => new { p, d })
+                .SelectMany(
+                    x => x.d.DefaultIfEmpty(),
+                    (x, d) => new ProgressDetailsDTO(x.p, d ?? new ProgressDiff(x.p.BookPage, x.p.Id))
                 )
                 .ToList();
         }

@@ -8,4 +8,6 @@ public record BookPageDTO(int Page, int? KindleLocation, double? Percentage)
         : this(origin.Page, origin.KindleLocation, origin.Percentage)
     {
     }
+
+    public BookPageDTO() : this(0, null, 0) { }
 }

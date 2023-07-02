@@ -12,10 +12,6 @@
         </div>
     </CascadingValue>
 }
-else
-{
-    <MudIconButton Icon="@Icons.Material.Filled.MoreHoriz" OnClick="() => SetDrawerOpened(true)" Disabled="Disabled" />
-}
 
 <MudDrawer @bind-Open="_isDrawerOpened" Anchor="Anchor.Bottom" Width="100%" Elevation="1" Variant="@DrawerVariant.Temporary">
     <MudList Clickable="true">

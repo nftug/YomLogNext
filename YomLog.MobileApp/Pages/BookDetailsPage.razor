@@ -21,35 +21,64 @@
     <MainContent>
         @if (IsLoading.Value)
         {
-            <MudOverlay Visible DarkBackground="true">
+            <MudOverlay Visible>
                 <MudProgressCircular Color="Color.Secondary" Indeterminate="true" Size="Size.Large" />
             </MudOverlay>
             return;
         }
 
-        <MudText Typo="Typo.h6" GutterBottom>@Book.Title</MudText>
-        <ItemList Items="Book.Authors" Class="mb-2" />
+        @if (ActiveTabIndex == 0)
+        {
+            <MudText Typo="Typo.h6" GutterBottom>@Book.Title</MudText>
+            <ItemList Items="Book.Authors" Class="mb-2" />
 
-        <div class="d-flex justify-center my-4">
-            <MudImage Src="@Book.ThumbnailUrl" />
-        </div>
+            <div class="d-flex justify-center my-4">
+                <MudImage Src="@Book.ThumbnailUrl" />
+            </div>
 
-        <MudCard Outlined Class="my-7 py-2">
-            <MudCardContent>
-                <MudText Typo="Typo.body1" Class="mb-4">
-                    現在の進捗: @CurrentProgress.Position.Page / @Book.Total.Page ページ
-                </MudText>
-                <MudProgressLinear Color="Color.Primary" Value="(CurrentProgress.Position.Percentage ?? 0) * 100" />
-                <MudText Typo="Typo.caption" Class="mt-2">@($"{(CurrentProgress.Position.Percentage ?? 0):P2}")</MudText>
-            </MudCardContent>
-        </MudCard>
+            <MudCard Outlined Class="my-6">
+                <MudCardContent>
+                    <MudText Typo="Typo.body1" Class="mb-4">
+                        現在の進捗: @CurrentProgress.Position.Page / @Book.Total.Page ページ
+                    </MudText>
+                    <MudProgressLinear Color="Color.Primary" Value="(CurrentProgress.Position.Percentage ?? 0) * 100" />
+                    <MudText Typo="Typo.caption" Class="mt-2">@($"{(CurrentProgress.Position.Percentage ?? 0):P2}")</MudText>
+                </MudCardContent>
+            </MudCard>
 
-        <MudButton FullWidth
-                   Variant="Variant.Filled"
-                   Color="Color.Success"
-                   StartIcon="@Icons.Material.Filled.Add"
-                   OnClick="AddProgressClicked">
-            進捗を追加
-        </MudButton>
+            <MudButton FullWidth
+                       Size="Size.Large"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="AddProgressClicked">
+                進捗を追加
+            </MudButton>
+        }
+        else if (ActiveTabIndex == 1)
+        {
+            <MudList Class="my-n4" Clickable>
+                @foreach (var prog in ProgressList)
+                {
+                    <ProgressItem Item="prog" Book="Book" OnReloadData="LoadDataAsync" />
+                }
+            </MudList>
+
+            <span class="fab fab-with-footer">
+                <MudFab Title="進捗を追加"
+                        Color="Color.Primary"
+                        StartIcon="@Icons.Material.Filled.Add"
+                        OnClick="AddProgressClicked" />
+            </span>
+        }
     </MainContent>
+
+    <FooterContent>
+        <footer class="mud-appbar mud-appbar-fixed-bottom mud-elevation-0">
+            <MudTabs Elevation="0" Color="Color.Dark" Centered @bind-ActivePanelIndex="ActiveTabIndex">
+                <MudTabPanel Icon="@Icons.Material.Filled.Book" Text="書籍" />
+                <MudTabPanel Icon="@Icons.Material.Filled.Bookmarks" Text="進捗" />
+            </MudTabs>
+        </footer>
+    </FooterContent>
 </PageContainer>

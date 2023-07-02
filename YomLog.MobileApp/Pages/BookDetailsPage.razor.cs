@@ -32,6 +32,8 @@ public partial class BookDetailsPage : BindableComponentBase
     private ProgressDetailsDTO CurrentProgress
         => Book.CurrentProgress ?? new() { BookId = Book.Id };
 
+    private int ActiveTabIndex;
+
     protected override void OnInitialized()
     {
         IsLoading = new ReactivePropertySlim<bool>(true).AddTo(Disposable);

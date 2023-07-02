@@ -17,8 +17,6 @@ public record BookPage
     {
         if (!skipValidation)
         {
-            System.Diagnostics.Debug.WriteLine($"page: {page}, kindleLocation: {kindleLocation}");
-
             if (page == default)
                 throw new EntityValidationException("ページ数を指定してください。");
             if (page <= 0)
@@ -40,7 +38,7 @@ public record BookPage
             throw new EntityValidationException("book type is not kindle.");
 
         int page = (int)(kl / (double)(total.KindleLocation ?? 1) * total.Page);
-        return new(page, kl, skipValidation) { Total = total };
+        return new(page > 0 ? page : 1, kl, skipValidation) { Total = total };
     }
 
     public static BookPage operator +(BookPage left, BookPage right)

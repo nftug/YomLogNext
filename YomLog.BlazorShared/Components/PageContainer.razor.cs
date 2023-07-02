@@ -24,7 +24,7 @@ public partial class PageContainer : BindableComponentBase
     [Parameter] public RenderFragment<AppBarContainer>? TitleContent { get; set; }
     [Parameter] public RenderFragment<AppBarContainer>? AppBarActions { get; set; }
     [Parameter] public RenderFragment? FooterContent { get; set; }
-    [Parameter] public string Class { get; set; } = "mb-8 mt-8";
+    [Parameter] public string Class { get; set; } = "my-8";
     [Parameter] public MaxWidth? MaxWidth { get; set; }
     [Parameter] public bool CenteredContainer { get; set; }
     [Parameter] public bool TopPage { get; set; }

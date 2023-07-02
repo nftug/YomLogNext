@@ -18,7 +18,11 @@ public partial class ProgressEditDialog : ComponentBase
 
     protected override void OnInitialized()
     {
-        Item ??= new() { BookId = Book.Id };
+        Item ??= new()
+        {
+            BookId = Book.Id,
+            Position = Book.CurrentProgress?.Position ?? new()
+        };
         Command = (ProgressCommandDTO)Item.ToCommandDTO();
     }
 
