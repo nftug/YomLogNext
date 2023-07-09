@@ -105,4 +105,21 @@
     <MtouchLink>None</MtouchLink>
     <UseInterpreter>True</UseInterpreter>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'maccatalyst-arm64' and '$(Configuration)' == 'Release'">
+    <UseInterpreter>true</UseInterpreter>
+    <MtouchInterpreter>all</MtouchInterpreter>
+    <!-- <EnableCodeSigning>false</EnableCodeSigning> -->
+  </PropertyGroup>
+
+  <PropertyGroup  Condition="'$(TargetFramework)' == 'net7.0-maccatalyst' and '$(Configuration)' == 'Release'">
+    <!-- for Mac Catalyst -->
+    <RuntimeIdentifiers>maccatalyst-x64</RuntimeIdentifiers>
+</PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
+    <UseInterpreter>true</UseInterpreter>
+  </PropertyGroup>
+
+
 </Project>

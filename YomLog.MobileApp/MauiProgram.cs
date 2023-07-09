@@ -29,10 +29,10 @@ public static class MauiProgram
         var config = new ConfigurationBuilder().AddJsonStream(stream!).Build();
         builder.Configuration.AddConfiguration(config);
 
-        // #if DEBUG
+#if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
-        // #endif
+#endif
 
         string apiBaseUri = config.GetRequiredSection("ApiBaseUri").Get<string>()!;
         string oidcClientId = config.GetRequiredSection("Oidc").GetValue<string>("ClientId")!;
