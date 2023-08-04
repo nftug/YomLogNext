@@ -91,9 +91,8 @@
     <UseInterpreter>True</UseInterpreter>
   </PropertyGroup>
 
-  <PropertyGroup  Condition="'$(TargetFramework)' == 'net7.0-maccatalyst' and '$(Configuration)' == 'Release'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net7.0-maccatalyst' and '$(Configuration)' == 'Release'">
     <UseInterpreter>true</UseInterpreter>
     <MtouchInterpreter>all</MtouchInterpreter>
   </PropertyGroup>
-
 </Project>

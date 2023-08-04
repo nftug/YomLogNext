@@ -2,12 +2,13 @@
 @inherits BindableComponentBase
 @inject LayoutService LayoutService
 
-<MudDrawer @bind-Open="LayoutService.DrawerOpen.Value" Elevation="1">
+<MudDrawer @bind-Open="LayoutService.DrawerOpen.Value" Elevation="1" Variant="Variant">
     @ChildContent
 </MudDrawer>
 
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+    [Parameter] public DrawerVariant Variant { get; set; } = DrawerVariant.Temporary;
 
     protected override void OnInitialized()
     {
