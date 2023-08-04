@@ -29,18 +29,18 @@ public class PageInfoService : BindableBase
 
         Uri = new ReactivePropertySlim<Uri>(new(navigationManager.Uri));
         PathAndQuery = Uri
-            .ObserveProperty(x => x.Value.PathAndQuery)
+            .Select(x => x.PathAndQuery)
             .ToReadOnlyReactivePropertySlim<string>();
         LocalPath = Uri
-            .ObserveProperty(x => x.Value.LocalPath)
+            .Select(x => x.LocalPath)
             .ToReadOnlyReactivePropertySlim<string>();
         Query = Uri
-            .ObserveProperty(x => x.Value.Query)
+            .Select(x => x.Query)
             .ToReadOnlyReactivePropertySlim<string>();
         PopStateInvoked = new ReactivePropertySlim<bool>();
 
         // NOTE: For debug
-        PathAndQuery.ObserveChanges().Subscribe(x => System.Diagnostics.Debug.WriteLine(x));
+        // PathAndQuery.ObserveChanges().Subscribe(x => System.Diagnostics.Debug.WriteLine(x));
 
         _navigationManager.LocationChanged += (_, e) => Uri.Value = new(e.Location);
         Task.Run(() => _jsRuntime.InvokeVoidAsync("registerPageInfoService", DotNetObjectReference.Create(this)));

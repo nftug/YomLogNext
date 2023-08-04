@@ -40,7 +40,7 @@ public abstract class AuthServiceBase : BindableBase, IAuthService
 
         IsTokenValid = new ReactivePropertySlim<bool>().AddTo(Disposable);
         IsIdentityAuthenticated = _authStateProvider.Identity
-            .ObserveProperty(x => x.Value.IsAuthenticated)
+            .Select(x => x.IsAuthenticated)
             .ToReadOnlyReactivePropertySlim()
             .AddTo(Disposable);
         IsAuthenticated = Observable

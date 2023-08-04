@@ -54,7 +54,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-    <PackageReference Include="ReactiveProperty" Version="9.1.2" />
+    <PackageReference Include="ReactiveProperty" Version="9.3.0" />
     <PackageReference Include="Sve.Blazor.InfiniteScroll" Version="1.0.0-alpha" />
   </ItemGroup>
 
@@ -87,12 +87,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
     <CreatePackage>false</CreatePackage>
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
-    <!-- <MtouchLink>None</MtouchLink> -->
-    <!-- <UseInterpreter>True</UseInterpreter> -->
+    <MtouchLink>None</MtouchLink>
+    <UseInterpreter>True</UseInterpreter>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Platform)' == 'net7.0-maccatalyst' and '$(Configuration)' == 'Release'">
-    <!-- <UseInterpreter>true</UseInterpreter> -->
-    <!-- <MtouchInterpreter>all</MtouchInterpreter> -->
+  <PropertyGroup  Condition="'$(TargetFramework)' == 'net7.0-maccatalyst' and '$(Configuration)' == 'Release'">
+    <UseInterpreter>true</UseInterpreter>
+    <MtouchInterpreter>all</MtouchInterpreter>
   </PropertyGroup>
+
 </Project>
