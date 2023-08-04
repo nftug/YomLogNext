@@ -1,6 +1,7 @@
 using YomLog.Domain.Books.Commands;
 using YomLog.Domain.Books.Entities;
 using YomLog.Domain.Books.Enums;
+using YomLog.Domain.Books.ValueObjects;
 using YomLog.Shared.DTOs;
 
 namespace YomLog.Domain.Books.DTOs;
@@ -16,7 +17,10 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
     public string? Isbn { get; set; }
     public BookType BookType { get; set; }
     public BookPageDTO Total { get; set; } = null!;
+
+    public IReadOnlyList<ProgressDetailsDTO> ProgressList { get; set; } = null!;
     public ProgressDetailsDTO? CurrentProgress { get; set; }
+
 
     public BookDetailsDTO() { }
 
@@ -31,6 +35,19 @@ public class BookDetailsDTO : EntityDetailsDTOBase<Book, BookDetailsDTO>
         Isbn = model.Isbn;
         BookType = model.BookType;
         Total = new(model.TotalPage);
+
+        ProgressList = model.Progress
+            .GroupJoin(
+                ProgressDiff.GetProgressDiffList(model.Progress),
+                p => p.Id,
+                d => d.ProgressId, (p, d) => new { p, d }
+            )
+            .SelectMany(
+                x => x.d.DefaultIfEmpty(),
+                (x, d) => new ProgressDetailsDTO(x.p, d ?? new ProgressDiff(x.p.BookPage, x.p.Id))
+            )
+            .ToList();
+
         CurrentProgress = ProgressDetailsDTO.Create(model.CurrentProgress, null);
     }
 

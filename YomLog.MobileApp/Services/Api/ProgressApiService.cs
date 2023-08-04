@@ -22,9 +22,6 @@ public class ProgressApiService
         _bookApiService = bookApiService;
     }
 
-    public Task<List<ProgressDetailsDTO>> FetchByBookAsync(Guid bookId)
-        => _mediator.Send(new GetProgressList.Query(bookId));
-
     public async Task<ProgressDetailsDTO?> AddAsync(ProgressCommandDTO item)
     {
         try
@@ -59,7 +56,7 @@ public class ProgressApiService
 
     public async Task DeleteAsync(ProgressDetailsDTO item)
     {
-        await _mediator.Send(new DeleteProgress.Command(item.Id));
+        await _mediator.Send(new DeleteProgress.Command(item.BookId, item.Id));
         await _bookApiService.GetAsync(item.BookId);
         _snackbar.Add("進捗記録を削除しました。", Severity.Info);
     }

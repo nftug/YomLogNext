@@ -20,12 +20,10 @@ public class AddProgress
     public class Handler : IRequestHandler<Command, ProgressDetailsDTO>
     {
         private readonly IBookRepository _bookRepository;
-        private readonly IProgressRepository _repository;
 
-        public Handler(IBookRepository bookRepository, IProgressRepository repository)
+        public Handler(IBookRepository bookRepository)
         {
             _bookRepository = bookRepository;
-            _repository = repository;
         }
 
         public async Task<ProgressDetailsDTO> Handle(Command request, CancellationToken cancellationToken)
@@ -41,7 +39,9 @@ public class AddProgress
                 state: request.Item.State,
                 createdBy: Command.OperatedBy
             );
-            await _repository.CreateAsync(prog);
+
+            book.AddProgress(prog);
+            await _bookRepository.UpdateAsync(book);
 
             return new(prog, null);
         }

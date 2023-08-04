@@ -17,7 +17,6 @@ namespace YomLog.MobileApp.Pages;
 public partial class BookDetailsPage : BindableComponentBase
 {
     [Inject] private BookStoreService BookStore { get; set; } = null!;
-    [Inject] private ProgressApiService ProgressApiService { get; set; } = null!;
     [Inject] private BookApiService BookApiService { get; set; } = null!;
     [Inject] private IDialogService DialogService { get; set; } = null!;
     [Inject] private IPopupService PopupService { get; set; } = null!;
@@ -27,7 +26,6 @@ public partial class BookDetailsPage : BindableComponentBase
 
     private ReactivePropertySlim<bool> IsLoading = null!;
     private BookDetailsDTO Book = null!;
-    private List<ProgressDetailsDTO> ProgressList = new();
 
     private ProgressDetailsDTO CurrentProgress
         => Book.CurrentProgress ?? new() { BookId = Book.Id };
@@ -40,24 +38,23 @@ public partial class BookDetailsPage : BindableComponentBase
         IsLoading.Skip(1).Subscribe(_ => Rerender());
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (!firstRender) return;
-        await LoadDataAsync();
+        LoadData();
     }
 
-    private async Task LoadDataAsync()
+    private void LoadData()
     {
         IsLoading.Value = true;
         Book = BookStore.GetOrDefault(BookId) ?? throw new NotFoundException();
-        ProgressList = await ProgressApiService.FetchByBookAsync(BookId);
         IsLoading.Value = false;
     }
 
     private async Task EditMenuClicked()
     {
         var dialog = await BookEditDialog.ShowDialog(DialogService, Book, default);
-        if (dialog.Data is bool ans && ans) await LoadDataAsync();
+        if (dialog.Data is bool ans && ans) LoadData();
     }
 
     private async Task DeleteMenuClicked()
@@ -72,6 +69,6 @@ public partial class BookDetailsPage : BindableComponentBase
     private async Task AddProgressClicked()
     {
         var dialog = await ProgressEditDialog.ShowDialog(DialogService, null, Book);
-        if (dialog.Data is bool ans && ans) await LoadDataAsync();
+        if (dialog.Data is bool ans && ans) LoadData();
     }
 }

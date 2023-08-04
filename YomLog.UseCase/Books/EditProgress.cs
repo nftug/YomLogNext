@@ -24,17 +24,21 @@ public class EditProgress
 
     public class Handler : IRequestHandler<Command, ProgressDetailsDTO>
     {
-        private readonly IProgressRepository _repository;
+        private readonly IBookRepository _bookRepository;
 
-        public Handler(IProgressRepository repository)
+        public Handler(IBookRepository bookRepository)
         {
-            _repository = repository;
+            _bookRepository = bookRepository;
         }
 
         public async Task<ProgressDetailsDTO> Handle(Command request, CancellationToken cancellationToken)
         {
+            var book =
+                await _bookRepository.FindAsync(request.Item.BookId)
+                ?? throw new EntityValidationException("book not found");
+
             var prog =
-                await _repository.FindAsync(request.Id)
+                book.Progress.FirstOrDefault(x => x.Id == request.Id)
                 ?? throw new EntityValidationException("progress not found");
 
             prog.Edit(
@@ -43,7 +47,8 @@ public class EditProgress
                 state: request.Item.State,
                 updatedBy: Command.OperatedBy
             );
-            await _repository.UpdateAsync(prog);
+            await _bookRepository.UpdateAsync(book);
+
             return new(prog, null);
         }
     }

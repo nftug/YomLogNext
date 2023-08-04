@@ -1,6 +1,6 @@
-namespace YomLog.Infrastructure.Shared.EDMs;
+namespace YomLog.Infrastructure.Shared.DataModels;
 
-public interface IEntityEDM
+public interface IDataModel
 {
     long PK { get; set; }
     Guid Id { get; set; }
@@ -12,7 +12,7 @@ public interface IEntityEDM
     string? UpdatedByName { get; set; }
 }
 
-public interface IJoinTableEDM
+public interface IJoinTableDataModel
 {
     long PK { get; set; }
 }

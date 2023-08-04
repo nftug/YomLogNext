@@ -58,9 +58,9 @@
         else if (ActiveTabIndex == 1)
         {
             <MudList Class="my-n4" Clickable>
-                @foreach (var prog in ProgressList)
+                @foreach (var prog in Book.ProgressList)
                 {
-                    <ProgressItem Item="prog" Book="Book" OnReloadData="LoadDataAsync" />
+                    <ProgressItem Item="prog" Book="Book" OnReloadData="LoadData" />
                 }
             </MudList>
 

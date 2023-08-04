@@ -1,14 +1,13 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using LiteDB;
 using YomLog.Shared.Entities;
 
-namespace YomLog.Infrastructure.Shared.EDMs;
+namespace YomLog.Infrastructure.Shared.DataModels;
 
-public abstract class EntityEDMBase<TEntity, TEntityEDM> : IEntityEDM
+public abstract class DataModelBase<TEntity, TDataModel> : IDataModel
     where TEntity : EntityBase<TEntity>
-    where TEntityEDM : EntityEDMBase<TEntity, TEntityEDM>, new()
+    where TDataModel : DataModelBase<TEntity, TDataModel>, new()
 {
-    [Key] public long PK { get; set; }
+    [BsonId] public long PK { get; set; }
 
     public Guid Id { get; set; }
     public DateTime CreatedOn { get; set; }
@@ -18,9 +17,10 @@ public abstract class EntityEDMBase<TEntity, TEntityEDM> : IEntityEDM
     public Guid? UpdatedById { get; set; }
     public string? UpdatedByName { get; set; }
 
-    internal virtual TEntityEDM Transfer(TEntity origin)
+    internal virtual TDataModel Transfer(TEntity origin)
     {
-        Id = origin.Reference.Id;
+        PK = origin.PK;
+        Id = origin.Id;
         CreatedOn = origin.DateTimeRecord.CreatedOn;
         CreatedByName = origin.UserRecord.CreatedBy.Name;
         CreatedById = origin.UserRecord.CreatedBy.Id;
@@ -28,10 +28,8 @@ public abstract class EntityEDMBase<TEntity, TEntityEDM> : IEntityEDM
         UpdatedByName = origin.UserRecord.UpdatedBy?.Name;
         UpdatedById = origin.UserRecord.UpdatedBy?.Id;
 
-        return (TEntityEDM)this;
+        return (TDataModel)this;
     }
-
-    internal virtual void ApplyNavigation(TEntity model) { }
 
     protected abstract TEntity PrepareDomainEntity();
 
@@ -45,25 +43,7 @@ public abstract class EntityEDMBase<TEntity, TEntityEDM> : IEntityEDM
             )
         );
 
-    public static void BuildEdm(ModelBuilder modelBuilder)
-        => new TEntityEDM().OnBuildEdm(modelBuilder);
-
-    protected static void SetupTableBase(ModelBuilder modelBuilder)
-        => modelBuilder.Entity<TEntityEDM>().ToTable(typeof(TEntity).Name);
-
-    protected static void SetupIndexBase(ModelBuilder modelBuilder)
-    {
-        // modelBuilder.Entity<TEntityEDM>().HasIndex(x => x.Id).IsUnique();
-        modelBuilder.Entity<TEntityEDM>().HasIndex(x => x.Id);
-    }
-
-    protected virtual void OnBuildEdm(ModelBuilder modelBuilder)
-    {
-        SetupTableBase(modelBuilder);
-        SetupIndexBase(modelBuilder);
-    }
-
-    public override bool Equals(object? obj) => Id == (obj as TEntityEDM)?.Id;
+    public override bool Equals(object? obj) => Id == (obj as TDataModel)?.Id;
 
     public override int GetHashCode() => Id.GetHashCode();
 }

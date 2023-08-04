@@ -14,9 +14,13 @@ public class Book : EntityWithNameBase<Book>
     public Uri? ThumbnailUrl { get; private set; }
     public string? Isbn { get; private set; }
     public BookPage TotalPage { get; private set; } = null!;
-    public Progress? CurrentProgress { get; }
+
+    private readonly List<Progress> _progress = new();
+    public IReadOnlyList<Progress> Progress => _progress;
 
     public BookType BookType => TotalPage.BookType;
+    public Progress? CurrentProgress
+        => Progress.OrderByDescending(x => x.DateTimeRecord.CreatedOn).FirstOrDefault();
 
     public Book(
         string googleBooksId,
@@ -27,7 +31,7 @@ public class Book : EntityWithNameBase<Book>
         Uri? thumbnailUrl,
         string? isbn,
         BookPage totalPage,
-        Progress? currentProgress
+        IReadOnlyList<Progress> progress
     ) : base(name)
     {
         GoogleBooksId = googleBooksId;
@@ -37,7 +41,7 @@ public class Book : EntityWithNameBase<Book>
         ThumbnailUrl = thumbnailUrl;
         Isbn = isbn;
         TotalPage = totalPage;
-        CurrentProgress = currentProgress;
+        _progress = progress.ToList();
     }
 
     public static Book Create(BookCommandDTO command, IReadOnlyList<Author> authors, User createdBy)
@@ -50,7 +54,7 @@ public class Book : EntityWithNameBase<Book>
             command.Thumbnail != null ? new(command.Thumbnail) : null,
             command.Isbn,
             new(command.TotalPage, command.TotalKindleLocation),
-            null
+            new List<Progress>()
         )
         .CreateModel(createdBy);
 
@@ -63,5 +67,16 @@ public class Book : EntityWithNameBase<Book>
             ? new(command.TotalPage, null)
             : new(TotalPage.Page, command.TotalKindleLocation);
         UpdateModel(updatedBy);
+    }
+
+    public void AddProgress(Progress prog)
+    {
+        _progress.Add(prog);
+    }
+
+    public void DeleteProgress(Guid progId)
+    {
+        var item = _progress.First(x => x.Id == progId);
+        _progress.Remove(item);
     }
 }

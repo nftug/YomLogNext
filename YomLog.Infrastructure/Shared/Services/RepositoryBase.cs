@@ -1,105 +1,67 @@
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using YomLog.Infrastructure.Shared.EDMs;
+using LiteDB.Async;
+using YomLog.Infrastructure.Shared.DataModels;
+using YomLog.Infrastructure.Shared.LiteDB;
 using YomLog.Shared.Attributes;
 using YomLog.Shared.Entities;
 using YomLog.Shared.Exceptions;
 using YomLog.Shared.Interfaces;
-using YomLog.Shared.ValueObjects;
 
 namespace YomLog.Infrastructure.Shared.Services;
 
 [InjectAsTransient]
-public abstract class RepositoryBase<TEntity, TEntityEDM> : IRepository<TEntity>
+public abstract class RepositoryBase<TEntity, TDataModel> : IRepository<TEntity>
     where TEntity : EntityBase<TEntity>
-    where TEntityEDM : EntityEDMBase<TEntity, TEntityEDM>, new()
+    where TDataModel : DataModelBase<TEntity, TDataModel>, new()
 {
-    protected readonly DataContext _context;
-    protected readonly IQueryFactory<TEntity, TEntityEDM> _queryFactory;
+    protected readonly AppConfig _appConfig;
+    protected LiteDbCollection<TEntity, TDataModel> Context => new(_appConfig);
 
-    public RepositoryBase(DataContext context, IQueryFactory<TEntity, TEntityEDM> queryFactory)
+    protected virtual ILiteQueryableAsync<TDataModel> GetCollectionForQuery(ILiteCollectionAsync<TDataModel> collection)
+        => collection.Query();
+
+    protected Task<T> UseCollectionQuery<T>(Func<ILiteQueryableAsync<TDataModel>, Task<T>> callback)
     {
-        _context = context;
-        _queryFactory = queryFactory;
+        using var context = Context;
+        return callback(GetCollectionForQuery(context.Collection));
+    }
+
+    public RepositoryBase(AppConfig appConfig)
+    {
+        _appConfig = appConfig;
     }
 
     public virtual async Task CreateAsync(TEntity item)
     {
-        var data = new TEntityEDM().Transfer(item);
-        await _context.AddAsync(data);
-
-        // Apply navigation after saving to database, because the operation requires PK.
-        data.ApplyNavigation(item);
-        await _context.SaveChangesAsync();
+        using var context = Context;
+        var data = new TDataModel().Transfer(item);
+        await context.Collection.InsertAsync(data);
     }
 
     public virtual async Task CreateRangeAsync(IEnumerable<TEntity> items)
     {
-        foreach (var item in items)
-        {
-            var data = new TEntityEDM().Transfer(item);
-            await _context.AddAsync(data);
-            data.ApplyNavigation(item);
-        }
-
-        await _context.SaveChangesAsync();
+        using var context = Context;
+        var data = items.Select(x => new TDataModel().Transfer(x));
+        await context.Collection.InsertBulkAsync(data);
     }
 
     public virtual async Task UpdateAsync(TEntity item)
     {
-        var data = await _context.Set<TEntityEDM>().AsTracking()
-            .FirstOrDefaultAsync(x => x.Id == item.Id)
-            ?? throw new NotFoundException();
-
-        await UpdateCoreAsync(data, item);
-        await _context.SaveChangesAsync();
-    }
-
-    protected virtual async Task UpdateCoreAsync(TEntityEDM data, TEntity item)
-    {
-        data.Transfer(item);
-
-        // Clear many-to-many relationships (Physical delete)
-        await ClearJoinTables(data);
-        // Apply a new navigation.
-        data.ApplyNavigation(item);
-    }
-
-    public virtual async Task UpdateRangeAsync(IEnumerable<TEntity> items)
-    {
-        var ids = items.Select(x => x.Id);
-        var entities = await _context.Set<TEntityEDM>()
-            .AsTracking()
-            .Where(x => ids.Contains(x.Id))
-            .ToListAsync();
-
-        foreach (var entity in entities)
-        {
-            var item = items.First(x => x.Id == entity.Id);
-            await UpdateCoreAsync(entity, item);
-        }
-
-        await _context.SaveChangesAsync();
+        using var context = Context;
+        var data = new TDataModel().Transfer(item);
+        await context.Collection.UpdateAsync(data);
     }
 
     public virtual Task<TEntity?> FindAsync(Guid id, User? operatedBy = null)
         => FindByPredicateAsync(x => x.Id == id, operatedBy);
 
-    public virtual async Task<EntityReference<TEntity>> DeleteAsync(Guid id, User operatedBy)
+    public virtual async Task DeleteAsync(Guid id, User operatedBy)
     {
-        var item = await FindAsync(id, operatedBy);
-        if (item == null) throw new NotFoundException();
+        var item = await FindAsync(id, operatedBy) ?? throw new NotFoundException();
         if (!item.CheckCanDelete(operatedBy)) throw new ForbiddenException();
 
-        var data = await _context.Set<TEntityEDM>()
-            .AsTracking()
-            .FirstAsync(x => x.Id == id);
-
-        _context.Remove(data);
-        await _context.SaveChangesAsync();
-
-        // returns deleted item's reference
-        return new(data.PK, data.Id);
+        using var context = Context;
+        await context.Collection.DeleteAsync(item.PK);
     }
 
     public virtual Task<List<TEntity>> FindAllAsync(User? operatedBy = null)
@@ -108,56 +70,30 @@ public abstract class RepositoryBase<TEntity, TEntityEDM> : IRepository<TEntity>
     public virtual Task<List<TEntity>> FindAllAsync(IEnumerable<Guid> ids, User? operatedBy = null)
         => FindAllByPredicateAsync(x => ids.Contains(x.Id), operatedBy);
 
-    public virtual Task<bool> AnyAsync(Guid id)
-        => _context.Set<TEntityEDM>().AnyAsync(x => x.Id == id);
-
-    public virtual Task<bool> AnyAsync(IEnumerable<Guid> ids)
-        => _context.Set<TEntityEDM>().AnyAsync(x => ids.Contains(x.Id));
-
-    internal async Task<TEntity?> FindByPredicateAsync(
-        Expression<Func<TEntityEDM, bool>> predicate,
+    internal Task<TEntity?> FindByPredicateAsync(
+        Expression<Func<TDataModel, bool>> predicate,
         User? operatedBy = null
     )
-    {
-        // If operated by admin users, allow them to get any deleted items.
-        var source = _queryFactory.Source;
-        if (operatedBy?.Role == UserRole.Admin) source = source.IgnoreQueryFilters();
-
-        var item = (await source.FirstOrDefaultAsync(predicate))?.ToDomain();
-
-        if (item == null) return null;
-        if (operatedBy != null && !item.CheckCanGet(operatedBy))
-            throw new ForbiddenException();
-
-        return item;
-    }
-
-    internal async Task<List<TEntity>> FindAllByPredicateAsync(
-        Expression<Func<TEntityEDM, bool>>? predicate = null,
-        User? operatedBy = null
-    )
-        => (await _queryFactory.Source
-            .Where(predicate ?? (x => true))
-            .ToListAsync())
-            .Select(x => x.ToDomain())
-            .Where(x => operatedBy == null || x.CheckCanGet(operatedBy))
-            .ToList();
-
-    /// <summary>
-    /// Clear many-to-many relationships with physical deleting. Use before updating an entity.
-    /// </summary>
-    protected async Task ClearJoinTables(IEntityEDM data)
-    {
-        var joinTables = _context.Entry(data).Collections
-            .Where(x =>
-                x.Metadata.PropertyInfo != null &&
-                typeof(IJoinTableEDM).IsAssignableFrom(x.Metadata.PropertyInfo.PropertyType.GetGenericArguments()[0])
-            );
-
-        foreach (var collectionEntry in joinTables)
+        => UseCollectionQuery(async query =>
         {
-            await collectionEntry.LoadAsync();
-            _context.RemoveRange((IEnumerable<IJoinTableEDM>)collectionEntry.CurrentValue!);
-        }
-    }
+            var entity = (await query.Where(predicate).FirstOrDefaultAsync())?.ToDomain();
+            if (entity == null) return null;
+            if (operatedBy != null && !entity.CheckCanGet(operatedBy))
+                throw new ForbiddenException();
+
+            return entity;
+        });
+
+    internal Task<List<TEntity>> FindAllByPredicateAsync(
+        Expression<Func<TDataModel, bool>>? predicate = null,
+        User? operatedBy = null
+    )
+        => UseCollectionQuery(async query =>
+                (await query
+                    .Where(predicate ?? (x => true))
+                    .ToListAsync())
+                    .Select(x => x.ToDomain())
+                    .Where(x => operatedBy == null || x.CheckCanGet(operatedBy))
+                    .ToList()
+            );
 }

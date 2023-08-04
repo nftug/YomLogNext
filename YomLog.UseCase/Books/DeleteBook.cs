@@ -22,6 +22,8 @@ public class DeleteBook
         public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
         {
             await _repository.DeleteAsync(request.Id, Command.OperatedBy);
+            // TODO: カスケードデリートの実装
+
             return Unit.Value;
         }
     }

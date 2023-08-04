@@ -51,12 +51,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageReference Include="ReactiveProperty" Version="9.1.2" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
     <PackageReference Include="Sve.Blazor.InfiniteScroll" Version="1.0.0-alpha" />
   </ItemGroup>
 
@@ -70,19 +68,6 @@
   <ItemGroup>
     <EmbeddedResource Include=".\Properties\appsettings.json" />
   </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-    <None Remove="Platforms\iOS\Linker.xml" />
-    <LinkDescription Include="Platforms\iOS\Linker.xml" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-      <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.5" PrivateAssets="None" GeneratePathProperty="true" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
-    <CodeSignEntitlements>Platforms/MacCatalyst/Entitlements.plist</CodeSignEntitlements>
-  </PropertyGroup>
 
   <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
     <AndroidKeyStore>True</AndroidKeyStore>
@@ -102,24 +87,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-ios|AnyCPU'">
     <CreatePackage>false</CreatePackage>
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
-    <MtouchLink>None</MtouchLink>
-    <UseInterpreter>True</UseInterpreter>
+    <!-- <MtouchLink>None</MtouchLink> -->
+    <!-- <UseInterpreter>True</UseInterpreter> -->
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'maccatalyst-arm64' and '$(Configuration)' == 'Release'">
-    <UseInterpreter>true</UseInterpreter>
-    <MtouchInterpreter>all</MtouchInterpreter>
-    <!-- <EnableCodeSigning>false</EnableCodeSigning> -->
+  <PropertyGroup Condition="'$(Platform)' == 'net7.0-maccatalyst' and '$(Configuration)' == 'Release'">
+    <!-- <UseInterpreter>true</UseInterpreter> -->
+    <!-- <MtouchInterpreter>all</MtouchInterpreter> -->
   </PropertyGroup>
-
-  <PropertyGroup  Condition="'$(TargetFramework)' == 'net7.0-maccatalyst' and '$(Configuration)' == 'Release'">
-    <!-- for Mac Catalyst -->
-    <RuntimeIdentifiers>maccatalyst-x64</RuntimeIdentifiers>
-</PropertyGroup>
-
-  <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
-    <UseInterpreter>true</UseInterpreter>
-  </PropertyGroup>
-
-
 </Project>

@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using MudBlazor;
 using YomLog.BlazorShared;
 using YomLog.Infrastructure;
 using YomLog.MobileApp.Services;
@@ -65,12 +63,10 @@ public static class MauiProgram
 
         builder.Services.AddInfrastructure(FileSystem.AppDataDirectory);
         builder.Services.AddFromAssembly(typeof(Domain.Books.Entities.Book).Assembly);
-        builder.Services.AddMediatR(typeof(UseCase.Books.AddBook).Assembly);
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(UseCase.Books.AddBook).Assembly));
         builder.Services.AddFromCurrentAssembly();
 
         var app = builder.Build();
-
-        app.Services.UseInfrastructure();
 
         return app;
     }
